@@ -257,6 +257,17 @@ def m_simple(name, tex=None, color=(0.5, 0.5, 0.5), rough=0.8, metal=0.0, uv_sca
     return m
 
 
+def m_moss_clump(name="M_MossClump"):
+    """Moss cushions, as the Unreal material: the moss set with a per-instance tint between a cool and a warm green."""
+    m = bpy.data.materials.new(name)
+    b = NB(m)
+    bc, nr, orh = tset(b, "Moss", b.coord("Object", 1 / 0.25), "BOX", 0.2)
+    oi = b.n.new("ShaderNodeObjectInfo")
+    tint = b.mix(oi.outputs["Random"], (0.78, 0.88, 0.70), (1.15, 1.08, 0.74))
+    b.set(**{"Base Color": b.mix(1.0, bc, tint, blend="MULTIPLY"), "Normal": b.normal(nr, 1.0), "Roughness": 0.9})
+    return m
+
+
 def m_glass(name="M_Glass", night=0.0):
     m = bpy.data.materials.new(name)
     b = NB(m)
@@ -264,10 +275,13 @@ def m_glass(name="M_Glass", night=0.0):
     bc = b.img("T_Glass_BC.jpg", "sRGB", v).outputs[0]
     orh = b.img("T_Glass_ORH.png", "Non-Color", v).outputs[0]
     _, _, came = b.sep(orh)
-    _, lit = b.uvsep("UV2")
+    rnd, lit = b.uvsep("UV2")
     glow = b.math("MULTIPLY", b.math("MULTIPLY", lit, b.math("SUBTRACT", 1.0, came)), 9.0 * night)
     glow.node.name = "GLOW"
-    b.set(**{"Base Color": bc, "Roughness": 0.08, "Emission Color": (1.0, 0.56, 0.24), "Emission Strength": glow})
+    # per-window intensity and warmth from UV2.x, as in the Unreal material
+    glow = b.math("MULTIPLY", glow, b.math("ADD", b.math("MULTIPLY", rnd, 0.6), 0.6))
+    warm = b.mix(rnd, (1.0, 0.50, 0.18), (1.0, 0.68, 0.36))
+    b.set(**{"Base Color": bc, "Roughness": 0.08, "Emission Color": warm, "Emission Strength": glow})
     return m
 
 
@@ -343,6 +357,19 @@ def m_fall(name="M_Fall"):
     return m
 
 
+def m_mist(name="M_Mist"):
+    """The spray dome at the foot of the waterfall, as the Unreal material: thin (0.22 x foam), the silhouette faded out
+    (x (1 - fresnel)), so it reads as a cloud of spray rather than a shell."""
+    m = bpy.data.materials.new(name)
+    b = NB(m)
+    foam, _, _ = b.sep(b.img("T_Foam.png", "Non-Color", b.coord("Object", 1 / 18.0)).outputs[0])
+    lw = b.n.new("ShaderNodeLayerWeight")
+    lw.inputs["Blend"].default_value = 0.5                       # Facing = 1 - |N.V|
+    edge = b.math("SUBTRACT", 1.0, b.math("POWER", lw.outputs["Facing"], 1.5))
+    b.set(**{"Base Color": (0.85, 0.88, 0.9), "Roughness": 1.0, "Alpha": b.math("MULTIPLY", b.math("MULTIPLY", foam, 0.22), edge)})
+    return m
+
+
 def m_emit(name, color, strength):
     m = bpy.data.materials.new(name)
     b = NB(m)
@@ -365,7 +392,7 @@ def build_materials(night=0.0):
     M["M_Water"] = m_water("M_Water")
     M["M_River"] = m_water("M_River", (0.02, 0.035, 0.03), 0.08, flow=True, foam=0.7)
     M["M_Fall"] = m_fall()
-    M["M_Mist"] = m_emit("M_Mist", (0.7, 0.75, 0.78), 0.0)
+    M["M_Mist"] = m_mist()
     M["M_Lantern"] = m_emit("M_Lantern", (1.0, 0.6, 0.25), 60.0 * night + 0.5)
     M["M_Bark"] = m_simple("M_Bark", "Bark", rough=0.9, obj=False, uv_scale=1 / 1.5)
     M["M_BirchBark"] = m_simple("M_BirchBark", "BirchBark", rough=0.7, obj=False, uv_scale=1 / 1.5)
@@ -373,7 +400,7 @@ def build_materials(night=0.0):
     M["M_PineBark"] = m_simple("M_PineBark", None, (0.42, 0.20, 0.10), 0.8)
     M["M_Needles"] = m_foliage("M_Needles", "T_Needles_BC.jpg", (0.75, 0.85, 0.72), (1.15, 1.05, 0.85), 0.3, nrm="T_Needles_N.png")
     M["M_Leaf"] = m_foliage("M_Leaf", "T_Leaf_BC.jpg", (0.8, 0.95, 0.7), (1.2, 1.1, 0.75), 0.4)
-    M["M_MossClump"] = m_simple("M_MossClump", "Moss", rough=0.9, uv_scale=1 / 0.25)
+    M["M_MossClump"] = m_moss_clump()
     M["M_Fern3D"] = m_foliage("M_Fern3D", "T_FernPinna_BC.jpg", (0.8, 0.95, 0.75), (1.1, 1.05, 0.85), 0.35)
     M["M_Grass3D"] = m_foliage("M_Grass3D", "T_GrassBlade_BC.jpg", (0.85, 0.95, 0.75), (1.1, 1.05, 0.8), 0.3)
     return M
@@ -478,14 +505,52 @@ def setup_world(preset, stars_path):
         nt.links.new(sky.outputs[0], bg.inputs[0])
         bg.inputs["Strength"].default_value = 0.22 * P["sky"]
     sc.world = w
-    # sun / moon lamp
+    # Daylight: the sky texture's own sun disc is the sun.  Its sun : sky ratio and its colour at a low elevation are
+    # physical, as with Unreal's sky atmosphere, and the exposure is metered per shot (auto_exposure).  A lamp on top
+    # would double the sunlight.  Night: a moon lamp under the star dome.
     for ob in [o for o in bpy.data.objects if o.name.startswith("SunLamp")]:
         bpy.data.objects.remove(ob)
-    el, az = math.radians(P["sun_elev"]), math.radians(P["sun_az"])
-    d = (math.sin(az) * math.cos(el), math.cos(az) * math.cos(el), math.sin(el))
-    col = tuple(c / 255.0 for c in P["sun_color"])
-    strength = 3.6 * P["sun_lux"] / 10.0 if not P.get("moon") else 0.35
-    bu.add_sun(d, strength=strength, angle_deg=0.55, color=col, name="SunLamp")
+    if P.get("moon"):
+        el, az = math.radians(P["sun_elev"]), math.radians(P["sun_az"])
+        d = (math.sin(az) * math.cos(el), math.cos(az) * math.cos(el), math.sin(el))
+        bu.add_sun(d, strength=0.35, angle_deg=0.55, color=tuple(c / 255.0 for c in P["sun_color"]), name="SunLamp")
+
+
+# exposure bias over the metered middle grey, per preset (the mist is airy, the sunset a silhouette, dusk is dim)
+EV_BIAS = {"mist": 0.4, "day": 0.0, "sunset": -0.6, "dusk": -0.8}
+
+
+def auto_exposure(preset, out_dir, long=192):
+    """Metered exposure (as Unreal's auto exposure): a small, quick render of the composited frame; the log-average
+    luminance of its 5-95 % luminance range is brought to middle grey (0.18), plus the preset's bias."""
+    import tempfile
+
+    sc = bpy.context.scene
+    r = sc.render
+    keep = (r.resolution_x, r.resolution_y, sc.cycles.samples, sc.cycles.use_denoising, r.filepath, r.image_settings.file_format,
+            r.image_settings.color_depth, sc.view_settings.exposure)
+    s = long / max(r.resolution_x, r.resolution_y)
+    r.resolution_x, r.resolution_y = max(16, int(r.resolution_x * s)), max(16, int(r.resolution_y * s))
+    sc.cycles.samples, sc.cycles.use_denoising = 6, False
+    sc.view_settings.exposure = 0.0
+    r.image_settings.file_format, r.image_settings.color_depth = "OPEN_EXR", "32"
+    path = os.path.join(tempfile.mkdtemp(dir=out_dir), "meter.exr")
+    r.filepath = path
+    bpy.ops.render.render(write_still=True)
+    img = bpy.data.images.load(path)
+    px = np.array(img.pixels[:], np.float32).reshape(-1, 4)[:, :3]
+    bpy.data.images.remove(img)
+    os.remove(path)
+    os.rmdir(os.path.dirname(path))
+    (r.resolution_x, r.resolution_y, sc.cycles.samples, sc.cycles.use_denoising, r.filepath, r.image_settings.file_format,
+     r.image_settings.color_depth, _) = keep
+    lum = np.maximum(px @ np.array([0.2126, 0.7152, 0.0722], np.float32), 1e-5)
+    lo, hi = np.percentile(lum, [5, 95])
+    sel = (lum >= lo) & (lum <= hi)
+    avg = float(np.exp(np.log(lum[sel]).mean()))
+    ev = float(np.clip(math.log2(0.18 / avg) + EV_BIAS.get(preset, 0.0), -8.0, 8.0))
+    sc.view_settings.exposure = ev
+    return ev
 
 
 def setup_compositor(preset, cam_z):
@@ -541,6 +606,26 @@ def setup_compositor(preset, cam_z):
     amt.use_clamp = True
     nt.links.new(inv.outputs[0], amt.inputs[0])
     nt.links.new(hmix.outputs[0], amt.inputs[1])
+    # the sky keeps its gradient, sun glow and stars (the sky texture already carries the atmosphere): background
+    # pixels (depth 1e10) get a light constant haze instead of the full fog colour
+    is_sky = nt.nodes.new("CompositorNodeMath")
+    is_sky.operation = "GREATER_THAN"
+    is_sky.inputs[1].default_value = 1.0e6
+    nt.links.new(rl.outputs["Depth"], is_sky.inputs[0])
+    dsk = nt.nodes.new("CompositorNodeMath")
+    dsk.operation = "SUBTRACT"
+    dsk.inputs[0].default_value = {"mist": 0.8, "day": 0.25, "sunset": 0.12, "night": 0.3, "dusk": 0.2}[preset]
+    nt.links.new(amt.outputs[0], dsk.inputs[1])
+    dsk2 = nt.nodes.new("CompositorNodeMath")
+    dsk2.operation = "MULTIPLY"
+    nt.links.new(dsk.outputs[0], dsk2.inputs[0])
+    nt.links.new(is_sky.outputs[0], dsk2.inputs[1])
+    amt_ = amt
+    amt = nt.nodes.new("CompositorNodeMath")
+    amt.operation = "ADD"
+    amt.use_clamp = True
+    nt.links.new(amt_.outputs[0], amt.inputs[0])
+    nt.links.new(dsk2.outputs[0], amt.inputs[1])
     fogc = {"mist": (0.62, 0.68, 0.70), "day": (0.62, 0.70, 0.82), "sunset": (0.95, 0.62, 0.45), "night": (0.010, 0.016, 0.030),
             "dusk": (0.45, 0.40, 0.48)}[preset]
     mix = nt.nodes.new("CompositorNodeMixRGB")
@@ -668,11 +753,17 @@ def main():
             cam.data.sensor_height = 36.0
         cam.data.clip_end = 30000.0
         cam.data.clip_start = 0.3
-        sc.view_settings.exposure = P["exposure"] * 0.8 + (0.4 if P.get("moon") else 0.0)
         setup_compositor(s["preset"], k["loc"][2])
         t = time.time()
+        if P.get("moon"):
+            sc.view_settings.look = "None"
+            sc.view_settings.exposure = P["exposure"] * 0.8 + 0.4
+        else:
+            sc.view_settings.look = "Medium High Contrast"      # closer to Unreal's filmic tone curve than AgX's base
+            auto_exposure(s["preset"], a.out)
         bu.render_to(f"{a.out}/{name}.png")
-        print(f"rendered {name} ({rx}x{ry}, preset {s['preset']}) in {time.time() - t:.0f}s", flush=True)
+        print(f"rendered {name} ({rx}x{ry}, preset {s['preset']}, exposure {sc.view_settings.exposure:+.2f}) in {time.time() - t:.0f}s",
+              flush=True)
     print(f"all previews in {time.time() - t0:.0f}s", flush=True)
 
 

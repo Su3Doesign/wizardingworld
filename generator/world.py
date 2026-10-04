@@ -92,11 +92,23 @@ def points_in_polygon(x, y, poly):
 
 # ----------------------------------------------------------------------------------------------- layout
 
-# castle plateau outline (z = 80 inside), counter-clockwise
-CRAG_OUTLINE = catmull([
-    (-150, -150), (-60, -166), (40, -163), (128, -148), (176, -98), (190, -10), (192, 80), (182, 160), (120, 210),
-    (20, 220), (-80, 208), (-145, 160), (-166, 70), (-168, -40),
+# ---- the castle (layout after the Legacy castle map: map pixel (mx, my) -> world ((mx - 1000) * 0.24, (1100 - my) * 0.24))
+# The castle stands on two rocks 80 m above the lake, joined by bridges over the water that threads between them:
+#   * the north-west rock (the mainland side): the Astronomy wing, the Transfiguration court, the Library, the Bell Tower,
+#     the greenhouses, Divination / Potions and the Viaduct Entrance
+#   * the south-east rock: the Viaduct court, the Entrance Hall, the Great Hall (by the east arm of the lake), the Grand
+#     Staircase Tower, the Quad, Ravenclaw / Gryffindor, the Hospital wing, the Faculty tower and the South Wing with the
+#     Clock Tower running down to the main lake
+# The lake's east arm runs north along the castle; its north-east bay opens into the inlet that threads the castle
+# (under the grand viaduct, the stone bridge and the suspension bridge) to the west basin (the Map Chamber's rock),
+# which drains south into the main lake.  The boats come up the east arm into the bay: the boathouse sits at the tip of
+# the spur on the bay's north side; its entry stairs climb the spur, and the stream from the north-east hills falls
+# through their arches into the bay.
+CASTLE_REGION = catmull([
+    (-172, -60), (-170, 60), (-158, 150), (-110, 182), (-20, 192), (40, 196), (60, 176), (64, 130), (150, 92), (186, 70),
+    (188, 0), (184, -110), (150, -210), (-60, -214), (-160, -170),
 ], step=2.0, closed=True)
+CLIFF_MARGIN = (12.0, 14.0)      # plateau rim to the water's edge: narrow water (inlet, basin) / the open lake
 
 # west river gorge: river centre line from the north-west hills to the lake (the last points are under water)
 GORGE_PATH = catmull([
@@ -106,22 +118,42 @@ GORGE_PATH = catmull([
 _GORGE_BED_Y = np.array([3000, 2250, 1650, 1150, 760, 470, 250, 80, -40, -150, -255, -380], np.float64)
 _GORGE_BED_Z = np.array([260, 175, 122, 92, 70, 50, 30, 15, 7, 2.2, -2.0, -8.0], np.float64)
 
-# east ravine: stream from the eastern hills to the lip -> waterfall into the lake
+# east ravine -> the stream from the north-east hills: it crosses the grounds, cuts a cleft through the root of the
+# boathouse spur and falls through the arches of the entry stairs into the bay.  Bed 2-3 m below the natural ground.
 RAVINE_PATH = catmull([
-    (1100, 1500), (820, 1000), (600, 680), (420, 400), (296, 190), (232, 40), (220, -60), (218, -136),
+    (600, 1400), (500, 1060), (410, 780), (330, 560), (260, 400), (200, 300), (162, 246), (150, 214),
 ], step=2.0)
-_RAVINE_BED_Y = np.array([1500, 1000, 680, 400, 190, 40, -60, -136], np.float64)
-_RAVINE_BED_Z = np.array([175, 122, 90, 71, 59, 51, 46.5, 45], np.float64)
-WATERFALL_LIP = (218.0, -136.0, 45.0)
-WATERFALL_FOOT = (218.0, -168.0, 0.0)
+_RAVINE_BED_Y = np.array([1400, 1060, 780, 560, 390, 290, 240, 214], np.float64)
+_RAVINE_BED_Z = np.array([96.0, 86.0, 80.0, 77.0, 74.0, 71.0, 66.0, 60.0], np.float64)
+RAVINE_GAP = 0.0
+WATERFALL_LIP = (150.0, 212.0, 60.0)
+WATERFALL_FOOT = (150.0, 182.0, 0.0)
 
-# Black Lake shoreline (counter-clockwise); the north shore follows the crag foot
+# the boathouse spur: a rocky ridge from the north-west rock's north-east corner down into the bay
+SPUR_PATH = catmull([(50, 222), (100, 224), (150, 220), (200, 208), (244, 192)], step=2.0)
+SPUR_Z = (78.0, 3.0)             # crest height at the root / at the tip
+
+# Black Lake: the main lake (south) with the east arm and the bay, counter-clockwise
 LAKE_OUTLINE = catmull([
-    (-290, -330), (-195, -205), (-110, -183), (-20, -182), (70, -178), (150, -168), (214, -160), (300, -195), (420, -250),
-    (560, -310), (760, -420), (980, -560), (1180, -760), (1320, -1080), (1340, -1450), (1180, -1800), (850, -2050),
+    (-290, -330), (-200, -224), (-150, -205), (-60, -226), (10, -212), (52, -170), (58, -138), (96, -132), (140, -140),
+    (178, -128), (196, -40), (200, 40), (196, 84), (150, 102), (100, 104), (74, 112), (72, 150), (76, 180), (120, 186),
+    (170, 182), (222, 170), (258, 172), (270, 210), (320, 300), (430, 400), (580, 470), (720, 470), (800, 380), (830, 200),
+    (810, 0),
+    (770, -190), (760, -420), (980, -560), (1180, -760), (1320, -1080), (1340, -1450), (1180, -1800), (850, -2050),
     (300, -2180), (-300, -2160), (-850, -1980), (-1250, -1650), (-1450, -1250), (-1400, -850), (-1150, -560),
     (-820, -420), (-520, -370),
 ], step=3.0, closed=True)
+# the inlet / channel through the castle: from the bay, under the grand viaduct, the stone bridge and the suspension
+# bridge, to the west basin
+CHANNEL_PATH = catmull([(86, 130), (50, 112), (24, 74), (2, 46), (-14, 34), (-26, 12), (-34, -12), (-54, -30), (-80, -42)],
+                       step=2.0)
+CHANNEL_W = (52.0, 20.0)         # width at the bay end / further in
+WEST_BASIN = catmull([
+    (-66, -24), (-50, -40), (-48, -78), (-60, -108), (-88, -122), (-120, -120), (-140, -98), (-144, -60), (-130, -28),
+    (-104, -16),
+], step=2.0, closed=True)
+BASIN_OUTLET = catmull([(-122, -110), (-128, -150), (-138, -190), (-150, -215)], step=2.0)
+BASIN_OUTLET_W = 18.0
 
 ISLANDS = [  # (x, y, radius, height above the lake, name)
     (-470, -700, 44.0, 9.0, "WhiteTombIsland"),
@@ -136,13 +168,16 @@ ROAD_PATH = catmull([(50, 222), (80, 420), (95, 600), (70, 880), (0, 1200), (-80
 HOGSMEADE = (-130.0, 1800.0)
 PITCH = (-170.0, 840.0)            # Quidditch pitch centre; long axis north-south
 PITCH_SIZE = (75.0, 170.0)         # stand oval: full width, full length (m)
-HUT = (470.0, 470.0)               # the gamekeeper's hut at the forest edge
-WILLOW = (370.0, 300.0)
-GREENHOUSES = (390.0, 140.0)
-STONE_CIRCLE = (372.0, -62.0)      # the viaduct lands here
-VIADUCT = ((186.0, -40.0), (352.0, -54.0))
+HUT = (520.0, 560.0)               # the gamekeeper's hut on the north shore of the east arm, by the forest
+WILLOW = (300.0, 430.0)
+GREENHOUSES = (-40.0, 270.0)      # the outer greenhouses north of the castle
+STONE_CIRCLE = (190.0, 330.0)      # on the grounds above the stream
+VIADUCT = ((10.0, 132.0), (46.0, 110.0), (70.0, 68.0))   # the grand viaduct over the inlet's mouth: Viaduct Entrance -> bend -> Viaduct court
+STONE_BRIDGE = ((-36.0, 40.0), (6.0, 22.0))
+SUSPENSION_BRIDGE = ((-58.0, -2.0), (-14.0, -24.0))
+STACKS = [(-100.0, -66.0, 13.0, 64.0, "MapChamberRock")]   # sea stacks: (x, y, radius, top z, name)
 STATION = (1010.0, -640.0)
-BOATHOUSE = (-10.0, -180.0)
+BOATHOUSE = (244.0, 186.0)
 BOAT_DOCK_STATION = (930.0, -600.0)
 
 FOREST_CENTRES = [(1300, 600, 1500.0), (900, 1600, 1000.0), (-1100, 300, 900.0), (-700, -150, 500.0)]
@@ -155,7 +190,9 @@ def pathfield(name):
     """Cached fastnoise.PathField per layout path."""
     if name not in _PF:
         spec = {
-            "crag": (CRAG_OUTLINE, 0.5, True), "lake": (LAKE_OUTLINE, 1.0, True), "gorge": (GORGE_PATH, 0.5, False),
+            "region": (CASTLE_REGION, 0.5, True), "lake": (LAKE_OUTLINE, 1.0, True), "gorge": (GORGE_PATH, 0.5, False),
+            "channel": (CHANNEL_PATH, 0.5, False), "basin": (WEST_BASIN, 0.5, True), "outlet": (BASIN_OUTLET, 0.5, False),
+            "spur": (SPUR_PATH, 0.5, False),
             "ravine": (RAVINE_PATH, 0.5, False), "road": (ROAD_PATH, 0.5, False), "corridor": (VALLEY_CORRIDOR, 4.0, False),
         }[name]
         _PF[name] = fn.PathField(*spec)
@@ -198,10 +235,28 @@ class Fields:
         return self._c[key]
 
     def crag(self):
-        return self._get("crag", lambda: fn.polygon_signed(pathfield("crag"), self.x, self.y))
+        """Signed distance to the castle plateaus (negative on them): the castle region minus the water and a cliff margin
+        (so the inlet and the basins split it into the north-west and the south-east rocks)."""
+        def _c():
+            open_d, narrow_d = self.lake_parts()
+            reg = fn.polygon_signed(pathfield("region"), self.x, self.y)
+            return np.maximum.reduce([reg, CLIFF_MARGIN[1] - open_d, CLIFF_MARGIN[0] - narrow_d])
+        return self._get("crag", _c)
+
+    def lake_parts(self):
+        """Signed distances (negative in the water) to the open lake (main lake, east arm, bay) and to the narrow water
+        (the inlet / channel, the west basin and its outlet)."""
+        def _l():
+            main = fn.polygon_signed(pathfield("lake"), self.x, self.y)
+            cd_, cs_, _ = pathfield("channel").query(self.x, self.y)
+            w = CHANNEL_W[0] + (CHANNEL_W[1] - CHANNEL_W[0]) * sstep(0.0, 90.0, cs_)
+            basin = fn.polygon_signed(pathfield("basin"), self.x, self.y)
+            od, _, _ = pathfield("outlet").query(self.x, self.y)
+            return main, np.minimum.reduce([cd_ - w / 2, basin, od - BASIN_OUTLET_W / 2])
+        return self._get("lakeparts", _l)
 
     def lake(self):
-        return self._get("lake", lambda: fn.polygon_signed(pathfield("lake"), self.x, self.y))
+        return self._get("lake", lambda: np.minimum(*self.lake_parts()))
 
     def gorge(self):
         return self._get("gorge", lambda: pathfield("gorge").query(self.x, self.y))
@@ -260,12 +315,21 @@ class Fields:
         wall = np.where(side > 0, crag_wall * near + plain_wall * (1 - near), plain_wall)
         h = np.minimum(h, wall)
 
-        # 5. east ravine: a narrow cleft between the castle crag and the eastern headland near its lip (the waterfall),
-        #    opening upstream into a shallow stream valley
+        # 4b. the boathouse spur: a rocky ridge from the castle's north-east corner down into the bay (the entry stairs
+        #     climb it; the stream cuts through its root, step 5, and falls into the bay)
+        dsp, ssp, _ = pathfield("spur").query(x, y)
+        L_sp = pathfield("spur").length
+        crest = SPUR_Z[0] + (SPUR_Z[1] - SPUR_Z[0]) * sstep(0.0, L_sp, ssp) ** 2.2 + 2.0 * self.n(30.0, 3, 47)
+        spur = crest - 1.25 * np.clip(dsp - 5.0, 0, None) - 0.004 * np.clip(dsp - 5.0, 0, None) ** 2
+        h = np.where(dsp < 90.0, np.maximum(h, spur), h)
+
+        # 5. east ravine -> the stream: a shallow valley across the grounds, then a narrow cleft through the root of the
+        #    spur, ending at the lip above the bay (the waterfall)
         dr, sr, rside = self.ravine()
         rbed = ravine_bed(sr)
         L_r = pathfield("ravine").length
-        rfloor = 4.0 + 3.0 * (0.5 + 0.5 * self.n(70.0, 3, 41))
+        gapw = sstep(RAVINE_GAP, RAVINE_GAP - 120.0, L_r - sr)
+        rfloor = 4.0 + 3.0 * (0.5 + 0.5 * self.n(70.0, 3, 41)) + 24.0 * gapw
         rnear = sstep(420.0, 60.0, L_r - sr)
         rsteep = (0.35 + 2.6 * rnear) * (1.0 + 0.2 * self.n(50.0, 3, 42))
         keep = sstep(L_r + 10.0, L_r - 1.0, sr)
@@ -274,7 +338,8 @@ class Fields:
         rz = 12.0 + 8.0 * (0.5 + 0.5 * r1)
         rl = np.clip(3.0 + 10.0 * r2, 0.0, 10.0) * rnear
         rk = np.maximum(rsteep, 0.35)
-        rwall = rbed + tiered(rover, [rz / rk, rl], [rk, 0.35, rk * 1.1]) + 0.004 * rover ** 2
+        floor_rise = gapw * (0.17 * np.clip(np.minimum(dr, rfloor) - 4.0, 0, None) + 1.2 * self.n(18.0, 3, 45))
+        rwall = rbed + floor_rise + tiered(rover, [rz / rk, rl], [rk, 0.35, rk * 1.1]) + 0.004 * rover ** 2
         h = h * (1 - keep) + np.minimum(h, rwall) * keep
         # 6. the lake basin: sheer cliffs below the crag and the headlands round it, shelving beaches elsewhere
         ld = self.lake()
@@ -289,6 +354,11 @@ class Fields:
         lw = np.clip(4.0 + 15.0 * m2, 0.0, 16.0)
         boulder = 2.5 + 3.0 * (0.5 + 0.5 * m3)
         cliff = LAKE_Z - 1.0 + tiered(ld, [boulder, z1 / 5.2, lw], [0.45, 5.2, 0.30, 5.8])
+        # the inlet and the basins between the castle rocks: sheer walls straight out of the water
+        open_d, narrow_d = self.lake_parts()
+        narrow = sstep(4.0, -4.0, narrow_d - open_d)
+        sheer = LAKE_Z - 1.0 + tiered(ld, [1.2 + 1.5 * (0.5 + 0.5 * m3)], [0.5, 7.5 + 2.0 * m1])
+        cliff = cliff * (1 - narrow) + sheer * narrow
         outside = cliff * cliffy + beach * (1 - cliffy)
         lake_h = np.where(ld < 0, np.maximum(bottom, inside), outside)
         h = np.minimum(h, lake_h)
@@ -299,6 +369,10 @@ class Fields:
             d = np.hypot(x - ix, y - iy) * (1 + 0.22 * fn.fbm2(x, y, 40.0, 2, int(abs(ix)) % 97))
             isl = LAKE_Z + ih * (1 - sstep(0.0, ir, d)) ** 0.7 - 1.5 - 40.0 * sstep(ir, ir * 2.2, d)
             h = np.maximum(h, isl)
+        # 7b. sea stacks (the Map Chamber's rock in the west basin): steep pillars out of the water
+        for sx, sy, sr_, sz, _ in STACKS:
+            d = np.hypot(x - sx, y - sy) * (1 + 0.12 * fn.fbm2(x, y, 25.0, 2, 77))
+            h = np.maximum(h, sz - 7.0 * np.clip(d - sr_, 0, None) - 0.5 * np.clip(d - sr_ * 0.6, 0, None))
         # 8. flatten the pitch, Hogsmeade, the station shelf, the greenhouse lawn; soften the road
         h = self._flatten(h, PITCH, (PITCH_SIZE[0] * 0.65 + 14, PITCH_SIZE[1] * 0.58 + 14), 40.0)
         h = self._flatten(h, HOGSMEADE, (260.0, 330.0), 140.0)
@@ -367,6 +441,9 @@ class Fields:
                           (STONE_CIRCLE, 45.0)):
                 f = f * sstep(rr * 0.7, rr, np.hypot(x - c[0], y - c[1]))
             f = f * sstep(7.0, 20.0, self.road())
+            # no trees in the stream, nor on the floor of the gap under the viaduct (the arches stay visible)
+            L_r = pathfield("ravine").length
+            f = f * sstep(4.0, 9.0, dr) * (1.0 - sstep(140.0, 60.0, L_r - sr) * sstep(60.0, 20.0, dr))
             return np.clip(f, 0, 1)
         return self._get("forest", _f)
 

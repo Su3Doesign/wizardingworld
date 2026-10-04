@@ -915,8 +915,10 @@ def build_mist(name="M_Mist"):
     sp(unreal.Material, b.mat, blend_mode=unreal.BlendMode.BLEND_TRANSLUCENT, two_sided=True,
        translucency_lighting_mode=unreal.TranslucencyLightingMode.TLM_VOLUMETRIC_NON_DIRECTIONAL)
     f = b.mask(b.tex(T("T_Foam"), b.proj_uvs(1800.0)[1], S_MASKS), "RGB", r=True)
+    # the dome's silhouette fades out, so it reads as a cloud of spray rather than a shell: x (1 - fresnel)
+    edge = b.unary(unreal.MaterialExpressionOneMinus, b.node(unreal.MaterialExpressionFresnel, {"exponent": 1.5, "base_reflect_fraction": 0.0}))
     df = b.node(unreal.MaterialExpressionDepthFade, {"fade_distance_default": 400.0})
-    b.conn(b.mul(f, "", k=0.22), "", df, "")
+    b.conn(b.mul(b.mul(f, "", k=0.22), "", edge, ""), "", df, "")
     b.out(b.const3((0.85, 0.88, 0.9)), "", MP.MP_BASE_COLOR)
     b.out(df, "", MP.MP_OPACITY)
     return b.finish(), b

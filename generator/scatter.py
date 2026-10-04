@@ -275,7 +275,11 @@ def rocks_and_moss(S, rng, moss_density=4.0):
     P, idx = sample_faces(V, F, w, rng)
     k = len(P)
     Rm = ins.frames_from_normals(fn[idx], rng, up_blend=0.35)
-    S.add("moss", P - fn[idx] * 0.05, Rm, rng.uniform(0.18, 0.75, k) * np.array([1.0])[0], rng.integers(0, 4, k))
+    # low, wide, overlapping cushions (a carpet that follows the rock, with the moss texture between them): mostly
+    # small, a few large (log-normal), 0.1-0.35 m high
+    sxy = np.clip(np.exp(rng.normal(math.log(0.5), 0.45, k)), 0.2, 1.4)
+    sc = np.stack([sxy * rng.uniform(0.85, 1.15, k), sxy * rng.uniform(0.85, 1.15, k), sxy * rng.uniform(0.25, 0.45, k)], 1)
+    S.add("moss", P - fn[idx] * 0.05, Rm, sc, rng.integers(0, 4, k))
     # --- talus boulders: moderate slopes below steep ground, lake shore, river bed
     gd, gs, _ = Fd.gorge()
     talus = W.sstep(0.95, 0.75, fn[:, 2]) * W.sstep(0.3, 0.5, fn[:, 2]) * (C_[:, 2] < W.CASTLE_Z - 4) * (~plateau)

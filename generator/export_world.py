@@ -163,6 +163,19 @@ def export_all(geo_dir, out_dir):
     return manifest
 
 
+def export_instances_only(geo_dir, out_dir):
+    """Re-export only the instance records into an existing export (after a re-scatter, e.g. a moved camera changed
+    the sight-line clearings).  The FBX files and the mesh entries of the manifest stay untouched."""
+    manifest = json.load(open(f"{out_dir}/manifest.json"))
+    for e in manifest["instances"]:
+        if os.path.isfile(f"{out_dir}/{e['file']}"):
+            os.remove(f"{out_dir}/{e['file']}")
+    have_lib = {os.path.splitext(os.path.basename(p))[0] for p in glob.glob(f"{geo_dir}/lib/lib_*.npz")}
+    manifest["instances"] = export_instances(geo_dir, out_dir, have_lib)
+    json.dump(manifest, open(f"{out_dir}/manifest.json", "w"), indent=1)
+    return manifest
+
+
 def write_scene(geo_dir, out_path):
     """scene.json for the Unreal builder: lighting presets, the shots (cameras, keys, preset), mist banks, lanterns."""
     import shots as SH
@@ -270,9 +283,13 @@ def verify(out_dir, tol_cm=1.0):
 if __name__ == "__main__":
     geo, out = sys.argv[1], sys.argv[2]
     t0 = time.time()
-    export_all(geo, out)
-    print(f"--- exported in {time.time() - t0:.0f}s; verifying FBX files by parsing them back ---")
-    n_bad = verify(out)
+    if "--instances-only" in sys.argv[3:]:
+        export_instances_only(geo, out)
+        n_bad = 0
+    else:
+        export_all(geo, out)
+        print(f"--- exported in {time.time() - t0:.0f}s; verifying FBX files by parsing them back ---")
+        n_bad = verify(out)
     print("--- verifying instance files ---")
     n_bad += verify_instances(out, geo)
     print("ALL FBX OK" if n_bad == 0 else f"{n_bad} FILES HAVE PROBLEMS")

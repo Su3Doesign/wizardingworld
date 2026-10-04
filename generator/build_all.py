@@ -4,6 +4,7 @@
     python build_all.py --quality ultra       # local build: denser rock (0.5 m voxels, 9 M tris core), denser forests
     python build_all.py --skip-previews       # stop after the Unreal SourceAssets
     python build_all.py --only scatter,export # re-run some stages (they read the previous stages' OUT/ files)
+    python build_all.py --only scatter,instances,previews   # after moving a camera in shots.py
 
 Stages (each a module of this folder; all deterministic, fixed seeds):
     erode     world.py       hydraulic + thermal erosion of the mountain ring              (cache/erosion.npz)
@@ -17,7 +18,8 @@ Stages (each a module of this folder; all deterministic, fixed seeds):
     scatter   scatter.py     forests, crag ledges, moss, boulders, understory (+ sight-line clearings for the shots)
     textures  tex_world.py   the procedural texture library
     export    export_world.py  FBX + instance records + manifest.json + scene.json -> ../WizardingWorld/SourceAssets
-    previews  preview.py     Cycles previews from every shot -> ../Previews
+    instances export_world.py --instances-only: only the instance records + scene.json (FBX untouched); run on request
+    previews  preview.py     Cycles previews from every shot -> ../Previews (+ contact_sheet.py: all shots on one page)
 Requirements: Python 3.11 + requirements.txt (bpy 4.5 = Blender as a module).  ~25 min on 4 cores + previews.
 """
 from __future__ import annotations
@@ -93,8 +95,12 @@ def main():
         for f in os.listdir(TEX):
             shutil.copy(os.path.join(TEX, f), os.path.join(SA, "textures", f))
         run("export", ["export_world.py", GEO, fbx])
+    if "instances" in only:                                   # a lighter export after a re-scatter: FBX files untouched
+        run("instances", ["export_world.py", GEO, os.path.join(SA, "fbx"), "--instances-only"])
     if want("previews") and not a.skip_previews:
-        run("previews", ["preview.py", GEO, TEX, os.path.join(HERE, "..", "Previews"), "--samples", "40", "--long", "1280"])
+        prev = os.path.join(HERE, "..", "Previews")
+        run("previews", ["preview.py", GEO, TEX, prev, "--samples", "40", "--long", "1280"])
+        run("contact-sheet", ["contact_sheet.py", prev, os.path.join(prev, "contact_sheet.jpg")])
     print(f"all done in {(time.time() - t0) / 60:.1f} min", flush=True)
 
 

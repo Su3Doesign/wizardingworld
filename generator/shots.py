@@ -19,8 +19,10 @@ PRESETS = {
     "day": dict(sun_elev=42.0, sun_az=205.0, sun_lux=10.0, sun_color=(255, 245, 230), sky=1.0, fog_density=0.012,
                 fog_falloff=0.006, fog_height=0.0, vol_fog=True, mist_banks=False, windows=0.0, clouds=0.55, exposure=0.0,
                 tint=(1.0, 1.0, 1.0), saturation=1.0),
-    "sunset": dict(sun_elev=3.5, sun_az=292.0, sun_lux=8.0, sun_color=(255, 168, 112), sky=1.0, fog_density=0.009,
-                   fog_falloff=0.010, fog_height=10.0, vol_fog=True, mist_banks=True, windows=0.35, clouds=0.6, exposure=0.6,
+    # sunset: a midsummer Highland sunset in the north-west.  The mountain ring rises 12-20 deg above the castle, so the
+    # sun is already behind the ridge: the valley is in shadow, the sky glows behind the castle (ref 4's silhouette)
+    "sunset": dict(sun_elev=3.5, sun_az=316.0, sun_lux=8.0, sun_color=(255, 168, 112), sky=1.0, fog_density=0.009,
+                   fog_falloff=0.010, fog_height=10.0, vol_fog=True, mist_banks=True, windows=0.55, clouds=0.6, exposure=0.6,
                    tint=(1.0, 0.96, 0.92), saturation=1.05),
     "night": dict(sun_elev=24.0, sun_az=340.0, sun_lux=0.35, sun_color=(170, 195, 255), sky=0.08, fog_density=0.018,
                   fog_falloff=0.012, fog_height=5.0, vol_fog=True, mist_banks=True, windows=1.0, clouds=0.45, exposure=1.6,
@@ -45,12 +47,12 @@ SHOTS = {
         keys=[dict(t=0.0, loc=(300.0, -660.0, 3.2), look_at=(105.0, -90.0, 96.0)),
               dict(t=12.0, loc=(272.0, -585.0, 3.6), look_at=(105.0, -90.0, 98.0))]),
     "CAM_03_Lake_Sunset": dict(
-        title="Ref 4: the Great Hall end and the crag from the lake at sunset", aspect="landscape", lens=32.0, fstop=8.0,
-        preset="sunset", keys=[dict(t=0.0, loc=(-560.0, -650.0, 14.0), look_at=(-70.0, -40.0, 102.0))]),
+        title="Ref 4: the castle silhouetted against the sunset, from the lake", aspect="landscape", lens=35.0, fstop=8.0,
+        preset="sunset", keys=[dict(t=0.0, loc=(338.0, -433.0, 7.0), look_at=(0.0, 0.0, 84.0))]),
     "CAM_04_Viaduct_Walk": dict(
         title="Walking the viaduct into the castle", aspect="landscape", lens=24.0, fstop=5.6, preset="day",
-        keys=[dict(t=0.0, loc=(360.0, -55.0, 81.0), look_at=(190.0, -40.0, 96.0)),
-              dict(t=12.0, loc=(290.0, -49.0, 81.0), look_at=(150.0, -38.0, 100.0))]),
+        keys=[dict(t=0.0, loc=(343.0, -53.2, 80.75), look_at=(186.0, -40.0, 92.0)),         # out of the east tower's door
+              dict(t=12.0, loc=(300.0, -49.6, 80.75), look_at=(150.0, -37.0, 98.0))]),     # deck 79 m, parapet 80.4 m
     "CAM_05_Quidditch_Aerial": dict(
         title="Over the Quidditch stadium towards the castle", aspect="landscape", lens=28.0, fstop=8.0, preset="day",
         keys=[dict(t=0.0, loc=(-360.0, 1060.0, 205.0), look_at=(-40.0, 140.0, 105.0)),
