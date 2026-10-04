@@ -1,0 +1,7 @@
+/generator/OUT/
+/generator/cache/
+/generator/typings/
+/generator/.stub_index.pkl
+__pycache__/
+*.pyc
+*.blend1

@@ -1,0 +1,24 @@
+{
+ "FileVersion": 3,
+ "EngineAssociation": "5.6",
+ "Category": "",
+ "Description": "The castle on the crag above the Black Lake - procedurally generated high-poly world + one-step scene builder",
+ "Plugins": [
+  {
+   "Name": "PythonScriptPlugin",
+   "Enabled": true
+  },
+  {
+   "Name": "EditorScriptingUtilities",
+   "Enabled": true
+  },
+  {
+   "Name": "SequencerScripting",
+   "Enabled": true
+  },
+  {
+   "Name": "MovieRenderPipeline",
+   "Enabled": true
+  }
+ ]
+}
