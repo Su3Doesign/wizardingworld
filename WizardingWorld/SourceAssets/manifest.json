@@ -1,0 +1,3087 @@
+{
+ "unit": "cm",
+ "mapping": "ue = (100*x, -100*y, 100*z) from Blender metres",
+ "meshes": [
+  {
+   "name": "SM_CastleCentre",
+   "file": "SM_CastleCentre.fbx",
+   "source": "castle_centre",
+   "tris": 430005,
+   "slots": [
+    "M_CastleStone",
+    "M_Trim",
+    "M_Slate",
+    "M_Lead",
+    "M_Glass"
+   ],
+   "bbox_center_m": [
+    39.4685,
+    38.0,
+    132.045
+   ],
+   "bbox_extent_m": [
+    127.0315,
+    150.5,
+    56.045
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 16.69,
+   "mean_up": -0.021,
+   "kind": "architecture",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_CastleEast",
+   "file": "SM_CastleEast.fbx",
+   "source": "castle_east",
+   "tris": 376143,
+   "slots": [
+    "M_CastleStone",
+    "M_Trim",
+    "M_Slate",
+    "M_Lead",
+    "M_Glass"
+   ],
+   "bbox_center_m": [
+    157.0185,
+    42.5,
+    148.055
+   ],
+   "bbox_extent_m": [
+    34.5815,
+    142.3,
+    74.055
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 18.69,
+   "mean_up": 0.005,
+   "kind": "architecture",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_CastleLake",
+   "file": "SM_CastleLake.fbx",
+   "source": "castle_lake",
+   "tris": 14439,
+   "slots": [
+    "M_CastleStone",
+    "M_Trim",
+    "M_Slate",
+    "M_Lead",
+    "M_Glass"
+   ],
+   "bbox_center_m": [
+    -3.1,
+    -174.5813,
+    20.475
+   ],
+   "bbox_extent_m": [
+    19.4,
+    13.9818,
+    24.475
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.71,
+   "mean_up": 0.05,
+   "kind": "architecture",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_CastleLedge",
+   "file": "SM_CastleLedge.fbx",
+   "source": "castle_ledge",
+   "tris": 8851,
+   "slots": [
+    "M_CastleStone",
+    "M_Trim",
+    "M_Slate",
+    "M_Lead",
+    "M_Glass"
+   ],
+   "bbox_center_m": [
+    -170.1184,
+    -97.85,
+    41.469
+   ],
+   "bbox_extent_m": [
+    6.1816,
+    14.65,
+    18.175
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.45,
+   "mean_up": 0.082,
+   "kind": "architecture",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_CastleNorth",
+   "file": "SM_CastleNorth.fbx",
+   "source": "castle_north",
+   "tris": 400007,
+   "slots": [
+    "M_CastleStone",
+    "M_Trim",
+    "M_Slate",
+    "M_Lead",
+    "M_Glass",
+    "M_Wood"
+   ],
+   "bbox_center_m": [
+    12.3614,
+    129.9,
+    138.035
+   ],
+   "bbox_extent_m": [
+    138.1614,
+    90.4,
+    64.035
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 19.09,
+   "mean_up": 0.011,
+   "kind": "architecture",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_CastleSouth",
+   "file": "SM_CastleSouth.fbx",
+   "source": "castle_south",
+   "tris": 245943,
+   "slots": [
+    "M_CastleStone",
+    "M_Trim",
+    "M_Slate",
+    "M_Lead",
+    "M_Glass"
+   ],
+   "bbox_center_m": [
+    13.5638,
+    -132.6903,
+    115.5661
+   ],
+   "bbox_extent_m": [
+    146.3362,
+    32.5903,
+    76.0239
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 10.77,
+   "mean_up": 0.016,
+   "kind": "architecture",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_CastleViaduct",
+   "file": "SM_CastleViaduct.fbx",
+   "source": "castle_viaduct",
+   "tris": 7277,
+   "slots": [
+    "M_CastleStone",
+    "M_Trim",
+    "M_Slate",
+    "M_Lead",
+    "M_Glass",
+    "M_Wood"
+   ],
+   "bbox_center_m": [
+    271.4987,
+    -47.8564,
+    72.2745
+   ],
+   "bbox_extent_m": [
+    85.8013,
+    11.4436,
+    31.0755
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.38,
+   "mean_up": 0.082,
+   "kind": "architecture",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_CastleWest",
+   "file": "SM_CastleWest.fbx",
+   "source": "castle_west",
+   "tris": 367626,
+   "slots": [
+    "M_CastleStone",
+    "M_Trim",
+    "M_Slate",
+    "M_Lead",
+    "M_Glass"
+   ],
+   "bbox_center_m": [
+    -125.8939,
+    10.6,
+    127.1873
+   ],
+   "bbox_extent_m": [
+    41.9939,
+    156.7,
+    82.2427
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 16.03,
+   "mean_up": 0.047,
+   "kind": "architecture",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_GroundsGates",
+   "file": "SM_GroundsGates.fbx",
+   "source": "grounds_gates",
+   "tris": 6756,
+   "slots": [
+    "M_CastleStone",
+    "M_Trim",
+    "M_Lead"
+   ],
+   "bbox_center_m": [
+    95.0,
+    600.0,
+    90.1061
+   ],
+   "bbox_extent_m": [
+    37.0,
+    1.45,
+    5.6819
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.29,
+   "mean_up": 0.0,
+   "kind": "architecture",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_GroundsGreenhouses",
+   "file": "SM_GroundsGreenhouses.fbx",
+   "source": "grounds_greenhouses",
+   "tris": 4032,
+   "slots": [
+    "M_CastleStone",
+    "M_Lead",
+    "M_Glass"
+   ],
+   "bbox_center_m": [
+    390.0,
+    140.0,
+    81.1807
+   ],
+   "bbox_extent_m": [
+    17.15,
+    22.6,
+    3.843
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.15,
+   "mean_up": 0.205,
+   "kind": "architecture",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_GroundsHogsmeade",
+   "file": "SM_GroundsHogsmeade.fbx",
+   "source": "grounds_hogsmeade",
+   "tris": 103800,
+   "slots": [
+    "M_CastleStone",
+    "M_Trim",
+    "M_Slate",
+    "M_Lead",
+    "M_Glass"
+   ],
+   "bbox_center_m": [
+    -130.6186,
+    1809.2156,
+    116.7124
+   ],
+   "bbox_extent_m": [
+    168.832,
+    177.27,
+    10.1309
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 5.8,
+   "mean_up": 0.038,
+   "kind": "architecture",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_GroundsHut",
+   "file": "SM_GroundsHut.fbx",
+   "source": "grounds_hut",
+   "tris": 3588,
+   "slots": [
+    "M_CastleStone",
+    "M_Trim",
+    "M_Slate",
+    "M_Lead",
+    "M_Glass",
+    "M_Wood"
+   ],
+   "bbox_center_m": [
+    473.4725,
+    467.7994,
+    81.1245
+   ],
+   "bbox_extent_m": [
+    8.6075,
+    9.0875,
+    6.675
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.21,
+   "mean_up": 0.022,
+   "kind": "architecture",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_GroundsStadium",
+   "file": "SM_GroundsStadium.fbx",
+   "source": "grounds_stadium",
+   "tris": 11144,
+   "slots": [
+    "M_Lead",
+    "M_Wood",
+    "M_Cloth"
+   ],
+   "bbox_center_m": [
+    -170.0,
+    840.0,
+    108.7032
+   ],
+   "bbox_extent_m": [
+    46.6015,
+    94.135,
+    18.6939
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.59,
+   "mean_up": 0.126,
+   "kind": "architecture",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_GroundsStation",
+   "file": "SM_GroundsStation.fbx",
+   "source": "grounds_station",
+   "tris": 9857,
+   "slots": [
+    "M_CastleStone",
+    "M_Trim",
+    "M_Slate",
+    "M_Lead",
+    "M_Glass",
+    "M_Lantern"
+   ],
+   "bbox_center_m": [
+    1461.838,
+    -369.9758,
+    199.4416
+   ],
+   "bbox_extent_m": [
+    511.9381,
+    314.3029,
+    198.2416
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.41,
+   "mean_up": -0.018,
+   "kind": "architecture",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_GroundsStonecircle",
+   "file": "SM_GroundsStonecircle.fbx",
+   "source": "grounds_stonecircle",
+   "tris": 18432,
+   "slots": [
+    "M_CastleStone"
+   ],
+   "bbox_center_m": [
+    372.0396,
+    -61.9796,
+    77.5949
+   ],
+   "bbox_extent_m": [
+    15.5558,
+    15.6251,
+    3.9454
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 1.06,
+   "mean_up": 0.002,
+   "kind": "architecture",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_GroundsTomb",
+   "file": "SM_GroundsTomb.fbx",
+   "source": "grounds_tomb",
+   "tris": 36,
+   "slots": [
+    "M_Marble"
+   ],
+   "bbox_center_m": [
+    -470.0,
+    -700.0,
+    8.7
+   ],
+   "bbox_extent_m": [
+    2.4859,
+    1.8921,
+    1.2
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.02,
+   "mean_up": 0.0,
+   "kind": "architecture",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_SkyDome",
+   "file": "SM_SkyDome.fbx",
+   "source": "sky_dome",
+   "tris": 9216,
+   "slots": [
+    "M_Stars"
+   ],
+   "bbox_center_m": [
+    0.0,
+    0.0,
+    13174.7183
+   ],
+   "bbox_extent_m": [
+    29985.1973,
+    29985.1973,
+    16766.0845
+   ],
+   "uv_layers": [
+    "UV0"
+   ],
+   "size_mb": 0.19,
+   "mean_up": -0.301,
+   "kind": "sky",
+   "nanite": false,
+   "shadow": false
+  },
+  {
+   "name": "SM_SkyMoondisc",
+   "file": "SM_SkyMoondisc.fbx",
+   "source": "sky_moondisc",
+   "tris": 64,
+   "slots": [
+    "M_Moon"
+   ],
+   "bbox_center_m": [
+    -3798.7356,
+    17871.6465,
+    8134.7329
+   ],
+   "bbox_extent_m": [
+    1200.8992,
+    549.0938,
+    1117.4966
+   ],
+   "uv_layers": [
+    "UV0"
+   ],
+   "size_mb": 0.02,
+   "mean_up": -0.407,
+   "kind": "sky",
+   "nanite": false,
+   "shadow": false
+  },
+  {
+   "name": "SM_TerrainCore00",
+   "file": "SM_TerrainCore00.fbx",
+   "source": "terrain_core_00",
+   "tris": 339000,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    -400.2468,
+    -320.2437,
+    31.4003
+   ],
+   "bbox_extent_m": [
+    202.0304,
+    202.0874,
+    46.3144
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 15.53,
+   "mean_up": 0.868,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainCore01",
+   "file": "SM_TerrainCore01.fbx",
+   "source": "terrain_core_01",
+   "tris": 367006,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    -399.7336,
+    80.1671,
+    41.0279
+   ],
+   "bbox_extent_m": [
+    202.4879,
+    201.9487,
+    37.6093
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 16.8,
+   "mean_up": 0.841,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainCore02",
+   "file": "SM_TerrainCore02.fbx",
+   "source": "terrain_core_02",
+   "tris": 351882,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    -400.257,
+    479.706,
+    59.2861
+   ],
+   "bbox_extent_m": [
+    202.0058,
+    202.643,
+    26.909
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 15.71,
+   "mean_up": 0.909,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainCore10",
+   "file": "SM_TerrainCore10.fbx",
+   "source": "terrain_core_10",
+   "tris": 621169,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    -0.1477,
+    -320.6758,
+    27.059
+   ],
+   "bbox_extent_m": [
+    201.7957,
+    201.5581,
+    53.6171
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 28.3,
+   "mean_up": 0.481,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainCore11",
+   "file": "SM_TerrainCore11.fbx",
+   "source": "terrain_core_11",
+   "tris": 473593,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    -0.737,
+    80.2009,
+    43.1654
+   ],
+   "bbox_extent_m": [
+    202.4948,
+    201.1969,
+    39.5854
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 19.19,
+   "mean_up": 0.659,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainCore12",
+   "file": "SM_TerrainCore12.fbx",
+   "source": "terrain_core_12",
+   "tris": 241705,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    0.0238,
+    480.5035,
+    82.1156
+   ],
+   "bbox_extent_m": [
+    202.0783,
+    201.801,
+    4.7262
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 10.47,
+   "mean_up": 0.999,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainCore20",
+   "file": "SM_TerrainCore20.fbx",
+   "source": "terrain_core_20",
+   "tris": 451994,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    400.2261,
+    -320.3461,
+    26.4035
+   ],
+   "bbox_extent_m": [
+    202.1236,
+    201.8967,
+    51.2146
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 20.37,
+   "mean_up": 0.759,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainCore21",
+   "file": "SM_TerrainCore21.fbx",
+   "source": "terrain_core_21",
+   "tris": 480748,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    400.1802,
+    80.0001,
+    58.2077
+   ],
+   "bbox_extent_m": [
+    202.0672,
+    201.2615,
+    21.1359
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 21.74,
+   "mean_up": 0.697,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainCore22",
+   "file": "SM_TerrainCore22.fbx",
+   "source": "terrain_core_22",
+   "tris": 272902,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    399.9519,
+    480.4912,
+    75.682
+   ],
+   "bbox_extent_m": [
+    202.3921,
+    201.822,
+    11.6837
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 12.02,
+   "mean_up": 0.988,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainOuter00",
+   "file": "SM_TerrainOuter00.fbx",
+   "source": "terrain_outer_00",
+   "tris": 74098,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    -3446.1155,
+    -3445.9015,
+    929.8056
+   ],
+   "bbox_extent_m": [
+    1153.8845,
+    1154.0985,
+    414.4324
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 3.63,
+   "mean_up": 0.763,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainOuter01",
+   "file": "SM_TerrainOuter01.fbx",
+   "source": "terrain_outer_01",
+   "tris": 73756,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    -3445.934,
+    -1150.0456,
+    787.3829
+   ],
+   "bbox_extent_m": [
+    1154.066,
+    1161.5956,
+    519.9485
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 3.66,
+   "mean_up": 0.795,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainOuter02",
+   "file": "SM_TerrainOuter02.fbx",
+   "source": "terrain_outer_02",
+   "tris": 73817,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    -3445.967,
+    1148.9589,
+    937.3606
+   ],
+   "bbox_extent_m": [
+    1154.033,
+    1157.0459,
+    386.6215
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 3.64,
+   "mean_up": 0.767,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainOuter03",
+   "file": "SM_TerrainOuter03.fbx",
+   "source": "terrain_outer_03",
+   "tris": 74109,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    -3445.9456,
+    3447.9385,
+    866.4016
+   ],
+   "bbox_extent_m": [
+    1154.0544,
+    1152.0615,
+    517.4621
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 3.64,
+   "mean_up": 0.739,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainOuter10",
+   "file": "SM_TerrainOuter10.fbx",
+   "source": "terrain_outer_10",
+   "tris": 73711,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    -1149.867,
+    -3445.9775,
+    694.9006
+   ],
+   "bbox_extent_m": [
+    1162.006,
+    1154.0225,
+    645.5943
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 3.68,
+   "mean_up": 0.792,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainOuter11",
+   "file": "SM_TerrainOuter11.fbx",
+   "source": "terrain_outer_11",
+   "tris": 183056,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    -1152.037,
+    -1150.433,
+    263.0865
+   ],
+   "bbox_extent_m": [
+    1159.337,
+    1160.721,
+    304.5865
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 8.65,
+   "mean_up": 0.966,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainOuter12",
+   "file": "SM_TerrainOuter12.fbx",
+   "source": "terrain_outer_12",
+   "tris": 192337,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    -1152.4925,
+    1149.1625,
+    579.9059
+   ],
+   "bbox_extent_m": [
+    1158.9175,
+    1155.0045,
+    516.159
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 9.4,
+   "mean_up": 0.948,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainOuter13",
+   "file": "SM_TerrainOuter13.fbx",
+   "source": "terrain_outer_13",
+   "tris": 73734,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    -1150.542,
+    3447.9175,
+    737.6066
+   ],
+   "bbox_extent_m": [
+    1161.257,
+    1152.0825,
+    620.3711
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 3.67,
+   "mean_up": 0.786,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainOuter20",
+   "file": "SM_TerrainOuter20.fbx",
+   "source": "terrain_outer_20",
+   "tris": 73794,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    1148.9149,
+    -3445.9335,
+    681.4521
+   ],
+   "bbox_extent_m": [
+    1157.0899,
+    1154.0665,
+    634.6245
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 3.69,
+   "mean_up": 0.791,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainOuter21",
+   "file": "SM_TerrainOuter21.fbx",
+   "source": "terrain_outer_21",
+   "tris": 183063,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    1148.271,
+    -1150.0085,
+    329.0584
+   ],
+   "bbox_extent_m": [
+    1155.894,
+    1161.5325,
+    370.5584
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 8.66,
+   "mean_up": 0.964,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainOuter22",
+   "file": "SM_TerrainOuter22.fbx",
+   "source": "terrain_outer_22",
+   "tris": 192393,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    1150.417,
+    1150.1706,
+    533.9612
+   ],
+   "bbox_extent_m": [
+    1157.497,
+    1158.1786,
+    458.3278
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 9.55,
+   "mean_up": 0.956,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainOuter23",
+   "file": "SM_TerrainOuter23.fbx",
+   "source": "terrain_outer_23",
+   "tris": 73830,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    1148.9329,
+    3445.963,
+    707.8701
+   ],
+   "bbox_extent_m": [
+    1157.0719,
+    1154.037,
+    590.2351
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 3.66,
+   "mean_up": 0.81,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainOuter30",
+   "file": "SM_TerrainOuter30.fbx",
+   "source": "terrain_outer_30",
+   "tris": 74109,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    3447.9196,
+    -3445.9325,
+    902.6574
+   ],
+   "bbox_extent_m": [
+    1152.0804,
+    1154.0675,
+    416.7649
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 3.62,
+   "mean_up": 0.787,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainOuter31",
+   "file": "SM_TerrainOuter31.fbx",
+   "source": "terrain_outer_31",
+   "tris": 73754,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    3447.903,
+    -1150.025,
+    769.7449
+   ],
+   "bbox_extent_m": [
+    1152.097,
+    1162.124,
+    502.5723
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 3.67,
+   "mean_up": 0.768,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainOuter32",
+   "file": "SM_TerrainOuter32.fbx",
+   "source": "terrain_outer_32",
+   "tris": 73817,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    3444.459,
+    1148.9354,
+    939.5879
+   ],
+   "bbox_extent_m": [
+    1155.541,
+    1157.0694,
+    403.0107
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 3.65,
+   "mean_up": 0.763,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_TerrainOuter33",
+   "file": "SM_TerrainOuter33.fbx",
+   "source": "terrain_outer_33",
+   "tris": 74114,
+   "slots": [
+    "M_Terrain"
+   ],
+   "bbox_center_m": [
+    3447.9425,
+    3447.9365,
+    1044.4327
+   ],
+   "bbox_extent_m": [
+    1152.0575,
+    1152.0635,
+    320.0326
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 3.63,
+   "mean_up": 0.785,
+   "kind": "terrain",
+   "nanite": true,
+   "shadow": true
+  },
+  {
+   "name": "SM_WaterFall",
+   "file": "SM_WaterFall.fbx",
+   "source": "water_fall",
+   "tris": 1416,
+   "slots": [
+    "M_Fall"
+   ],
+   "bbox_center_m": [
+    218.0,
+    -141.0,
+    22.8
+   ],
+   "bbox_extent_m": [
+    7.0,
+    5.0,
+    22.8
+   ],
+   "uv_layers": [
+    "UV0"
+   ],
+   "size_mb": 0.05,
+   "mean_up": 0.266,
+   "kind": "waterfall",
+   "nanite": false,
+   "shadow": false
+  },
+  {
+   "name": "SM_WaterLake",
+   "file": "SM_WaterLake.fbx",
+   "source": "water_lake",
+   "tris": 15471,
+   "slots": [
+    "M_Water"
+   ],
+   "bbox_center_m": [
+    -60.516,
+    -1177.3286,
+    0.0
+   ],
+   "bbox_extent_m": [
+    1475.0,
+    1087.5,
+    0.0
+   ],
+   "uv_layers": [
+    "UV0"
+   ],
+   "size_mb": 0.25,
+   "mean_up": 1.0,
+   "kind": "water",
+   "nanite": false,
+   "shadow": false
+  },
+  {
+   "name": "SM_WaterMist",
+   "file": "SM_WaterMist.fbx",
+   "source": "water_mist",
+   "tris": 256,
+   "slots": [
+    "M_Mist"
+   ],
+   "bbox_center_m": [
+    218.0,
+    -174.0,
+    8.7
+   ],
+   "bbox_extent_m": [
+    16.0,
+    16.0,
+    9.0
+   ],
+   "uv_layers": [
+    "UV0"
+   ],
+   "size_mb": 0.02,
+   "mean_up": 0.068,
+   "kind": "waterfall",
+   "nanite": false,
+   "shadow": false
+  },
+  {
+   "name": "SM_WaterRiver",
+   "file": "SM_WaterRiver.fbx",
+   "source": "water_river",
+   "tris": 24312,
+   "slots": [
+    "M_River"
+   ],
+   "bbox_center_m": [
+    -1247.5443,
+    1324.8018,
+    130.36
+   ],
+   "bbox_extent_m": [
+    1058.504,
+    1679.633,
+    130.34
+   ],
+   "uv_layers": [
+    "UV0"
+   ],
+   "size_mb": 0.59,
+   "mean_up": 0.998,
+   "kind": "water",
+   "nanite": false,
+   "shadow": false
+  },
+  {
+   "name": "SM_WaterStream",
+   "file": "SM_WaterStream.fbx",
+   "source": "water_stream",
+   "tris": 15024,
+   "slots": [
+    "M_River"
+   ],
+   "bbox_center_m": [
+    658.2884,
+    683.1837,
+    110.3576
+   ],
+   "bbox_extent_m": [
+    444.7656,
+    818.5261,
+    64.9924
+   ],
+   "uv_layers": [
+    "UV0"
+   ],
+   "size_mb": 0.36,
+   "mean_up": 0.997,
+   "kind": "water",
+   "nanite": false,
+   "shadow": false
+  },
+  {
+   "name": "SM_LibBirch00",
+   "file": "SM_LibBirch00.fbx",
+   "source": "lib_birch_00",
+   "tris": 68256,
+   "slots": [
+    "M_Leaf",
+    "M_BirchBark"
+   ],
+   "bbox_center_m": [
+    -0.3165,
+    0.5543,
+    6.2659
+   ],
+   "bbox_extent_m": [
+    3.1533,
+    3.363,
+    6.2719
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 3.31,
+   "mean_up": 0.151,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibBirch01",
+   "file": "SM_LibBirch01.fbx",
+   "source": "lib_birch_01",
+   "tris": 77312,
+   "slots": [
+    "M_Leaf",
+    "M_BirchBark"
+   ],
+   "bbox_center_m": [
+    0.388,
+    0.1094,
+    7.0558
+   ],
+   "bbox_extent_m": [
+    3.3569,
+    3.0005,
+    7.0611
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 3.75,
+   "mean_up": 0.149,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibBoat00",
+   "file": "SM_LibBoat00.fbx",
+   "source": "lib_boat_00",
+   "tris": 1608,
+   "slots": [
+    "M_Lead",
+    "M_Wood",
+    "M_Lantern"
+   ],
+   "bbox_center_m": [
+    0.075,
+    0.0,
+    0.325
+   ],
+   "bbox_extent_m": [
+    2.175,
+    0.675,
+    0.875
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.08,
+   "mean_up": 0.001,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": false
+  },
+  {
+   "name": "SM_LibBoulder00",
+   "file": "SM_LibBoulder00.fbx",
+   "source": "lib_boulder_00",
+   "tris": 8012,
+   "slots": [
+    "M_Boulder"
+   ],
+   "bbox_center_m": [
+    -0.0729,
+    0.0238,
+    0.3239
+   ],
+   "bbox_extent_m": [
+    0.914,
+    0.7211,
+    0.4627
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 0.41,
+   "mean_up": 0.015,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": false
+  },
+  {
+   "name": "SM_LibBoulder01",
+   "file": "SM_LibBoulder01.fbx",
+   "source": "lib_boulder_01",
+   "tris": 8316,
+   "slots": [
+    "M_Boulder"
+   ],
+   "bbox_center_m": [
+    -0.0999,
+    0.0378,
+    0.3204
+   ],
+   "bbox_extent_m": [
+    0.8066,
+    0.8595,
+    0.4577
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 0.44,
+   "mean_up": 0.029,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": false
+  },
+  {
+   "name": "SM_LibBoulder02",
+   "file": "SM_LibBoulder02.fbx",
+   "source": "lib_boulder_02",
+   "tris": 10376,
+   "slots": [
+    "M_Boulder"
+   ],
+   "bbox_center_m": [
+    -0.0624,
+    0.0032,
+    0.5016
+   ],
+   "bbox_extent_m": [
+    0.8705,
+    0.7755,
+    0.7165
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 0.54,
+   "mean_up": 0.042,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": false
+  },
+  {
+   "name": "SM_LibBoulder03",
+   "file": "SM_LibBoulder03.fbx",
+   "source": "lib_boulder_03",
+   "tris": 9186,
+   "slots": [
+    "M_Boulder"
+   ],
+   "bbox_center_m": [
+    -0.0423,
+    0.0059,
+    0.3909
+   ],
+   "bbox_extent_m": [
+    0.9344,
+    0.7678,
+    0.5584
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 0.48,
+   "mean_up": 0.044,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": false
+  },
+  {
+   "name": "SM_LibBoulder04",
+   "file": "SM_LibBoulder04.fbx",
+   "source": "lib_boulder_04",
+   "tris": 8372,
+   "slots": [
+    "M_Boulder"
+   ],
+   "bbox_center_m": [
+    0.0781,
+    -0.0023,
+    0.3191
+   ],
+   "bbox_extent_m": [
+    0.8342,
+    0.7596,
+    0.4558
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 0.44,
+   "mean_up": 0.029,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": false
+  },
+  {
+   "name": "SM_LibBoulder05",
+   "file": "SM_LibBoulder05.fbx",
+   "source": "lib_boulder_05",
+   "tris": 9812,
+   "slots": [
+    "M_Boulder"
+   ],
+   "bbox_center_m": [
+    0.0415,
+    0.0043,
+    0.4901
+   ],
+   "bbox_extent_m": [
+    0.9459,
+    0.7347,
+    0.7002
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 0.51,
+   "mean_up": 0.054,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": false
+  },
+  {
+   "name": "SM_LibBoulder06",
+   "file": "SM_LibBoulder06.fbx",
+   "source": "lib_boulder_06",
+   "tris": 10398,
+   "slots": [
+    "M_Boulder"
+   ],
+   "bbox_center_m": [
+    -0.1502,
+    0.0036,
+    0.4654
+   ],
+   "bbox_extent_m": [
+    0.8538,
+    0.8754,
+    0.6649
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 0.55,
+   "mean_up": 0.06,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": false
+  },
+  {
+   "name": "SM_LibBoulder07",
+   "file": "SM_LibBoulder07.fbx",
+   "source": "lib_boulder_07",
+   "tris": 9974,
+   "slots": [
+    "M_Boulder"
+   ],
+   "bbox_center_m": [
+    0.0027,
+    -0.067,
+    0.4599
+   ],
+   "bbox_extent_m": [
+    1.0136,
+    0.7997,
+    0.657
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2",
+    "UV3"
+   ],
+   "size_mb": 0.52,
+   "mean_up": 0.062,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": false
+  },
+  {
+   "name": "SM_LibFern00",
+   "file": "SM_LibFern00.fbx",
+   "source": "lib_fern_00",
+   "tris": 21924,
+   "slots": [
+    "M_Fern3D"
+   ],
+   "bbox_center_m": [
+    0.0606,
+    -0.0114,
+    0.4218
+   ],
+   "bbox_extent_m": [
+    0.7568,
+    0.6984,
+    0.4271
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.88,
+   "mean_up": 0.53,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibFern01",
+   "file": "SM_LibFern01.fbx",
+   "source": "lib_fern_01",
+   "tris": 26796,
+   "slots": [
+    "M_Fern3D"
+   ],
+   "bbox_center_m": [
+    -0.0445,
+    0.0659,
+    0.336
+   ],
+   "bbox_extent_m": [
+    0.7442,
+    0.9222,
+    0.3431
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 1.07,
+   "mean_up": 0.579,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibFern02",
+   "file": "SM_LibFern02.fbx",
+   "source": "lib_fern_02",
+   "tris": 24360,
+   "slots": [
+    "M_Fern3D"
+   ],
+   "bbox_center_m": [
+    -0.1326,
+    -0.0978,
+    0.3245
+   ],
+   "bbox_extent_m": [
+    0.6986,
+    0.7896,
+    0.3305
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.97,
+   "mean_up": 0.574,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibFern03",
+   "file": "SM_LibFern03.fbx",
+   "source": "lib_fern_03",
+   "tris": 31668,
+   "slots": [
+    "M_Fern3D"
+   ],
+   "bbox_center_m": [
+    0.0392,
+    0.0537,
+    0.3201
+   ],
+   "bbox_extent_m": [
+    0.7506,
+    0.701,
+    0.326
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 1.26,
+   "mean_up": 0.564,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibGrass00",
+   "file": "SM_LibGrass00.fbx",
+   "source": "lib_grass_00",
+   "tris": 1872,
+   "slots": [
+    "M_Grass3D"
+   ],
+   "bbox_center_m": [
+    0.0364,
+    -0.0346,
+    0.4622
+   ],
+   "bbox_extent_m": [
+    0.4348,
+    0.4606,
+    0.4622
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.1,
+   "mean_up": 0.274,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibGrass01",
+   "file": "SM_LibGrass01.fbx",
+   "source": "lib_grass_01",
+   "tris": 1872,
+   "slots": [
+    "M_Grass3D"
+   ],
+   "bbox_center_m": [
+    0.0304,
+    -0.0055,
+    0.4559
+   ],
+   "bbox_extent_m": [
+    0.4456,
+    0.4487,
+    0.4559
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.1,
+   "mean_up": 0.253,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibGrass02",
+   "file": "SM_LibGrass02.fbx",
+   "source": "lib_grass_02",
+   "tris": 1872,
+   "slots": [
+    "M_Grass3D"
+   ],
+   "bbox_center_m": [
+    -0.0872,
+    -0.0264,
+    0.4368
+   ],
+   "bbox_extent_m": [
+    0.5126,
+    0.502,
+    0.4368
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.1,
+   "mean_up": 0.303,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibGrass03",
+   "file": "SM_LibGrass03.fbx",
+   "source": "lib_grass_03",
+   "tris": 1872,
+   "slots": [
+    "M_Grass3D"
+   ],
+   "bbox_center_m": [
+    -0.0074,
+    -0.0234,
+    0.4653
+   ],
+   "bbox_extent_m": [
+    0.4916,
+    0.404,
+    0.4653
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.1,
+   "mean_up": 0.284,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibMoss00",
+   "file": "SM_LibMoss00.fbx",
+   "source": "lib_moss_00",
+   "tris": 13066,
+   "slots": [
+    "M_MossClump"
+   ],
+   "bbox_center_m": [
+    0.0166,
+    -0.0459,
+    0.2678
+   ],
+   "bbox_extent_m": [
+    1.0869,
+    1.0252,
+    0.3478
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.49,
+   "mean_up": 0.414,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibMoss01",
+   "file": "SM_LibMoss01.fbx",
+   "source": "lib_moss_01",
+   "tris": 13205,
+   "slots": [
+    "M_MossClump"
+   ],
+   "bbox_center_m": [
+    -0.0175,
+    -0.037,
+    0.2525
+   ],
+   "bbox_extent_m": [
+    1.0083,
+    1.0297,
+    0.3325
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.5,
+   "mean_up": 0.368,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibMoss02",
+   "file": "SM_LibMoss02.fbx",
+   "source": "lib_moss_02",
+   "tris": 3305,
+   "slots": [
+    "M_MossClump"
+   ],
+   "bbox_center_m": [
+    -0.0217,
+    0.0042,
+    0.2708
+   ],
+   "bbox_extent_m": [
+    1.079,
+    1.0792,
+    0.3508
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.14,
+   "mean_up": 0.404,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibMoss03",
+   "file": "SM_LibMoss03.fbx",
+   "source": "lib_moss_03",
+   "tris": 3293,
+   "slots": [
+    "M_MossClump"
+   ],
+   "bbox_center_m": [
+    0.0231,
+    -0.0173,
+    0.2694
+   ],
+   "bbox_extent_m": [
+    1.0693,
+    1.049,
+    0.3494
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.14,
+   "mean_up": 0.427,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibPine00",
+   "file": "SM_LibPine00.fbx",
+   "source": "lib_pine_00",
+   "tris": 15912,
+   "slots": [
+    "M_Bark",
+    "M_Needles",
+    "M_PineBark"
+   ],
+   "bbox_center_m": [
+    0.4394,
+    0.7078,
+    9.0239
+   ],
+   "bbox_extent_m": [
+    3.8027,
+    4.4329,
+    9.0361
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.67,
+   "mean_up": 0.196,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibSnag00",
+   "file": "SM_LibSnag00.fbx",
+   "source": "lib_snag_00",
+   "tris": 800,
+   "slots": [
+    "M_DeadWood"
+   ],
+   "bbox_center_m": [
+    0.1598,
+    0.1051,
+    10.999
+   ],
+   "bbox_extent_m": [
+    1.3169,
+    1.3463,
+    11.0017
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 0.05,
+   "mean_up": -0.006,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibSpruce00",
+   "file": "SM_LibSpruce00.fbx",
+   "source": "lib_spruce_00",
+   "tris": 181768,
+   "slots": [
+    "M_Bark",
+    "M_Needles"
+   ],
+   "bbox_center_m": [
+    -0.0357,
+    -0.286,
+    13.8808
+   ],
+   "bbox_extent_m": [
+    5.3019,
+    4.5463,
+    14.1549
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 7.75,
+   "mean_up": 0.314,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibSpruce01",
+   "file": "SM_LibSpruce01.fbx",
+   "source": "lib_spruce_01",
+   "tris": 183596,
+   "slots": [
+    "M_Bark",
+    "M_Needles"
+   ],
+   "bbox_center_m": [
+    -0.0654,
+    -0.1723,
+    12.8808
+   ],
+   "bbox_extent_m": [
+    4.7646,
+    4.7549,
+    13.1549
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 7.81,
+   "mean_up": 0.315,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibSpruce02",
+   "file": "SM_LibSpruce02.fbx",
+   "source": "lib_spruce_02",
+   "tris": 198572,
+   "slots": [
+    "M_Bark",
+    "M_Needles"
+   ],
+   "bbox_center_m": [
+    0.4027,
+    0.114,
+    14.8808
+   ],
+   "bbox_extent_m": [
+    4.9545,
+    4.5077,
+    15.1549
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 8.45,
+   "mean_up": 0.312,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibSpruce03",
+   "file": "SM_LibSpruce03.fbx",
+   "source": "lib_spruce_03",
+   "tris": 153608,
+   "slots": [
+    "M_Bark",
+    "M_Needles"
+   ],
+   "bbox_center_m": [
+    0.041,
+    -0.0369,
+    11.8808
+   ],
+   "bbox_extent_m": [
+    4.2786,
+    4.4128,
+    12.1549
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 6.57,
+   "mean_up": 0.311,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibSpruceyoung00",
+   "file": "SM_LibSpruceyoung00.fbx",
+   "source": "lib_spruceyoung_00",
+   "tris": 38484,
+   "slots": [
+    "M_Bark",
+    "M_Needles"
+   ],
+   "bbox_center_m": [
+    -0.3729,
+    0.0113,
+    2.9752
+   ],
+   "bbox_extent_m": [
+    2.2422,
+    2.3687,
+    4.0605
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 1.68,
+   "mean_up": 0.323,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibSpruceyoung01",
+   "file": "SM_LibSpruceyoung01.fbx",
+   "source": "lib_spruceyoung_01",
+   "tris": 50824,
+   "slots": [
+    "M_Bark",
+    "M_Needles"
+   ],
+   "bbox_center_m": [
+    -0.1044,
+    0.0266,
+    3.3148
+   ],
+   "bbox_extent_m": [
+    2.8032,
+    2.6147,
+    4.7208
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 2.2,
+   "mean_up": 0.331,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  },
+  {
+   "name": "SM_LibWillow00",
+   "file": "SM_LibWillow00.fbx",
+   "source": "lib_willow_00",
+   "tris": 29182,
+   "slots": [
+    "M_Bark",
+    "M_Leaf"
+   ],
+   "bbox_center_m": [
+    0.0943,
+    -0.0011,
+    6.0501
+   ],
+   "bbox_extent_m": [
+    7.9585,
+    8.2338,
+    6.5525
+   ],
+   "uv_layers": [
+    "UV0",
+    "UV1",
+    "UV2"
+   ],
+   "size_mb": 1.37,
+   "mean_up": 0.007,
+   "kind": "library",
+   "nanite": true,
+   "shadow": true,
+   "library": true,
+   "foliage": true
+  }
+ ],
+ "instances": [
+  {
+   "set": "birch",
+   "variant": 0,
+   "mesh": "SM_LibBirch00",
+   "file": "instances/birch_00.bin",
+   "count": 6777,
+   "shadow": true,
+   "foliage": true,
+   "bbox_min_m": [
+    -3157.06005859375,
+    -3812.4599609375,
+    1.4299999475479126
+   ],
+   "bbox_max_m": [
+    4558.9501953125,
+    3848.030029296875,
+    570.0
+   ]
+  },
+  {
+   "set": "birch",
+   "variant": 1,
+   "mesh": "SM_LibBirch01",
+   "file": "instances/birch_01.bin",
+   "count": 6794,
+   "shadow": true,
+   "foliage": true,
+   "bbox_min_m": [
+    -3047.320068359375,
+    -3784.469970703125,
+    2.6700000762939453
+   ],
+   "bbox_max_m": [
+    4553.009765625,
+    3880.60009765625,
+    569.989990234375
+   ]
+  },
+  {
+   "set": "boats",
+   "variant": 0,
+   "mesh": "SM_LibBoat00",
+   "file": "instances/boats_00.bin",
+   "count": 14,
+   "shadow": true,
+   "foliage": false,
+   "bbox_min_m": [
+    60.220001220703125,
+    -612.9600219726562,
+    0.11999999731779099
+   ],
+   "bbox_max_m": [
+    424.6499938964844,
+    -284.2300109863281,
+    0.11999999731779099
+   ]
+  },
+  {
+   "set": "boulder",
+   "variant": 0,
+   "mesh": "SM_LibBoulder00",
+   "file": "instances/boulder_00.bin",
+   "count": 3896,
+   "shadow": true,
+   "foliage": false,
+   "bbox_min_m": [
+    -4564.43017578125,
+    -4566.3798828125,
+    -25.799999237060547
+   ],
+   "bbox_max_m": [
+    4570.47998046875,
+    4570.72021484375,
+    1329.8499755859375
+   ]
+  },
+  {
+   "set": "boulder",
+   "variant": 1,
+   "mesh": "SM_LibBoulder01",
+   "file": "instances/boulder_01.bin",
+   "count": 4012,
+   "shadow": true,
+   "foliage": false,
+   "bbox_min_m": [
+    -4569.7998046875,
+    -4569.35986328125,
+    -25.81999969482422
+   ],
+   "bbox_max_m": [
+    4570.64013671875,
+    4569.419921875,
+    1352.5799560546875
+   ]
+  },
+  {
+   "set": "boulder",
+   "variant": 2,
+   "mesh": "SM_LibBoulder02",
+   "file": "instances/boulder_02.bin",
+   "count": 3997,
+   "shadow": true,
+   "foliage": false,
+   "bbox_min_m": [
+    -4566.72021484375,
+    -4569.89990234375,
+    -26.350000381469727
+   ],
+   "bbox_max_m": [
+    4568.759765625,
+    4571.47998046875,
+    1365.969970703125
+   ]
+  },
+  {
+   "set": "boulder",
+   "variant": 3,
+   "mesh": "SM_LibBoulder03",
+   "file": "instances/boulder_03.bin",
+   "count": 3977,
+   "shadow": true,
+   "foliage": false,
+   "bbox_min_m": [
+    -4568.81005859375,
+    -4569.7099609375,
+    -32.529998779296875
+   ],
+   "bbox_max_m": [
+    4567.259765625,
+    4570.18994140625,
+    1327.5899658203125
+   ]
+  },
+  {
+   "set": "boulder",
+   "variant": 4,
+   "mesh": "SM_LibBoulder04",
+   "file": "instances/boulder_04.bin",
+   "count": 3961,
+   "shadow": true,
+   "foliage": false,
+   "bbox_min_m": [
+    -4568.77001953125,
+    -4569.16015625,
+    -35.86000061035156
+   ],
+   "bbox_max_m": [
+    4569.7001953125,
+    4569.9599609375,
+    1369.300048828125
+   ]
+  },
+  {
+   "set": "boulder",
+   "variant": 5,
+   "mesh": "SM_LibBoulder05",
+   "file": "instances/boulder_05.bin",
+   "count": 3948,
+   "shadow": true,
+   "foliage": false,
+   "bbox_min_m": [
+    -4567.990234375,
+    -4569.5,
+    -36.41999816894531
+   ],
+   "bbox_max_m": [
+    4571.56982421875,
+    4570.14990234375,
+    1342.469970703125
+   ]
+  },
+  {
+   "set": "boulder",
+   "variant": 6,
+   "mesh": "SM_LibBoulder06",
+   "file": "instances/boulder_06.bin",
+   "count": 3908,
+   "shadow": true,
+   "foliage": false,
+   "bbox_min_m": [
+    -4558.41015625,
+    -4568.16015625,
+    -38.90999984741211
+   ],
+   "bbox_max_m": [
+    4568.2001953125,
+    4570.35009765625,
+    1338.1700439453125
+   ]
+  },
+  {
+   "set": "boulder",
+   "variant": 7,
+   "mesh": "SM_LibBoulder07",
+   "file": "instances/boulder_07.bin",
+   "count": 3892,
+   "shadow": true,
+   "foliage": false,
+   "bbox_min_m": [
+    -4567.77978515625,
+    -4568.990234375,
+    -39.0
+   ],
+   "bbox_max_m": [
+    4568.08984375,
+    4567.72021484375,
+    1360.52001953125
+   ]
+  },
+  {
+   "set": "fern",
+   "variant": 0,
+   "mesh": "SM_LibFern00",
+   "file": "instances/fern_00.bin",
+   "count": 1549,
+   "shadow": true,
+   "foliage": true,
+   "bbox_min_m": [
+    -557.4299926757812,
+    -318.79998779296875,
+    0.47999998927116394
+   ],
+   "bbox_max_m": [
+    558.969970703125,
+    561.3599853515625,
+    82.62999725341797
+   ]
+  },
+  {
+   "set": "fern",
+   "variant": 1,
+   "mesh": "SM_LibFern01",
+   "file": "instances/fern_01.bin",
+   "count": 1541,
+   "shadow": true,
+   "foliage": true,
+   "bbox_min_m": [
+    -558.3499755859375,
+    -332.25,
+    -0.5899999737739563
+   ],
+   "bbox_max_m": [
+    553.6300048828125,
+    546.77001953125,
+    81.0
+   ]
+  },
+  {
+   "set": "fern",
+   "variant": 2,
+   "mesh": "SM_LibFern02",
+   "file": "instances/fern_02.bin",
+   "count": 1603,
+   "shadow": true,
+   "foliage": true,
+   "bbox_min_m": [
+    -559.3499755859375,
+    -323.19000244140625,
+    -0.11999999731779099
+   ],
+   "bbox_max_m": [
+    557.5800170898438,
+    464.3800048828125,
+    81.80999755859375
+   ]
+  },
+  {
+   "set": "fern",
+   "variant": 3,
+   "mesh": "SM_LibFern03",
+   "file": "instances/fern_03.bin",
+   "count": 1595,
+   "shadow": true,
+   "foliage": true,
+   "bbox_min_m": [
+    -558.8800048828125,
+    -322.04998779296875,
+    0.07999999821186066
+   ],
+   "bbox_max_m": [
+    558.6400146484375,
+    534.8499755859375,
+    80.94000244140625
+   ]
+  },
+  {
+   "set": "grass",
+   "variant": 0,
+   "mesh": "SM_LibGrass00",
+   "file": "instances/grass_00.bin",
+   "count": 32930,
+   "shadow": false,
+   "foliage": true,
+   "bbox_min_m": [
+    -559.9500122070312,
+    -345.8500061035156,
+    1.4600000381469727
+   ],
+   "bbox_max_m": [
+    560.4099731445312,
+    640.4600219726562,
+    85.8499984741211
+   ]
+  },
+  {
+   "set": "grass",
+   "variant": 1,
+   "mesh": "SM_LibGrass01",
+   "file": "instances/grass_01.bin",
+   "count": 33018,
+   "shadow": false,
+   "foliage": true,
+   "bbox_min_m": [
+    -553.5999755859375,
+    -345.45001220703125,
+    1.4500000476837158
+   ],
+   "bbox_max_m": [
+    559.8800048828125,
+    640.5700073242188,
+    86.4000015258789
+   ]
+  },
+  {
+   "set": "grass",
+   "variant": 2,
+   "mesh": "SM_LibGrass02",
+   "file": "instances/grass_02.bin",
+   "count": 33196,
+   "shadow": false,
+   "foliage": true,
+   "bbox_min_m": [
+    -559.2100219726562,
+    -343.7699890136719,
+    1.4500000476837158
+   ],
+   "bbox_max_m": [
+    560.510009765625,
+    640.3300170898438,
+    85.91999816894531
+   ]
+  },
+  {
+   "set": "grass",
+   "variant": 3,
+   "mesh": "SM_LibGrass03",
+   "file": "instances/grass_03.bin",
+   "count": 33227,
+   "shadow": false,
+   "foliage": true,
+   "bbox_min_m": [
+    -556.8200073242188,
+    -349.6300048828125,
+    1.4600000381469727
+   ],
+   "bbox_max_m": [
+    560.4099731445312,
+    640.530029296875,
+    86.26000213623047
+   ]
+  },
+  {
+   "set": "moss",
+   "variant": 0,
+   "mesh": "SM_LibMoss00",
+   "file": "instances/moss_00.bin",
+   "count": 30849,
+   "shadow": false,
+   "foliage": false,
+   "bbox_min_m": [
+    -601.75,
+    -295.7699890136719,
+    0.5099999904632568
+   ],
+   "bbox_max_m": [
+    600.97998046875,
+    666.5700073242188,
+    84.20999908447266
+   ]
+  },
+  {
+   "set": "moss",
+   "variant": 1,
+   "mesh": "SM_LibMoss01",
+   "file": "instances/moss_01.bin",
+   "count": 30897,
+   "shadow": false,
+   "foliage": false,
+   "bbox_min_m": [
+    -601.3900146484375,
+    -311.07000732421875,
+    0.44999998807907104
+   ],
+   "bbox_max_m": [
+    600.469970703125,
+    668.22998046875,
+    84.20999908447266
+   ]
+  },
+  {
+   "set": "moss",
+   "variant": 2,
+   "mesh": "SM_LibMoss02",
+   "file": "instances/moss_02.bin",
+   "count": 30814,
+   "shadow": false,
+   "foliage": false,
+   "bbox_min_m": [
+    -600.6900024414062,
+    -297.6700134277344,
+    0.3799999952316284
+   ],
+   "bbox_max_m": [
+    601.4400024414062,
+    674.239990234375,
+    84.27999877929688
+   ]
+  },
+  {
+   "set": "moss",
+   "variant": 3,
+   "mesh": "SM_LibMoss03",
+   "file": "instances/moss_03.bin",
+   "count": 30750,
+   "shadow": false,
+   "foliage": false,
+   "bbox_min_m": [
+    -601.510009765625,
+    -293.3999938964844,
+    0.38999998569488525
+   ],
+   "bbox_max_m": [
+    601.3699951171875,
+    661.25,
+    84.41999816894531
+   ]
+  },
+  {
+   "set": "pine",
+   "variant": 0,
+   "mesh": "SM_LibPine00",
+   "file": "instances/pine_00.bin",
+   "count": 30611,
+   "shadow": true,
+   "foliage": true,
+   "bbox_min_m": [
+    -3237.199951171875,
+    -3860.2900390625,
+    1.940000057220459
+   ],
+   "bbox_max_m": [
+    4562.7900390625,
+    3928.2900390625,
+    577.010009765625
+   ]
+  },
+  {
+   "set": "snag",
+   "variant": 0,
+   "mesh": "SM_LibSnag00",
+   "file": "instances/snag_00.bin",
+   "count": 3939,
+   "shadow": true,
+   "foliage": true,
+   "bbox_min_m": [
+    -3054.760009765625,
+    -3770.56005859375,
+    4.010000228881836
+   ],
+   "bbox_max_m": [
+    2593.9599609375,
+    3898.969970703125,
+    569.1400146484375
+   ]
+  },
+  {
+   "set": "spruce",
+   "variant": 0,
+   "mesh": "SM_LibSpruce00",
+   "file": "instances/spruce_00.bin",
+   "count": 54408,
+   "shadow": true,
+   "foliage": true,
+   "bbox_min_m": [
+    -3179.280029296875,
+    -3833.340087890625,
+    1.4299999475479126
+   ],
+   "bbox_max_m": [
+    4562.06982421875,
+    3869.679931640625,
+    570.3800048828125
+   ]
+  },
+  {
+   "set": "spruce",
+   "variant": 1,
+   "mesh": "SM_LibSpruce01",
+   "file": "instances/spruce_01.bin",
+   "count": 54326,
+   "shadow": true,
+   "foliage": true,
+   "bbox_min_m": [
+    -3128.1201171875,
+    -3843.860107421875,
+    1.8300000429153442
+   ],
+   "bbox_max_m": [
+    2661.6298828125,
+    3896.31005859375,
+    572.02001953125
+   ]
+  },
+  {
+   "set": "spruce",
+   "variant": 2,
+   "mesh": "SM_LibSpruce02",
+   "file": "instances/spruce_02.bin",
+   "count": 54268,
+   "shadow": true,
+   "foliage": true,
+   "bbox_min_m": [
+    -3235.239990234375,
+    -3830.989990234375,
+    1.6100000143051147
+   ],
+   "bbox_max_m": [
+    4569.58984375,
+    3905.360107421875,
+    569.25
+   ]
+  },
+  {
+   "set": "spruce",
+   "variant": 3,
+   "mesh": "SM_LibSpruce03",
+   "file": "instances/spruce_03.bin",
+   "count": 54428,
+   "shadow": true,
+   "foliage": true,
+   "bbox_min_m": [
+    -3150.159912109375,
+    -3811.580078125,
+    1.2999999523162842
+   ],
+   "bbox_max_m": [
+    4565.6298828125,
+    3914.14990234375,
+    566.8900146484375
+   ]
+  },
+  {
+   "set": "spruceyoung",
+   "variant": 0,
+   "mesh": "SM_LibSpruceyoung00",
+   "file": "instances/spruceyoung_00.bin",
+   "count": 32098,
+   "shadow": true,
+   "foliage": true,
+   "bbox_min_m": [
+    -3193.7900390625,
+    -3842.610107421875,
+    1.2100000381469727
+   ],
+   "bbox_max_m": [
+    4564.7099609375,
+    3919.800048828125,
+    575.5800170898438
+   ]
+  },
+  {
+   "set": "spruceyoung",
+   "variant": 1,
+   "mesh": "SM_LibSpruceyoung01",
+   "file": "instances/spruceyoung_01.bin",
+   "count": 31957,
+   "shadow": true,
+   "foliage": true,
+   "bbox_min_m": [
+    -3142.239990234375,
+    -3820.18994140625,
+    1.2999999523162842
+   ],
+   "bbox_max_m": [
+    4548.25,
+    3925.340087890625,
+    572.47998046875
+   ]
+  },
+  {
+   "set": "willow",
+   "variant": 0,
+   "mesh": "SM_LibWillow00",
+   "file": "instances/willow_00.bin",
+   "count": 1,
+   "shadow": true,
+   "foliage": true,
+   "bbox_min_m": [
+    370.0,
+    300.0,
+    66.63999938964844
+   ],
+   "bbox_max_m": [
+    370.0,
+    300.0,
+    66.63999938964844
+   ]
+  }
+ ],
+ "instance_format": "float32 LE records: x y z (cm), qx qy qz qw, sx sy sz - Unreal frame"
+}

@@ -1,0 +1,953 @@
+{
+ "world": {
+  "lake_z": 0.0,
+  "castle_z": 80.0,
+  "extent_m": 4600.0,
+  "moon_dir": [
+   348.0,
+   24.0
+  ]
+ },
+ "presets": {
+  "mist": {
+   "sun_elev": 16.0,
+   "sun_az": 118.0,
+   "sun_lux": 6.5,
+   "sun_color": [
+    255,
+    236,
+    214
+   ],
+   "sky": 1.0,
+   "fog_density": 0.045,
+   "fog_falloff": 0.01,
+   "fog_height": 40.0,
+   "vol_fog": true,
+   "mist_banks": true,
+   "windows": 0.0,
+   "clouds": 0.85,
+   "exposure": 0.3,
+   "tint": [
+    0.96,
+    1.0,
+    1.0
+   ],
+   "saturation": 0.92
+  },
+  "day": {
+   "sun_elev": 42.0,
+   "sun_az": 205.0,
+   "sun_lux": 10.0,
+   "sun_color": [
+    255,
+    245,
+    230
+   ],
+   "sky": 1.0,
+   "fog_density": 0.012,
+   "fog_falloff": 0.006,
+   "fog_height": 0.0,
+   "vol_fog": true,
+   "mist_banks": false,
+   "windows": 0.0,
+   "clouds": 0.55,
+   "exposure": 0.0,
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "saturation": 1.0
+  },
+  "sunset": {
+   "sun_elev": 3.5,
+   "sun_az": 292.0,
+   "sun_lux": 8.0,
+   "sun_color": [
+    255,
+    168,
+    112
+   ],
+   "sky": 1.0,
+   "fog_density": 0.009,
+   "fog_falloff": 0.01,
+   "fog_height": 10.0,
+   "vol_fog": true,
+   "mist_banks": true,
+   "windows": 0.35,
+   "clouds": 0.6,
+   "exposure": 0.6,
+   "tint": [
+    1.0,
+    0.96,
+    0.92
+   ],
+   "saturation": 1.05
+  },
+  "night": {
+   "sun_elev": 24.0,
+   "sun_az": 340.0,
+   "sun_lux": 0.35,
+   "sun_color": [
+    170,
+    195,
+    255
+   ],
+   "sky": 0.08,
+   "fog_density": 0.018,
+   "fog_falloff": 0.012,
+   "fog_height": 5.0,
+   "vol_fog": true,
+   "mist_banks": true,
+   "windows": 1.0,
+   "clouds": 0.45,
+   "exposure": 1.6,
+   "tint": [
+    0.92,
+    0.97,
+    1.05
+   ],
+   "saturation": 0.95,
+   "moon": true,
+   "stars": true
+  },
+  "dusk": {
+   "sun_elev": 0.8,
+   "sun_az": 300.0,
+   "sun_lux": 3.0,
+   "sun_color": [
+    255,
+    150,
+    120
+   ],
+   "sky": 0.6,
+   "fog_density": 0.025,
+   "fog_falloff": 0.01,
+   "fog_height": 8.0,
+   "vol_fog": true,
+   "mist_banks": true,
+   "windows": 0.8,
+   "clouds": 0.6,
+   "exposure": 1.0,
+   "tint": [
+    0.98,
+    0.98,
+    1.02
+   ],
+   "saturation": 1.0
+  }
+ },
+ "shots": {
+  "CAM_01_Gorge_Mist": {
+   "title": "Ref 1: the castle above the gorge, misty morning",
+   "aspect": "portrait",
+   "res": [
+    2160,
+    3840
+   ],
+   "lens": 24.0,
+   "fstop": 8.0,
+   "preset": "mist",
+   "sequence": "LS_01_Gorge_Mist",
+   "keys": [
+    {
+     "t": 0.0,
+     "loc": [
+      -300.0,
+      -176.0,
+      74.19843292236328
+     ],
+     "look_at": [
+      -118.0,
+      -74.0,
+      88.0
+     ]
+    },
+    {
+     "t": 10.0,
+     "loc": [
+      -296.0,
+      -156.0,
+      79.42706680297852
+     ],
+     "look_at": [
+      -118.0,
+      -70.0,
+      90.0
+     ]
+    }
+   ],
+   "subject_low": 30.0
+  },
+  "CAM_02_Boats_Night": {
+   "title": "Ref 2: first-years crossing the lake by lantern light, moonrise behind the castle",
+   "aspect": "tall",
+   "res": [
+    2560,
+    3840
+   ],
+   "lens": 28.0,
+   "fstop": 4.0,
+   "preset": "night",
+   "sequence": "LS_02_Boats_Night",
+   "keys": [
+    {
+     "t": 0.0,
+     "loc": [
+      300.0,
+      -660.0,
+      3.2
+     ],
+     "look_at": [
+      105.0,
+      -90.0,
+      96.0
+     ]
+    },
+    {
+     "t": 12.0,
+     "loc": [
+      272.0,
+      -585.0,
+      3.6
+     ],
+     "look_at": [
+      105.0,
+      -90.0,
+      98.0
+     ]
+    }
+   ],
+   "subject_low": null
+  },
+  "CAM_03_Lake_Sunset": {
+   "title": "Ref 4: the Great Hall end and the crag from the lake at sunset",
+   "aspect": "landscape",
+   "res": [
+    3840,
+    2160
+   ],
+   "lens": 32.0,
+   "fstop": 8.0,
+   "preset": "sunset",
+   "sequence": "LS_03_Lake_Sunset",
+   "keys": [
+    {
+     "t": 0.0,
+     "loc": [
+      -560.0,
+      -650.0,
+      14.0
+     ],
+     "look_at": [
+      -70.0,
+      -40.0,
+      102.0
+     ]
+    },
+    {
+     "t": 0.041666666666666664,
+     "loc": [
+      -560.0,
+      -650.0,
+      14.0
+     ],
+     "look_at": [
+      -70.0,
+      -40.0,
+      102.0
+     ]
+    }
+   ],
+   "subject_low": null
+  },
+  "CAM_04_Viaduct_Walk": {
+   "title": "Walking the viaduct into the castle",
+   "aspect": "landscape",
+   "res": [
+    3840,
+    2160
+   ],
+   "lens": 24.0,
+   "fstop": 5.6,
+   "preset": "day",
+   "sequence": "LS_04_Viaduct_Walk",
+   "keys": [
+    {
+     "t": 0.0,
+     "loc": [
+      360.0,
+      -55.0,
+      81.0
+     ],
+     "look_at": [
+      190.0,
+      -40.0,
+      96.0
+     ]
+    },
+    {
+     "t": 12.0,
+     "loc": [
+      290.0,
+      -49.0,
+      81.0
+     ],
+     "look_at": [
+      150.0,
+      -38.0,
+      100.0
+     ]
+    }
+   ],
+   "subject_low": null
+  },
+  "CAM_05_Quidditch_Aerial": {
+   "title": "Over the Quidditch stadium towards the castle",
+   "aspect": "landscape",
+   "res": [
+    3840,
+    2160
+   ],
+   "lens": 28.0,
+   "fstop": 8.0,
+   "preset": "day",
+   "sequence": "LS_05_Quidditch_Aerial",
+   "keys": [
+    {
+     "t": 0.0,
+     "loc": [
+      -360.0,
+      1060.0,
+      205.0
+     ],
+     "look_at": [
+      -40.0,
+      140.0,
+      105.0
+     ]
+    },
+    {
+     "t": 10.0,
+     "loc": [
+      -300.0,
+      960.0,
+      185.0
+     ],
+     "look_at": [
+      -40.0,
+      140.0,
+      105.0
+     ]
+    }
+   ],
+   "subject_low": null
+  },
+  "CAM_06_ForestEdge_Hut": {
+   "title": "From the edge of the forest by the hut, dusk",
+   "aspect": "landscape",
+   "res": [
+    3840,
+    2160
+   ],
+   "lens": 30.0,
+   "fstop": 4.0,
+   "preset": "dusk",
+   "sequence": "LS_06_ForestEdge_Hut",
+   "keys": [
+    {
+     "t": 0.0,
+     "loc": [
+      512.0,
+      512.0,
+      85.51219482421875
+     ],
+     "look_at": [
+      30.0,
+      20.0,
+      120.0
+     ]
+    },
+    {
+     "t": 0.041666666666666664,
+     "loc": [
+      512.0,
+      512.0,
+      85.51219482421875
+     ],
+     "look_at": [
+      30.0,
+      20.0,
+      120.0
+     ]
+    }
+   ],
+   "subject_low": null
+  },
+  "CAM_07_Astronomy_Tower": {
+   "title": "From the top of the Astronomy Tower over the lake, night",
+   "aspect": "landscape",
+   "res": [
+    3840,
+    2160
+   ],
+   "lens": 20.0,
+   "fstop": 8.0,
+   "preset": "night",
+   "sequence": "LS_07_Astronomy_Tower",
+   "keys": [
+    {
+     "t": 0.0,
+     "loc": [
+      158.0,
+      133.0,
+      194.0
+     ],
+     "look_at": [
+      60.0,
+      -700.0,
+      20.0
+     ]
+    },
+    {
+     "t": 0.041666666666666664,
+     "loc": [
+      158.0,
+      133.0,
+      194.0
+     ],
+     "look_at": [
+      60.0,
+      -700.0,
+      20.0
+     ]
+    }
+   ],
+   "subject_low": null
+  },
+  "CAM_08_Station_Night": {
+   "title": "From the station across the lake to the lit castle",
+   "aspect": "landscape",
+   "res": [
+    3840,
+    2160
+   ],
+   "lens": 55.0,
+   "fstop": 5.6,
+   "preset": "night",
+   "sequence": "LS_08_Station_Night",
+   "keys": [
+    {
+     "t": 0.0,
+     "loc": [
+      985.0,
+      -655.0,
+      7.5
+     ],
+     "look_at": [
+      0.0,
+      -40.0,
+      112.0
+     ]
+    },
+    {
+     "t": 0.041666666666666664,
+     "loc": [
+      985.0,
+      -655.0,
+      7.5
+     ],
+     "look_at": [
+      0.0,
+      -40.0,
+      112.0
+     ]
+    }
+   ],
+   "subject_low": null
+  },
+  "CAM_09_Grand_Orbit": {
+   "title": "Grand orbit (24 s)",
+   "aspect": "landscape",
+   "res": [
+    3840,
+    2160
+   ],
+   "lens": 24.0,
+   "fstop": 11.0,
+   "preset": "day",
+   "sequence": "LS_09_Grand_Orbit",
+   "keys": [
+    {
+     "t": 0.0,
+     "loc": [
+      -349.99999999999983,
+      -603.5382907247958,
+      260.0
+     ],
+     "look_at": [
+      10.0,
+      20.0,
+      105.0
+     ]
+    },
+    {
+     "t": 2.0,
+     "loc": [
+      -176.349712473815,
+      -675.4665949281292,
+      260.0
+     ],
+     "look_at": [
+      10.0,
+      20.0,
+      105.0
+     ]
+    },
+    {
+     "t": 4.0,
+     "loc": [
+      10.000000000000044,
+      -700.0,
+      260.0
+     ],
+     "look_at": [
+      10.0,
+      20.0,
+      105.0
+     ]
+    },
+    {
+     "t": 6.0,
+     "loc": [
+      196.34971247381492,
+      -675.4665949281292,
+      260.0
+     ],
+     "look_at": [
+      10.0,
+      20.0,
+      105.0
+     ]
+    },
+    {
+     "t": 8.0,
+     "loc": [
+      370.00000000000006,
+      -603.5382907247958,
+      260.0
+     ],
+     "look_at": [
+      10.0,
+      20.0,
+      105.0
+     ]
+    },
+    {
+     "t": 10.0,
+     "loc": [
+      519.1168824543142,
+      -489.1168824543142,
+      260.0
+     ],
+     "look_at": [
+      10.0,
+      20.0,
+      105.0
+     ]
+    },
+    {
+     "t": 12.0,
+     "loc": [
+      633.5382907247958,
+      -339.99999999999994,
+      260.0
+     ],
+     "look_at": [
+      10.0,
+      20.0,
+      105.0
+     ]
+    },
+    {
+     "t": 14.0,
+     "loc": [
+      705.4665949281292,
+      -166.34971247381492,
+      260.0
+     ],
+     "look_at": [
+      10.0,
+      20.0,
+      105.0
+     ]
+    },
+    {
+     "t": 16.0,
+     "loc": [
+      730.0,
+      20.0,
+      260.0
+     ],
+     "look_at": [
+      10.0,
+      20.0,
+      105.0
+     ]
+    },
+    {
+     "t": 18.0,
+     "loc": [
+      705.4665949281292,
+      206.34971247381492,
+      260.0
+     ],
+     "look_at": [
+      10.0,
+      20.0,
+      105.0
+     ]
+    },
+    {
+     "t": 20.0,
+     "loc": [
+      633.5382907247958,
+      379.99999999999994,
+      260.0
+     ],
+     "look_at": [
+      10.0,
+      20.0,
+      105.0
+     ]
+    },
+    {
+     "t": 22.0,
+     "loc": [
+      519.1168824543142,
+      529.1168824543142,
+      260.0
+     ],
+     "look_at": [
+      10.0,
+      20.0,
+      105.0
+     ]
+    },
+    {
+     "t": 24.0,
+     "loc": [
+      370.00000000000006,
+      643.5382907247958,
+      260.0
+     ],
+     "look_at": [
+      10.0,
+      20.0,
+      105.0
+     ]
+    }
+   ],
+   "subject_low": null
+  },
+  "CAM_10_Cliff_Moss": {
+   "title": "Detail: moss, ledges and the little house on the gorge face",
+   "aspect": "portrait",
+   "res": [
+    2160,
+    3840
+   ],
+   "lens": 40.0,
+   "fstop": 4.0,
+   "preset": "mist",
+   "sequence": "LS_10_Cliff_Moss",
+   "keys": [
+    {
+     "t": 0.0,
+     "loc": [
+      -262.0,
+      -122.0,
+      44.0
+     ],
+     "look_at": [
+      -176.0,
+      -108.0,
+      52.0
+     ]
+    },
+    {
+     "t": 0.041666666666666664,
+     "loc": [
+      -262.0,
+      -122.0,
+      44.0
+     ],
+     "look_at": [
+      -176.0,
+      -108.0,
+      52.0
+     ]
+    }
+   ],
+   "subject_low": null
+  },
+  "CAM_11_Gorge_River": {
+   "title": "From the river up the gorge to the castle",
+   "aspect": "portrait",
+   "res": [
+    2160,
+    3840
+   ],
+   "lens": 22.0,
+   "fstop": 8.0,
+   "preset": "mist",
+   "sequence": "LS_11_Gorge_River",
+   "keys": [
+    {
+     "t": 0.0,
+     "loc": [
+      -228.0,
+      -232.0,
+      6.0
+     ],
+     "look_at": [
+      -160.0,
+      -70.0,
+      100.0
+     ]
+    },
+    {
+     "t": 0.041666666666666664,
+     "loc": [
+      -228.0,
+      -232.0,
+      6.0
+     ],
+     "look_at": [
+      -160.0,
+      -70.0,
+      100.0
+     ]
+    }
+   ],
+   "subject_low": null
+  },
+  "CAM_12_Plan_Top": {
+   "title": "Site plan (top view)",
+   "aspect": "square",
+   "res": [
+    3000,
+    3000
+   ],
+   "lens": 60.0,
+   "fstop": 16.0,
+   "preset": "day",
+   "sequence": "LS_12_Plan_Top",
+   "keys": [
+    {
+     "t": 0.0,
+     "loc": [
+      0.0,
+      200.0,
+      4200.0
+     ],
+     "look_at": [
+      0.0,
+      201.0,
+      0.0
+     ]
+    },
+    {
+     "t": 0.041666666666666664,
+     "loc": [
+      0.0,
+      200.0,
+      4200.0
+     ],
+     "look_at": [
+      0.0,
+      201.0,
+      0.0
+     ]
+    }
+   ],
+   "subject_low": null
+  }
+ },
+ "fog_volumes": [
+  {
+   "name": "Gorge",
+   "center": [
+    -215.0,
+    -40.0,
+    16.0
+   ],
+   "size": [
+    90.0,
+    300.0,
+    26.0
+   ],
+   "radial": 0.45,
+   "height": 0.7,
+   "strength": {
+    "mist": 1.0,
+    "sunset": 0.35,
+    "dusk": 0.6,
+    "night": 0.5
+   }
+  },
+  {
+   "name": "LakeUnderCliff",
+   "center": [
+    40.0,
+    -330.0,
+    5.0
+   ],
+   "size": [
+    560.0,
+    240.0,
+    16.0
+   ],
+   "radial": 0.35,
+   "height": 0.6,
+   "strength": {
+    "mist": 0.9,
+    "sunset": 0.6,
+    "dusk": 0.7,
+    "night": 0.8
+   }
+  },
+  {
+   "name": "Ravine",
+   "center": [
+    226.0,
+    -90.0,
+    30.0
+   ],
+   "size": [
+    50.0,
+    120.0,
+    30.0
+   ],
+   "radial": 0.5,
+   "height": 0.6,
+   "strength": {
+    "mist": 1.0,
+    "sunset": 0.3,
+    "dusk": 0.5,
+    "night": 0.6
+   }
+  },
+  {
+   "name": "ValleyForest",
+   "center": [
+    420.0,
+    650.0,
+    82.0
+   ],
+   "size": [
+    900.0,
+    650.0,
+    30.0
+   ],
+   "radial": 0.25,
+   "height": 0.5,
+   "strength": {
+    "mist": 1.0,
+    "dusk": 0.5,
+    "night": 0.3
+   }
+  },
+  {
+   "name": "WestHills",
+   "center": [
+    -700.0,
+    100.0,
+    95.0
+   ],
+   "size": [
+    700.0,
+    900.0,
+    40.0
+   ],
+   "radial": 0.2,
+   "height": 0.5,
+   "strength": {
+    "mist": 0.8,
+    "dusk": 0.4
+   }
+  }
+ ],
+ "lanterns": [
+  [
+   42257.2,
+   61256.0,
+   110.0
+  ],
+  [
+   40378.2,
+   59320.1,
+   110.0
+  ],
+  [
+   35792.6,
+   56477.7,
+   110.0
+  ],
+  [
+   31567.7,
+   57752.1,
+   110.0
+  ],
+  [
+   29542.4,
+   53403.7,
+   110.0
+  ],
+  [
+   25366.1,
+   53223.8,
+   110.0
+  ],
+  [
+   23703.3,
+   49724.5,
+   110.0
+  ],
+  [
+   19222.5,
+   45831.9,
+   110.0
+  ],
+  [
+   17344.6,
+   43736.9,
+   110.0
+  ],
+  [
+   15808.7,
+   38776.1,
+   110.0
+  ],
+  [
+   13650.7,
+   36835.8,
+   110.0
+  ],
+  [
+   9413.8,
+   34844.8,
+   110.0
+  ],
+  [
+   8549.1,
+   30886.9,
+   110.0
+  ],
+  [
+   5884.3,
+   28261.9,
+   110.0
+  ]
+ ]
+}
