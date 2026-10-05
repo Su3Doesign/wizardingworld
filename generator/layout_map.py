@@ -58,6 +58,12 @@ def main(out, n=1600, half=1250.0, center=(150.0, 120.0)):
     for xa, xb, yc, _, _ in W.STAIR_FLIGHTS:
         d.line([px(xa, yc), px(xb, yc)], fill=(250, 235, 200, 255), width=3)
     d.line([px(*q) for q in W.VIADUCT], fill=(250, 235, 200, 255), width=4)
+    # the Quidditch stadium's oval
+    ya = math.radians(W.PITCH_YAW)
+    ex, ey = np.array([math.cos(ya), -math.sin(ya)]), np.array([math.sin(ya), math.cos(ya)])
+    t = np.linspace(0, 2 * math.pi, 73)
+    ov = [px(*(np.array(W.PITCH) + ex * W.PITCH_SIZE[0] / 2 * math.cos(a) + ey * W.PITCH_SIZE[1] / 2 * math.sin(a))) for a in t]
+    d.line(ov, fill=(250, 235, 200, 255), width=3)
     f1, f2, f3 = font(30), font(22), font(18)
     # cameras: position, view cone, number
     resolved = SH.resolve(lambda x, y: float(W.ground(x, y)[0]))
@@ -88,7 +94,8 @@ def main(out, n=1600, half=1250.0, center=(150.0, 120.0)):
         d.text((X0, Y0), num, fill=(255, 255, 255, 255), font=font(13), anchor="mm")
     labels = [((-30, -40), "CASTLE"), ((-330, 330), "river gorge"), ((175, 520), "the stream"),
               ((360, -60), "east arm"), ((190, 128), "the bay"), ((-30, 345), "covered bridge"), ((-120, 140), "grand viaduct"),
-              (W.PITCH, "Quidditch stadium"), (W.HUT, "hut"), (W.WILLOW, "willow"), ((W.GREENHOUSES[0] - 60, W.GREENHOUSES[1] + 20), "greenhouses"),
+              ((W.PITCH[0] - 150, W.PITCH[1] + 40), "Quidditch stadium"), ((W.FLYING_LAWN[0], W.FLYING_LAWN[1] + 48), "flying lawn"),
+              (W.HUT, "hut"), (W.WILLOW, "willow"), ((W.GREENHOUSES[0] - 60, W.GREENHOUSES[1] + 20), "greenhouses"),
               ((W.STONE_CIRCLE[0] + 60, W.STONE_CIRCLE[1] + 10), "stone circle"), (W.GATES, "gates"), (W.STATION, "station"),
               ((W.BOATHOUSE[0] + 80, W.BOATHOUSE[1] + 10), "boathouse"), ((W.FALL_X + 140, 222), "stairs + waterfall"),
               ((380, -880), "THE BLACK LAKE"), (W.ISLANDS[0][:2], "tomb island"), ((900, 700), "the forest"), ((-130, 1300), "to Hogsmeade")]

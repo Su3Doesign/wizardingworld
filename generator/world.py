@@ -184,8 +184,11 @@ ISLANDS = [  # (x, y, radius, height above the lake, name)
 GATES = (95.0, 600.0)
 ROAD_PATH = catmull([(50, 222), (80, 420), (95, 600), (70, 880), (0, 1200), (-80, 1500), (-110, 1760), (-120, 2050)], step=3.0)
 HOGSMEADE = (-130.0, 1800.0)
-PITCH = (-170.0, 840.0)            # Quidditch pitch centre; long axis north-south
-PITCH_SIZE = (75.0, 170.0)         # stand oval: full width, full length (m)
+PITCH = (-125.0, 475.0)            # Quidditch stadium centre: on the lawn beside the castle, north-west of the greenhouses
+PITCH_YAW = -14.0                  # deg: its long axis turned from north towards the castle (axis direction (sin, cos))
+PITCH_SIZE = (67.0, 168.0)         # the stands' inner oval: full width, full length (m)
+FLYING_LAWN = (-10.0, 390.0)       # the flying lesson: rows of brooms on the lawn between the greenhouses and the stadium
+FLYING_LAWN_YAW = -36.5            # deg: the rows' direction (they point at the stadium)
 HUT = (520.0, 560.0)               # the gamekeeper's hut on the north shore of the east arm, by the forest
 WILLOW = (300.0, 430.0)
 GREENHOUSES = (-40.0, 270.0)      # the outer greenhouses north of the castle
@@ -393,7 +396,7 @@ class Fields:
             d = np.hypot(x - sx, y - sy) * (1 + 0.12 * fn.fbm2(x, y, 25.0, 2, 77))
             h = np.maximum(h, sz - 7.0 * np.clip(d - sr_, 0, None) - 0.5 * np.clip(d - sr_ * 0.6, 0, None))
         # 8. flatten the pitch, Hogsmeade, the station shelf, the greenhouse lawn; soften the road
-        h = self._flatten(h, PITCH, (PITCH_SIZE[0] * 0.65 + 14, PITCH_SIZE[1] * 0.58 + 14), 40.0)
+        h = self._flatten(h, PITCH, (PITCH_SIZE[0] * 0.65 + 14, PITCH_SIZE[1] * 0.58 + 14), 40.0, yaw=PITCH_YAW)
         h = self._flatten(h, HOGSMEADE, (260.0, 330.0), 140.0)
         h = self._flatten(h, STATION, (95.0, 42.0), 60.0, target=LAKE_Z + 3.2)
         h = self._flatten(h, GREENHOUSES, (65.0, 45.0), 35.0)
@@ -429,9 +432,12 @@ class Fields:
             return np.clip(d, 0, None)
         return self._get("dv", _v)
 
-    def _flatten(self, h, c, half, blend, target=None):
+    def _flatten(self, h, c, half, blend, target=None, yaw=0.0):
         x, y = self.x, self.y
-        r = np.hypot((x - c[0]) / half[0], (y - c[1]) / half[1])
+        sa, ca = math.sin(math.radians(yaw)), math.cos(math.radians(yaw))
+        u = (x - c[0]) * ca - (y - c[1]) * sa                  # across / along the (turned) long axis
+        v = (x - c[0]) * sa + (y - c[1]) * ca
+        r = np.hypot(u / half[0], v / half[1])
         w = sstep(1.0 + blend / max(half), 1.0, r)
         if target is None:
             target = flat_target(c)
@@ -575,7 +581,7 @@ def flat_target(c):
 def _analytic_no_flatten(F):
     saved = Fields._flatten
     try:
-        Fields._flatten = lambda self, h, c, half, blend, target=None: h
+        Fields._flatten = lambda self, h, c, half, blend, target=None, yaw=0.0: h
         return F._analytic()
     finally:
         Fields._flatten = saved

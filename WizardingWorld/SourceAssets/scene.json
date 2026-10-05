@@ -322,27 +322,27 @@
     {
      "t": 0.0,
      "loc": [
-      -360.0,
-      1060.0,
-      205.0
+      -205.0,
+      790.0,
+      170.0
      ],
      "look_at": [
-      -40.0,
-      140.0,
-      105.0
+      -70.0,
+      250.0,
+      88.0
      ]
     },
     {
      "t": 10.0,
      "loc": [
-      -300.0,
-      960.0,
-      185.0
+      -185.0,
+      715.0,
+      150.0
      ],
      "look_at": [
-      -40.0,
-      140.0,
-      105.0
+      -60.0,
+      230.0,
+      90.0
      ]
     }
    ],
@@ -656,7 +656,7 @@
    "subject_low": null
   },
   "CAM_10_Cliff_Moss": {
-   "title": "Detail: moss, ledges and the deep walls on the gorge face",
+   "title": "Detail: moss, ledges and the walls sunk into the rock on the gorge face",
    "aspect": "portrait",
    "res": [
     2160,
@@ -779,7 +779,7 @@
    "subject_low": null
   },
   "CAM_13_Night_Cliff": {
-   "title": "The night castle reference: the castle on its cliff over the lake, deep walls and lit windows, moonlight",
+   "title": "The night castle reference: the castle on its cliff over the lake, its walls sunk into the rock, lit windows, moonlight",
    "aspect": "landscape",
    "res": [
     3840,
@@ -896,6 +896,88 @@
       128.0,
       270.0,
       76.0
+     ]
+    }
+   ],
+   "subject_low": null
+  },
+  "CAM_16_Quidditch_Pitch": {
+   "title": "On the pitch: the goal hoops and the checkered house towers",
+   "aspect": "landscape",
+   "res": [
+    3840,
+    2160
+   ],
+   "lens": 24.0,
+   "fstop": 8.0,
+   "preset": "day",
+   "sequence": "LS_16_Quidditch_Pitch",
+   "keys": [
+    {
+     "t": 0.0,
+     "loc": [
+      -116.8,
+      425.5,
+      83.78317565917969
+     ],
+     "look_at": [
+      -140.2,
+      536.1,
+      93.5
+     ]
+    },
+    {
+     "t": 10.0,
+     "loc": [
+      -119.2,
+      447.6,
+      84.78317565917969
+     ],
+     "look_at": [
+      -140.2,
+      536.1,
+      94.0
+     ]
+    }
+   ],
+   "subject_low": null
+  },
+  "CAM_17_Flying_Lesson": {
+   "title": "The flying lesson: brooms laid out on the lawn beside the stadium",
+   "aspect": "landscape",
+   "res": [
+    3840,
+    2160
+   ],
+   "lens": 28.0,
+   "fstop": 5.6,
+   "preset": "day",
+   "sequence": "LS_17_Flying_Lesson",
+   "keys": [
+    {
+     "t": 0.0,
+     "loc": [
+      9.6,
+      376.1,
+      82.63346252441406
+     ],
+     "look_at": [
+      -34.1,
+      407.9,
+      84.6
+     ]
+    },
+    {
+     "t": 8.0,
+     "loc": [
+      5.5,
+      378.9,
+      82.65258178710937
+     ],
+     "look_at": [
+      -34.1,
+      407.9,
+      84.6
      ]
     }
    ],
@@ -1667,6 +1749,101 @@
    18487.6,
    -4274.6,
    8165.0
+  ],
+  [
+   4747.8,
+   -24367.5,
+   8077.0
+  ],
+  [
+   6418.1,
+   -27474.5,
+   8124.3
+  ],
+  [
+   5757.3,
+   -30658.3,
+   8249.0
+  ],
+  [
+   7425.6,
+   -33763.6,
+   8337.7
+  ],
+  [
+   6770.8,
+   -37186.7,
+   8448.2
+  ],
+  [
+   8324.5,
+   -39931.4,
+   8521.1
+  ],
+  [
+   7574.0,
+   -43285.4,
+   8631.1
+  ],
+  [
+   9176.7,
+   -46517.9,
+   8682.6
+  ],
+  [
+   8409.5,
+   -49613.2,
+   8746.9
+  ],
+  [
+   9894.6,
+   -52802.2,
+   8752.0
+  ],
+  [
+   8912.0,
+   -56187.2,
+   8760.4
+  ],
+  [
+   4300.0,
+   -23600.0,
+   7934.6
+  ],
+  [
+   5700.0,
+   -23400.0,
+   7893.5
+  ],
+  [
+   8450.0,
+   -59600.0,
+   8677.0
+  ],
+  [
+   10550.0,
+   -59600.0,
+   8673.2
+  ],
+  [
+   -6123.8,
+   -7933.7,
+   8210.0
+  ],
+  [
+   -6876.2,
+   -5866.3,
+   8210.0
+  ],
+  [
+   9900.0,
+   -3550.0,
+   8210.0
+  ],
+  [
+   10700.0,
+   -3550.0,
+   8210.0
   ]
  ]
 }

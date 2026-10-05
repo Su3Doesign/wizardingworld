@@ -784,16 +784,18 @@ def build_glass_inst(name="M_GlassInst"):
 
 
 def build_cloth(name="M_Cloth"):
-    """Stand canopies: four house colours picked by UV2.x (0, .25, .5, .75)."""
+    """The stadium's cloth (checkered tower boxes, valances, banners, pennants): eight house colours picked by UV2.x in
+    eighths ((k + 0.5) / 8): scarlet, gold, green, silver, blue, bronze, yellow, black."""
     b = MatBuilder(name)
     sp(unreal.Material, b.mat, two_sided=True)
     c = b.tex(T("T_Cloth_BC"), b.uv(0, 0.5), S_COLOR)
     pick = b.mask(b.uv(2), "", r=True)
-    pal = [b.vec_param("House1", (0.42, 0.03, 0.025)), b.vec_param("House2", (0.03, 0.20, 0.07)), b.vec_param("House3", (0.035, 0.07, 0.32)),
-           b.vec_param("House4", (0.60, 0.42, 0.03))]
+    pal = [b.vec_param(n_, v_) for n_, v_ in (("Scarlet", (0.42, 0.03, 0.025)), ("Gold", (0.62, 0.40, 0.05)), ("Green", (0.03, 0.20, 0.07)),
+                                              ("Silver", (0.52, 0.54, 0.56)), ("Blue", (0.035, 0.07, 0.32)), ("Bronze", (0.36, 0.20, 0.07)),
+                                              ("Yellow", (0.72, 0.55, 0.04)), ("Black", (0.025, 0.025, 0.025)))]
     col = pal[0]
     for k, p in enumerate(pal[1:], 1):
-        col = b.lerp(col, "", p, "", b.smoothstep(pick, "", 0.25 * k - 0.05, 0.25 * k - 0.04), "")
+        col = b.lerp(col, "", p, "", b.smoothstep(pick, "", 0.125 * k - 0.02, 0.125 * k - 0.01), "")
     b.out(b.mul(c, "RGB", col, ""), "", MP.MP_BASE_COLOR)
     b.out(b.const(0.9), "", MP.MP_ROUGHNESS)
     return b.finish(), b

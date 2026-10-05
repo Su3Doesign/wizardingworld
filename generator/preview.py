@@ -310,13 +310,14 @@ def m_cloth(name="M_Cloth"):
     pick, _ = b.uvsep("UV2")
     ramp = b.n.new("ShaderNodeValToRGB")
     ramp.color_ramp.interpolation = "CONSTANT"
-    els = ramp.color_ramp.elements
-    els[0].position, els[0].color = 0.0, (0.45, 0.04, 0.03, 1)
-    els[1].position, els[1].color = 0.25, (0.03, 0.22, 0.08, 1)
-    e = els.new(0.5)
-    e.color = (0.04, 0.08, 0.35, 1)
-    e = els.new(0.75)
-    e.color = (0.65, 0.45, 0.04, 1)
+    els = ramp.color_ramp.elements                         # eight house colours in eighths of UV2.x (as M_Cloth in Unreal)
+    pal = [(0.45, 0.04, 0.03), (0.62, 0.40, 0.05), (0.03, 0.22, 0.08), (0.52, 0.54, 0.56), (0.04, 0.08, 0.35), (0.36, 0.20, 0.07),
+           (0.72, 0.55, 0.04), (0.025, 0.025, 0.025)]
+    els[0].position, els[0].color = 0.0, (*pal[0], 1)
+    els[1].position, els[1].color = 0.125, (*pal[1], 1)
+    for k in range(2, 8):
+        e = els.new(0.125 * k)
+        e.color = (*pal[k], 1)
     b.link(pick, ramp.inputs[0])
     b.set(**{"Base Color": ramp.outputs[0], "Roughness": 0.9})
     return m
@@ -835,6 +836,8 @@ def main():
     if os.path.isfile(f"{a.geo}/instances/castle_lantern.npz"):
         cl = ins.load_set(f"{a.geo}/instances/castle_lantern.npz")
         lantern_pos += [tuple(p + R @ (np.array([0.0, 0.0, 1.65]) * sc_)) for p, R, sc_ in zip(cl["pos"], cl["R"], cl["scale"])]
+    if os.path.isfile(f"{a.geo}/grounds_lights.npy"):
+        lantern_pos += [tuple(q) for q in np.load(f"{a.geo}/grounds_lights.npy").reshape(-1, 3)]
     print(f"scene built in {time.time() - t0:.0f}s", flush=True)
     glass = bpy.data.materials["M_Glass"]
     lantern = bpy.data.materials["M_Lantern"]

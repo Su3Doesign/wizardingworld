@@ -1,8 +1,10 @@
 """grounds - everything round the castle: the Quidditch stadium, the gamekeeper's hut, the greenhouses, the stone circle,
-the gates, the station, Hogsmeade, the boats with their lanterns, the tomb on the island; and the water surfaces
-(the Black Lake, the river in the gorge, the ravine stream and the waterfall).
+the gates, the station, Hogsmeade, the boats with their lanterns, the tomb on the island, the props of props.py (the
+flying lawn, lamps, braziers, the courts' fountain and statues); and the water surfaces (the Black Lake, the river in
+the gorge, the ravine stream and the waterfall).
 
-Materials (besides the castle_kit ones): CLOTH (stand canopies / banners, colour per stand from UV2.x), MARBLE (tomb),
+Materials (besides the castle_kit ones): CLOTH (the stadium's checkered cloth, banners, pennants; palette entry from
+UV2.x = (k + 0.5) / 8: red, gold, green, silver, blue, bronze, yellow, black), MARBLE (the pitch markings, the tomb),
 LANTERN (emissive lantern glass), WATER (lake), RIVER (flowing water, UV0.v along the flow), FALL (waterfall sheet),
 MIST (waterfall spray, translucent).
 """
@@ -39,64 +41,366 @@ def _bx(c, size, yaw, mat):
     return ck._mesh_box(c, size, a, b, mat)
 
 
+# ----------------------------------------------------------------------------------------------- small mesh helpers
+UPV = np.array([0.0, 0.0, 1.0])
+_BOX_F = np.array([[0, 2, 1], [1, 2, 3], [4, 5, 6], [5, 7, 6], [0, 1, 4], [1, 5, 4], [2, 6, 3], [3, 6, 7], [0, 4, 2], [2, 4, 6],
+                   [1, 3, 5], [3, 7, 5]])
+# M_Cloth palette (UV2.x = (k + 0.5) / 8): the four houses' colour pairs
+RED, GOLD, GREEN, SILVER, BLUE, BRONZE, YELLOW, BLACK = range(8)
+HOUSES = ((RED, GOLD), (GREEN, SILVER), (BLUE, BRONZE), (YELLOW, BLACK))
+
+
+def colour(m, k):
+    """Set a cloth mesh's palette entry (M_Cloth reads UV2.x)."""
+    m.uv2 = np.zeros((m.nf, 3, 2))
+    m.uv2[:, :, 0] = (k + 0.5) / 8.0
+    m.uv2[:, :, 1] = 1.0
+    return m
+
+
+def _box8(corners, mat):
+    """Box from its 8 corners, ordered (z, y, x) bit-wise: index = 4 z + 2 y + x."""
+    m = Mesh(np.asarray(corners, np.float64), _BOX_F, mat)
+    if m.volume() < 0:
+        m.flip()
+    return m
+
+
+def beam(pa, pb, w, d, mat=WOOD):
+    """A timber of section w x d between two 3D points (w horizontal, d in the vertical plane through the timber)."""
+    pa, pb = np.asarray(pa, np.float64), np.asarray(pb, np.float64)
+    e = pb - pa
+    L = float(np.linalg.norm(e))
+    e = e / L
+    h = np.cross(UPV, e) if abs(e[2]) < 0.99 else np.array([1.0, 0.0, 0.0])
+    h = h / np.linalg.norm(h)
+    v = np.cross(e, h)
+    return _box8([pa + e * x + h * y + v * z for z in (-d / 2, d / 2) for y in (-w / 2, w / 2) for x in (0.0, L)], mat)
+
+
+def prism(q, za, zb, mat):
+    """Upright prism on a convex plan quad q = (q00, q10, q01, q11) (xy), from za to zb."""
+    q = [np.array([p[0], p[1]], np.float64) for p in q]
+    return _box8([[p[0], p[1], z] for z in (za, zb) for p in q], mat)
+
+
+def quad(p0, p1, p2, p3, mat, k=None):
+    """A single (two-sided material) quad p0 p1 p2 p3."""
+    m = Mesh(np.array([p0, p1, p2, p3], np.float64), np.array([[0, 1, 2], [0, 2, 3]]), mat)
+    m.uv_box(1.0, only_missing=False)
+    return colour(m, k) if k is not None else m
+
+
+def checker(o, a, b, na, nb, ka, kb, mat=CLOTH):
+    """A checkered cloth panel: origin o, edge vectors a (na cells) and b (nb cells), colours ka / kb."""
+    o, a, b = (np.asarray(x, np.float64) for x in (o, a, b))
+    out = []
+    for i in range(na):
+        for j in range(nb):
+            p = o + a * (i / na) + b * (j / nb)
+            out.append(quad(p, p + a / na, p + a / na + b / nb, p + b / nb, mat, ka if (i + j) % 2 == 0 else kb))
+    return mk.merge(out)
+
+
+def torus(c, axis, R, r, seg=40, tube=10, mat=LEAD):
+    """A ring of radius R (tube radius r) round `axis` through c."""
+    axis = np.asarray(axis, np.float64) / np.linalg.norm(axis)
+    e1 = np.cross(axis, UPV) if abs(axis[2]) < 0.99 else np.array([1.0, 0.0, 0.0])
+    e1 /= np.linalg.norm(e1)
+    e2 = np.cross(axis, e1)
+    th = np.linspace(0, 2 * math.pi, seg + 1)
+    ph = np.linspace(0, 2 * math.pi, tube + 1)
+    T, Ph = np.meshgrid(th, ph, indexing="ij")
+    radial = np.cos(T)[..., None] * e1 + np.sin(T)[..., None] * e2
+    G = np.asarray(c)[None, None] + radial * (R + r * np.cos(Ph))[..., None] + axis[None, None] * (r * np.sin(Ph))[..., None]
+    m = mk.grid(G, mat=mat, uv_tile=1.0)
+    if m.volume() < 0:
+        m.flip()
+    return m
+
+
+def flat_ribbon(P, width, z, closed, mat=MARBLE):
+    """A painted line: a flat strip of `width` along the polyline P (xy), facing up, at height z."""
+    P = np.asarray(P, np.float64)
+    if closed:
+        P = np.vstack([P, P[:1]])
+    t = np.gradient(P, axis=0)
+    if closed:
+        t[0] = t[-1] = P[1] - P[-2]
+    t /= np.linalg.norm(t, axis=1, keepdims=True) + 1e-12
+    nrm = np.stack([-t[:, 1], t[:, 0]], 1)
+    G = np.empty((len(P), 2, 3))
+    for k, sgn in enumerate((-0.5, 0.5)):
+        G[:, k, :2] = P + nrm * width * sgn
+        G[:, k, 2] = z
+    m = mk.grid(G, mat=mat, uv_tile=1.0)
+    if np.mean(m.face_normals()[:, 2]) < 0:
+        m.flip()
+    return m
+
+
+def oval(a, b, step):
+    """Points along the ellipse (a across, b along) equally spaced in arc length (~step): u, v, unit tangent (tu, tv),
+    outward normal (nu, nv), arc position s, perimeter."""
+    t = np.linspace(0, 2 * math.pi, 6001)
+    U, V = a * np.cos(t), b * np.sin(t)
+    s = np.concatenate([[0], np.cumsum(np.hypot(np.diff(U), np.diff(V)))])
+    n = max(8, int(round(s[-1] / step)))
+    ss = np.arange(n) * s[-1] / n
+    tt = np.interp(ss, s, t)
+    tu, tv = -a * np.sin(tt), b * np.cos(tt)
+    L = np.hypot(tu, tv)
+    tu, tv = tu / L, tv / L
+    return a * np.cos(tt), b * np.sin(tt), tu, tv, tv, -tu, ss, float(s[-1])
+
+
 # ----------------------------------------------------------------------------------------------- Quidditch stadium
-def stadium(rng):
-    cx, cy = W.PITCH
-    W2, L2 = W.PITCH_SIZE[0] / 2, W.PITCH_SIZE[1] / 2
-    z0 = g(cx, cy)
+def quidditch_tower(c, tan, out, z0, H, house, rng, wind):
+    """A spectators' tower: four battered timber posts with ring beams and X-braces in every bay, a box at the top whose
+    parapet and skirt are wrapped in the house's checkered cloth, an open viewing band, a canvas pyramid roof with a
+    checkered valance, and a long two-coloured streamer on a pole at the apex."""
+    ka, kb = HOUSES[house]
+    c = np.asarray(c, np.float64)
+    tan = np.asarray(tan, np.float64)
+    out = np.asarray(out, np.float64)
+    hs0, hs1 = 2.6, 2.2
+    zt = z0 + H                                              # the box floor
+    ze = zt + 3.3                                            # the roof's eave
+
+    def hs(z):
+        return hs0 + (hs1 - hs0) * np.clip((z - z0) / H, 0.0, 1.0)
+
+    def corner(a, b, z, extra=0.0):
+        h = hs(z) + extra
+        return np.array([c[0] + tan[0] * a * h + out[0] * b * h, c[1] + tan[1] * a * h + out[1] * b * h, z])
+
     parts = []
-    n = 22
-    houses = [0.02, 0.27, 0.52, 0.77]                     # four house colours (UV2.x picks the palette entry)
-    for k in range(n):
-        a = 2 * math.pi * (k + 0.5) / n
-        x = cx + (W2 + 6.0) * math.cos(a)
-        y = cy + (L2 + 6.0) * math.sin(a)
-        zt = z0 + rng.uniform(17.0, 27.0)
-        col = houses[(k * 4) // n]
-        # timber tower: four posts, cross braces, a cloth-wrapped stand box on top, pointed canvas roof
-        yaw = a
-        for sx in (-1, 1):
-            for sy in (-1, 1):
-                p = np.array([x + sx * 2.2 * math.cos(yaw) - sy * 2.2 * math.sin(yaw), y + sx * 2.2 * math.sin(yaw) + sy * 2.2 * math.cos(yaw), 0.0])
-                p[2] = (z0 + zt) / 2
-                parts.append(_bx(p, (0.45, 0.45, zt - z0), yaw, WOOD))
-        for zz in np.arange(z0 + 3.0, zt - 4.0, 4.0):
-            parts.append(_bx((x, y, zz), (5.0, 5.0, 0.3), yaw, WOOD))
-        stand = _bx((x, y, zt - 2.0), (5.6, 5.6, 4.2), yaw, CLOTH)
-        stand.uv2 = np.broadcast_to(np.array([col, 1.0]), (stand.nf, 3, 2)).copy()
-        parts.append(stand)
-        roof = ck._pyramid_roof((x, y), 6.2, 6.2, zt + 0.1, rng.uniform(5.5, 8.0), yaw)
-        roof.mat[:] = CLOTH
-        roof.uv2 = np.broadcast_to(np.array([col, 1.0]), (roof.nf, 3, 2)).copy()
-        parts.append(roof)
-        # pennant
-        pole = _bx((x, y, zt + 8.5), (0.12, 0.12, 4.0), yaw, LEAD)
-        parts.append(pole)
-    # low stands joining the towers
-    for k in range(n):
-        a0 = 2 * math.pi * (k + 0.5) / n
-        a1 = 2 * math.pi * (k + 1.5) / n
-        p0 = np.array([cx + (W2 + 6.0) * math.cos(a0), cy + (L2 + 6.0) * math.sin(a0)])
-        p1 = np.array([cx + (W2 + 6.0) * math.cos(a1), cy + (L2 + 6.0) * math.sin(a1)])
-        mid = (p0 + p1) / 2
-        L = float(np.linalg.norm(p1 - p0))
-        yaw = math.atan2(*(p1 - p0)[::-1])
-        st = _bx((mid[0], mid[1], z0 + 3.5), (L - 4.0, 3.2, 7.0), yaw, WOOD)
-        parts.append(st)
-        cl = _bx((mid[0], mid[1], z0 + 7.6), (L - 4.0, 3.4, 1.2), yaw, CLOTH)
-        cl.uv2 = np.broadcast_to(np.array([houses[(k * 4) // n], 1.0]), (cl.nf, 3, 2)).copy()
-        parts.append(cl)
-    # goal hoops: three at each end (poles with rings)
-    for end in (-1, 1):
-        for i, (dx, hgt) in enumerate(((-7.0, 15.0), (0.0, 18.0), (7.0, 15.0))):
-            x, y = cx + dx, cy + end * (L2 - 12.0)
-            parts.append(_bx((x, y, z0 + hgt / 2), (0.35, 0.35, hgt), 0.0, LEAD))
-            ring = mk.revolve([(2.0, -0.18), (2.35, -0.18), (2.35, 0.18), (2.0, 0.18)], seg=40, mat=LEAD)
-            ring.rotate_x(math.pi / 2)
-            ring.translate((x, y, z0 + hgt + 2.3))
-            ring.uv_box(1.0, only_missing=False)
-            parts.append(ring)
+    cs = ((-1, -1), (1, -1), (1, 1), (-1, 1))                 # round the box: inner face (b = -1) first
+    for a, b in cs:
+        parts.append(beam(corner(a, b, z0 - 0.3), corner(a, b, zt), 0.48, 0.48))
+        parts.append(beam(corner(a, b, zt), corner(a, b, ze), 0.36, 0.36))
+        p = corner(a, b, z0)
+        parts.append(_bx((p[0], p[1], z0 + 0.1), (1.1, 1.1, 0.8), math.atan2(tan[1], tan[0]), TRIM))     # stone pad
+    nb = max(4, int(round(H / 4.6)))
+    skirt0 = zt - 5.6                                         # the cloth hangs down to here
+    levels = [z0 + H * k / nb for k in range(nb + 1)]
+    for k, z in enumerate(levels[1:], 1):
+        for i in range(4):
+            (a0, b0), (a1, b1) = cs[i], cs[(i + 1) % 4]
+            parts.append(beam(corner(a0, b0, z), corner(a1, b1, z), 0.3, 0.3))
+    for k in range(nb):
+        za, zb = levels[k], levels[k + 1]
+        if za >= skirt0 - 0.5:
+            break
+        for i in range(4):
+            (a0, b0), (a1, b1) = cs[i], cs[(i + 1) % 4]
+            parts.append(beam(corner(a0, b0, za), corner(a1, b1, zb), 0.22, 0.22))
+            parts.append(beam(corner(a1, b1, za), corner(a0, b0, zb), 0.22, 0.22))
+    # the box: floor, checkered skirt + parapet, a rail, the valance under the eave
+    zp = zt + 1.25
+    parts.append(prism([corner(-1, -1, zt, 0.35)[:2], corner(1, -1, zt, 0.35)[:2], corner(-1, 1, zt, 0.35)[:2], corner(1, 1, zt, 0.35)[:2]],
+                       zt - 0.2, zt + 0.1, WOOD))
+    for i in range(4):
+        (a0, b0), (a1, b1) = cs[i], cs[(i + 1) % 4]
+        p0, p1 = corner(a0, b0, skirt0, 0.32), corner(a1, b1, skirt0, 0.32)
+        q0, q1 = corner(a0, b0, zp, 0.32), corner(a1, b1, zp, 0.32)
+        # the skirt: a ruled panel between the (battered) bottom edge and the top edge, in checks
+        rows, cols = 5, 4
+        for r_ in range(rows):
+            for c_ in range(cols):
+                f0, f1 = c_ / cols, (c_ + 1) / cols
+                g0, g1 = r_ / rows, (r_ + 1) / rows
+                lo0, lo1 = p0 + (p1 - p0) * f0, p0 + (p1 - p0) * f1
+                hi0, hi1 = q0 + (q1 - q0) * f0, q0 + (q1 - q0) * f1
+                parts.append(quad(lo0 + (hi0 - lo0) * g0, lo1 + (hi1 - lo1) * g0, lo1 + (hi1 - lo1) * g1, lo0 + (hi0 - lo0) * g1, CLOTH,
+                                  ka if (r_ + c_) % 2 == 0 else kb))
+        parts.append(beam(corner(a0, b0, zp + 0.08, 0.32), corner(a1, b1, zp + 0.08, 0.32), 0.16, 0.16))
+        v0, v1 = corner(a0, b0, ze - 0.7, 0.42), corner(a1, b1, ze - 0.7, 0.42)
+        parts.append(checker(v0, v1 - v0, np.array([0.0, 0.0, 0.7]), 8, 1, kb, ka))
+    # canvas pyramid roof
+    rh = float(rng.uniform(5.0, 7.0))
+    apex = np.array([c[0], c[1], ze + rh])
+    eaves = [corner(a, b, ze, 0.75) for a, b in cs]
+    for i in range(4):
+        e0, e1 = eaves[i], eaves[(i + 1) % 4]
+        tri = Mesh(np.array([e0, e1, apex]), np.array([[0, 1, 2]]), CLOTH)
+        if np.cross(e1 - e0, apex - e0) @ (((e0 + e1) / 2 - np.array([c[0], c[1], ze]))) < 0:
+            tri.flip()
+        tri.uv_box(1.0, only_missing=False)
+        parts.append(colour(tri, ka))
+    # the streamer: two bands of the house's colours, tapering and waving downwind from a pole on the apex
+    parts.append(beam(apex - np.array([0, 0, 0.6]), apex + np.array([0, 0, 3.8]), 0.12, 0.12, LEAD))
+    w = np.array([wind[0], wind[1], 0.0])
+    side = np.cross(UPV, w)
+    top = apex + np.array([0, 0, 3.7])
+    ph = rng.uniform(0, 6)
+    us = np.linspace(0, 1, 15)
+    for band, (v0, v1, kk) in enumerate(((-1.0, 0.0, kb), (0.0, 1.0, ka))):
+        U, Vb = np.meshgrid(us, np.linspace(v0, v1, 2), indexing="ij")
+        half = 0.5 * (1 - 0.72 * U)
+        G = top[None, None] + w[None, None] * (U * 7.5)[..., None] + UPV[None, None] * ((Vb - 1.0) * half - 0.35 * U)[..., None] \
+            + side[None, None] * (0.45 * np.sin(U * 7.0 + ph) * U)[..., None]
+        parts.append(colour(mk.grid(G, mat=CLOTH, uv_tile=1.0), kk))
     return mk.merge(parts)
+
+
+def scoring_arc(ap, bp):
+    """The scoring area's line across the +v end of the pitch (Quidditch Through the Ages): an arc bulging towards the
+    centre, v = v0 + k u^2, from boundary to boundary.  Returns (u, v) points."""
+    v0, k = bp - 28.0, 0.0554
+    uu = np.linspace(0.0, ap, 4001)
+    vb = bp * np.sqrt(np.clip(1.0 - (uu / ap) ** 2, 0.0, 1.0))
+    u1 = float(uu[np.argmax(v0 + k * uu ** 2 >= vb)])
+    u = np.linspace(-u1, u1, 41)
+    return u, v0 + k * u ** 2
+
+
+def stadium(rng):
+    """The Quidditch stadium beside the castle, after the film's timber towers, the studio model and the diagram in
+    Quidditch Through the Ages: an oval pitch with white markings (the boundary, the halfway line, the centre circle, the
+    scoring areas' arcs), sandy patches worn round the goal hoops (pitch_sand), three hoops of different heights at each
+    end; a ring of timber stands whose front facing the pitch is a band of checkered house cloth under a rail; a low
+    crenellated stone wall round it all, hung outside with long house banners; and sixteen tall X-braced timber towers
+    whose spectator boxes are wrapped in checkered house colours, under canvas pyramid roofs with streamers."""
+    cx, cy = W.PITCH
+    yaw = math.radians(W.PITCH_YAW)
+    ex = np.array([math.cos(yaw), -math.sin(yaw), 0.0])      # across the pitch
+    ey = np.array([math.sin(yaw), math.cos(yaw), 0.0])       # along it
+    z0 = g(cx, cy)
+    C = np.array([cx, cy, z0])
+
+    def P(u, v, z=0.0):
+        return C + ex * u + ey * v + UPV * z
+
+    def xy(u, v):
+        return (C + ex * u + ey * v)[:2]
+
+    aw, bw = W.PITCH_SIZE[0] / 2, W.PITCH_SIZE[1] / 2        # the stands' front (their inner oval)
+    ap, bp = aw - 6.0, bw - 8.0                              # the pitch's boundary line
+    parts = []
+    # --- markings
+    zl = z0 + 0.05
+    u, v, *_ = oval(ap, bp, 1.0)
+    parts.append(flat_ribbon([xy(a, b) for a, b in zip(u, v)], 0.35, zl, True))
+    parts.append(flat_ribbon([xy(a, 0.0) for a in np.linspace(-ap, ap, 30)], 0.35, zl, False))
+    u, v, *_ = oval(7.0, 7.0, 0.8)
+    parts.append(flat_ribbon([xy(a, b) for a, b in zip(u, v)], 0.35, zl, True))
+    parts.append(flat_ribbon([xy(a, b) for a, b in zip(*oval(0.6, 0.6, 0.3)[:2])], 0.5, zl, True))     # where the balls are released
+    au, av = scoring_arc(ap, bp)
+    for end in (-1, 1):
+        parts.append(flat_ribbon([xy(a, end * b) for a, b in zip(au, av)], 0.35, zl, False))
+    # --- goal hoops: three at each end, the middle one the highest
+    for end in (-1, 1):
+        for du, hh in ((-8.0, 14.5), (0.0, 17.5), (8.0, 14.5)):
+            b = P(du, end * (bp - 13.0))
+            R = 1.75
+            pole = mk.revolve([(0.001, -0.3), (0.95, -0.3), (0.95, 0.35), (0.55, 0.55), (0.26, 0.95), (0.22, 1.4), (0.13, hh - R - 0.1),
+                               (0.17, hh - R + 0.05), (0.001, hh - R + 0.05)], seg=20, mat=LEAD)
+            pole.translate(b)
+            pole.uv_box(1.0, only_missing=False)
+            parts.append(pole)
+            parts.append(torus(b + UPV * hh, ey, R, 0.13))
+    # --- the towers' places round the stands, the houses in quarters
+    u, v, tu, tv, nu, nv, s, perim = oval(aw, bw, 2.5)
+    n = len(u)
+    n_t = 16
+    s_t = (np.arange(n_t) + 0.5) * perim / n_t
+    house_of = [(k // 4) % 4 for k in range(n_t)]
+
+    def off(k_, o):
+        return xy(u[k_] + nu[k_] * o, v[k_] + nv[k_] * o)
+
+    def near_tower(sm):
+        d = np.abs((sm - s_t + perim / 2) % perim - perim / 2)
+        return float(d.min()), int(np.argmin(d))
+    # --- the stands: a boarded front with a band of checkered house cloth facing the pitch under a capping rail, three
+    # timber tiers behind it, and the low crenellated stone wall round the outside
+    for i in range(n):
+        j = (i + 1) % n
+        smid = (s[i] + (s[j] if j else perim)) / 2
+        dt, k_near = near_tower(smid)
+        ka, kb = HOUSES[house_of[k_near]]
+        parts.append(prism([off(i, 0.0), off(j, 0.0), off(i, 0.25), off(j, 0.25)], z0 - 0.3, z0 + 2.0, WOOD))
+        a0, a1 = off(i, -0.03), off(j, -0.03)
+        parts.append(checker([a0[0], a0[1], z0 + 0.55], [a1[0] - a0[0], a1[1] - a0[1], 0.0], [0.0, 0.0, 1.35], 4, 2, ka, kb))
+        r0, r1 = off(i, 0.12), off(j, 0.12)
+        parts.append(beam([r0[0], r0[1], z0 + 2.08], [r1[0], r1[1], z0 + 2.08], 0.36, 0.16))
+        if dt >= 3.5:                                     # the tiers stop round the towers
+            for t_ in range(3):
+                oa, ob = 0.25 + 2.1 * t_, 0.25 + 2.1 * (t_ + 1)
+                parts.append(prism([off(i, oa), off(j, oa), off(i, ob), off(j, ob)], z0 - 0.3, z0 + 1.15 + 0.9 * t_, WOOD))
+        q = [off(i, 6.55), off(j, 6.55), off(i, 7.55), off(j, 7.55)]
+        parts.append(prism(q, z0 - 0.5, z0 + 5.4, STONE))
+        parts.append(prism([off(i, 6.4), off(j, 6.4), off(i, 7.7), off(j, 7.7)], z0 + 5.4, z0 + 5.65, TRIM))
+        if i % 2 == 0:
+            m0, m1 = (off(i, 6.55) + off(j, 6.55)) / 2, (off(i, 7.55) + off(j, 7.55)) / 2
+            tt = (off(j, 7.05) - off(i, 7.05))
+            tt = tt / (np.linalg.norm(tt) + 1e-9) * 0.6
+            parts.append(prism([m0 - tt, m0 + tt, m1 - tt, m1 + tt], z0 + 5.65, z0 + 6.55, STONE))
+    wind = np.array([math.cos(math.radians(25.0)), math.sin(math.radians(25.0))])
+    for k in range(n_t):
+        i = int(np.argmin(np.abs(s - s_t[k])))
+        tw = np.interp(s_t[k], np.append(s, perim), np.append(u, u[0]))
+        th = np.interp(s_t[k], np.append(s, perim), np.append(v, v[0]))
+        tn = np.array([nu[i], nv[i]])
+        c = xy(tw + tn[0] * 3.9, th + tn[1] * 3.9)
+        out = (ex * tn[0] + ey * tn[1])[:2]
+        tan = np.array([-out[1], out[0]])
+        H = float(np.clip(25.0 + 6.0 * (0.5 + 0.5 * math.sin(k * 2.4 + 0.7)) + rng.normal(0.0, 1.2), 23.0, 33.0))
+        parts.append(quidditch_tower(c, tan, out, z0, H, house_of[k], rng, wind))
+        # a long house banner on the outer wall, between this tower and the next
+        ka, kb = HOUSES[house_of[k]]
+        s_b = (s_t[k] + perim / n_t / 2) % perim
+        ib = int(np.argmin(np.abs(s - s_b)))
+        nb_ = np.array([nu[ib], nv[ib]])
+        bc = xy(u[ib] + nb_[0] * 7.6, v[ib] + nb_[1] * 7.6)
+        bo = (ex * nb_[0] + ey * nb_[1])[:2]
+        bt = np.array([-bo[1], bo[0], 0.0])
+        o_ = np.array([bc[0], bc[1], z0]) - bt * 1.1
+        for za, zb, kk in ((0.9, 1.7, kb), (1.7, 4.5, ka), (4.5, 5.3, kb)):
+            parts.append(quad(o_ + UPV * za, o_ + bt * 2.2 + UPV * za, o_ + bt * 2.2 + UPV * zb, o_ + UPV * zb, CLOTH, kk))
+    return mk.merge(parts)
+
+
+def pitch_sand():
+    """The sandy patches worn round the goal hoops, as a skin over the turf in the terrain's own material (M_Terrain with
+    its dirt mask in UV3.x fading to grass at the edges, so it blends into the terrain)."""
+    cx, cy = W.PITCH
+    yaw = math.radians(W.PITCH_YAW)
+    ex = np.array([math.cos(yaw), -math.sin(yaw)])
+    ey = np.array([math.sin(yaw), math.cos(yaw)])
+    bp = W.PITCH_SIZE[1] / 2 - 8.0
+    z = g(cx, cy) + 0.03
+    out = []
+    for end in (-1, 1):
+        vc = end * (bp - 12.5)
+        us = np.arange(-16.0, 16.01, 0.5)
+        vs = np.arange(-10.0, 10.01, 0.5)
+        U, V = np.meshgrid(us, vs, indexing="ij")
+        X = cx + U * ex[0] + (vc + V) * ey[0]
+        Y = cy + U * ex[1] + (vc + V) * ey[1]
+        r = np.hypot(U / 13.5, V / 8.0) + 0.09 * fn_noise(X, Y)
+        dirt = np.clip((1.0 - r) / 0.28, 0.0, 1.0)
+        dirt = dirt * dirt * (3 - 2 * dirt)
+        G_ = np.stack([X, Y, np.full_like(X, z)], -1)
+        m = mk.grid(G_, mat=0, uv_tile=1.0)
+        d = dirt.reshape(-1)[m.F]
+        keep = d.max(1) > 0.0
+        m = m.select_faces(keep)
+        d = d[keep]
+        if np.mean(m.face_normals()[:, 2]) < 0:
+            m.flip()
+        m.uv1 = np.zeros((m.nf, 3, 2))
+        m.uv2 = np.zeros((m.nf, 3, 2))
+        m.uv3 = np.stack([d, np.ones_like(d)], -1)
+        out.append(m)
+    return mk.merge(out)
+
+
+def fn_noise(x, y):
+    import fastnoise as fn
+
+    return fn.fbm2(np.asarray(x, np.float64).ravel(), np.asarray(y, np.float64).ravel(), 4.0, 3, 311).reshape(np.shape(x))
 
 
 # ----------------------------------------------------------------------------------------------- hut, greenhouses, stones
@@ -443,7 +747,18 @@ def build(out_dir, seed=8):
         out.append((name, m.nf))
         print(f"  {name:22s} {m.nf:9,d} tris", flush=True)
 
-    save("grounds_stadium", stadium(rng))
+    save("grounds_stadium", stadium(np.random.default_rng(seed + 2)))
+    rng.random(44)              # advance the shared stream as the first stadium did: the hut, the greenhouses, the stones,
+                                # the station and Hogsmeade keep their shapes
+    sand = pitch_sand()                                   # terrain material, its own masks: no stone masks
+    sand.save(f"{out_dir}/grounds_pitchsand.npz")
+    out.append(("grounds_pitchsand", sand.nf))
+    import props                                          # the flying lawn, lamps, braziers, the fountain, statues, odds and ends
+
+    pm, lights = props.build(np.random.default_rng(seed + 1))
+    save("grounds_props", pm)
+    np.save(f"{out_dir}/grounds_lights.npy", lights)
+    print(f"  grounds lights: {len(lights)} (braziers, lamp posts)", flush=True)
     save("grounds_hut", hut(rng))
     save("grounds_greenhouses", greenhouses(rng))
     save("grounds_stonecircle", stone_circle(rng))

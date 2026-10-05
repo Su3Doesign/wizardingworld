@@ -58,8 +58,8 @@ SHOTS = {
               dict(t=12.0, loc=(40.0, 114.0, 80.75), look_at=(72.0, 62.0, 92.0))]),        # deck 79 m
     "CAM_05_Quidditch_Aerial": dict(
         title="Over the Quidditch stadium towards the castle", aspect="landscape", lens=28.0, fstop=8.0, preset="day",
-        keys=[dict(t=0.0, loc=(-360.0, 1060.0, 205.0), look_at=(-40.0, 140.0, 105.0)),
-              dict(t=10.0, loc=(-300.0, 960.0, 185.0), look_at=(-40.0, 140.0, 105.0))]),
+        keys=[dict(t=0.0, loc=(-205.0, 790.0, 170.0), look_at=(-70.0, 250.0, 88.0)),
+              dict(t=10.0, loc=(-185.0, 715.0, 150.0), look_at=(-60.0, 230.0, 90.0))]),
     "CAM_06_ForestEdge_Hut": dict(
         title="From the edge of the forest by the hut, dusk", aspect="landscape", lens=30.0, fstop=4.0, preset="dusk",
         keys=[dict(t=0.0, loc=(512.0, 512.0, ("above", 2.2)), look_at=(30.0, 20.0, 120.0))]),
@@ -75,7 +75,7 @@ SHOTS = {
                                                                                                        a0=-120.0, a1=60.0,
                                                                                                        seconds=24.0)),
     "CAM_10_Cliff_Moss": dict(
-        title="Detail: moss, ledges and the deep walls on the gorge face", aspect="portrait", lens=40.0, fstop=4.0,
+        title="Detail: moss, ledges and the walls sunk into the rock on the gorge face", aspect="portrait", lens=40.0, fstop=4.0,
         preset="mist", keys=[dict(t=0.0, loc=(-250.0, 10.0, 52.0), look_at=(-175.0, 30.0, 60.0))]),
     "CAM_11_Gorge_River": dict(
         title="From the river up the gorge to the castle", aspect="portrait", lens=22.0, fstop=8.0, preset="mist",
@@ -84,7 +84,7 @@ SHOTS = {
         title="Site plan (top view)", aspect="square", lens=60.0, fstop=16.0, preset="day",
         keys=[dict(t=0.0, loc=(0.0, 200.0, 4200.0), look_at=(0.0, 201.0, 0.0))]),
     "CAM_13_Night_Cliff": dict(
-        title="The night castle reference: the castle on its cliff over the lake, deep walls and lit windows, moonlight",
+        title="The night castle reference: the castle on its cliff over the lake, its walls sunk into the rock, lit windows, moonlight",
         aspect="landscape", lens=35.0, fstop=5.6, preset="night",
         keys=[dict(t=0.0, loc=(-470.0, -420.0, 45.0), look_at=(-70.0, -30.0, 105.0))]),
     "CAM_14_Boathouse_Stairs": dict(
@@ -95,6 +95,16 @@ SHOTS = {
         title="The covered bridge over the stream's gorge, from the grounds, misty morning", aspect="landscape", lens=28.0,
         fstop=8.0, preset="mist",
         keys=[dict(t=0.0, loc=(113.0, 362.0, ("above", 8.0)), look_at=(128.0, 270.0, 76.0))]),
+    "CAM_16_Quidditch_Pitch": dict(
+        title="On the pitch: the goal hoops and the checkered house towers", aspect="landscape", lens=24.0, fstop=8.0,
+        preset="day",
+        keys=[dict(t=0.0, loc=(-116.8, 425.5, ("above", 2.2)), look_at=(-140.2, 536.1, 93.5)),
+              dict(t=10.0, loc=(-119.2, 447.6, ("above", 3.2)), look_at=(-140.2, 536.1, 94.0))]),
+    "CAM_17_Flying_Lesson": dict(
+        title="The flying lesson: brooms laid out on the lawn beside the stadium", aspect="landscape", lens=28.0, fstop=5.6,
+        preset="day",
+        keys=[dict(t=0.0, loc=(9.6, 376.1, ("above", 1.6)), look_at=(-34.1, 407.9, 84.6)),
+              dict(t=8.0, loc=(5.5, 378.9, ("above", 1.6)), look_at=(-34.1, 407.9, 84.6))]),
 }
 
 

@@ -173,10 +173,11 @@ class Sets:
 
 # ----------------------------------------------------------------------------------------------- the castle's masonry
 class Built:
-    """Where the castle's masonry stands off the plateau too (the entry stairs, the deep walls down the cliffs, the
-    bridges, the boathouse): per 1 m cell the lowest and highest z of the castle's meshes, so the scatter keeps out."""
+    """Where the castle's masonry stands off the plateau too (the entry stairs, the walls on the cliffs, the bridges, the
+    boathouse), and the stadium and the props on the grounds: per 1 m cell the lowest and highest z of their meshes, so
+    the scatter keeps out."""
 
-    def __init__(self, out_dir, x0=-260.0, y0=-300.0, nx=560, ny=660):
+    def __init__(self, out_dir, x0=-260.0, y0=-300.0, nx=560, ny=980):
         import glob
 
         self.x0, self.y0 = x0, y0
@@ -184,7 +185,9 @@ class Built:
         self.zmax = np.full((nx, ny), -np.inf)
         self.ok = False
         rng = np.random.default_rng(3)
-        for f in sorted(glob.glob(f"{out_dir}/castle_*.npz")):
+        files = sorted(glob.glob(f"{out_dir}/castle_*.npz")) + [f"{out_dir}/{n}.npz" for n in ("grounds_stadium", "grounds_props")
+                                                                if os.path.isfile(f"{out_dir}/{n}.npz")]
+        for f in files:
             m = Mesh.load(f)
             T = m.V[m.F]
             area = 0.5 * np.linalg.norm(np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0]), axis=1)
@@ -383,6 +386,14 @@ def outer_boulders(S, rng):
     print(f"  outer boulders: {k:,} ({time.time() - t:.0f}s)", flush=True)
 
 
+def pitch_oval(x, y):
+    """< 1 inside the Quidditch stadium's wall (normalised oval radius)."""
+    sa, ca = math.sin(math.radians(W.PITCH_YAW)), math.cos(math.radians(W.PITCH_YAW))
+    u = (x - W.PITCH[0]) * ca - (y - W.PITCH[1]) * sa
+    v = (x - W.PITCH[0]) * sa + (y - W.PITCH[1]) * ca
+    return np.hypot(u / (W.PITCH_SIZE[0] / 2 + 1.0), v / (W.PITCH_SIZE[1] / 2 + 1.0))
+
+
 def understory(S, rng, grass_density=0.6, fern_density=0.10):
     """Ferns in the forest floor and grass tufts on lawns / rims near the castle (hero areas only)."""
     t = time.time()
@@ -392,6 +403,11 @@ def understory(S, rng, grass_density=0.6, fern_density=0.10):
     cd = F.crag()
     f = F.forest()
     lawn = (1 - f) * W.sstep(0.8, 0.95, nz) * (h > W.LAKE_Z + 1.5) * (cd > 1.0) * W.sstep(4.0, 9.0, F.road())
+    lawn = lawn * (pitch_oval(X, Y) > 1.0)                                   # the Quidditch pitch is mown, and the flying lawn
+    fa = math.radians(W.FLYING_LAWN_YAW)
+    fu = (X - W.FLYING_LAWN[0]) * math.cos(fa) + (Y - W.FLYING_LAWN[1]) * math.sin(fa)
+    fv = -(X - W.FLYING_LAWN[0]) * math.sin(fa) + (Y - W.FLYING_LAWN[1]) * math.cos(fa)
+    lawn = lawn * ~((fu > -34.0) & (fu < 30.0) & (np.abs(fv) < 15.0))
     near = W.sstep(650.0, 250.0, np.hypot(X - 0.0, Y - 60.0))
     pg = grass_density / max(grass_density, fern_density) * lawn * near * 0.8
     pf = fern_density / max(grass_density, fern_density) * f * W.sstep(0.7, 0.85, nz) * near

@@ -642,7 +642,9 @@ def build_tower(sink, t: Tower, rng, cuts=()):
         is_root = tw is t
         st0 = tw.stages[0]
         foot = base
-        if is_root or base <= Z + 0.5:
+        if is_root and tw.foot is not None:
+            foot = tw.foot
+        elif is_root or base <= Z + 0.5:
             r0 = st0.size
             ring_pts = [(x + r0 * math.cos(a), y + r0 * math.sin(a)) for a in np.linspace(0, 2 * math.pi, 13)]
             foot = foot_along(ring_pts, base, max_drop=90.0)
@@ -1390,10 +1392,11 @@ def _occupancy(xs, ys):
 
 
 def build_cliff_walls(sink, cw: CliffWalls, rng):
-    """The deep foundations: along every cliff rim of the castle plateau, a battered masonry wall clads the upper cliff
-    (its depth wanders along the rim, its foot steps down onto the rock), counterforts with set-offs, a string course,
-    rows of small lit windows low on the rock, a crenellated parapet with lanterns where no building stands at the edge,
-    and towers rooted deep on the cliff at the sharpest corners of the rocks."""
+    """The foundations: along every cliff rim of the castle plateau, a masonry wall clads the top of the cliff and sinks
+    into it - its face leans back into the rock as it goes down, its depth wanders and steps irregularly along the rim,
+    so the rock swallows the lower courses unevenly. Slim buttresses, a string course, a few small lit windows, a
+    crenellated parapet with lanterns where no building stands at the edge, and turrets corbelled out of the cliff at
+    the sharpest corners of the rocks."""
     from skimage import measure
 
     step = 1.0
@@ -1441,30 +1444,25 @@ def build_cliff_walls(sink, cw: CliffWalls, rng):
         N = np.stack([T_[:, 1], -T_[:, 0]], 1)
         flip = crag_at(V + N * 3.0) < crag_at(V - N * 3.0)
         N[flip] *= -1.0
-        # depth of the wall at each vertex: as deep as the cliff allows, wandering between lo and hi along the rim
+        # depth of the wall at each vertex: shallow, wandering irregularly between lo and hi along the rim; the face leans
+        # back into the cliff as it goes down, so the rock swallows the lower courses unevenly
         drop = np.array([Z - float(ground(np.array([v[0] + n[0] * kk for kk in (2, 4, 6, 8, 10)]),
                                           np.array([v[1] + n[1] * kk for kk in (2, 4, 6, 8, 10)])).min()) for v, n in zip(V, N)])
         sv = idx.astype(float)
         ph = rng.uniform(0, 2 * math.pi, 3)
-        wob = 0.5 + 0.5 * (0.45 * np.sin(sv / 37.0 + ph[0]) + 0.35 * np.sin(sv / 13.0 + ph[1]) + 0.2 * np.sin(sv / 5.0 + ph[2]))
+        wob = 0.5 + 0.5 * (0.45 * np.sin(sv / 29.0 + ph[0]) + 0.35 * np.sin(sv / 11.0 + ph[1]) + 0.2 * np.sin(sv / 4.0 + ph[2]))
+        wob = np.clip(wob + rng.normal(0.0, 0.12, n_v), 0.0, 1.0)
         D = np.clip(drop - 3.0, 0.0, lo + (hi - lo) * wob)
         D[drop < 8.0] = 0.0
-        # the wall must stand on rock: where the cliff falls away under the planned foot, go on down (up to 12 m more)
-        # until the rock comes out to the wall's battered face
-        for i in np.where(D > 0)[0]:
-            for dd in np.arange(D[i], min(D[i] + 12.01, drop[i] - 2.0), 2.0):
-                q = V[i] + N[i] * (1.0 + dd / 11.0 + 0.6)
-                if Z - dd <= float(ground([q[0]], [q[1]])[0]) + 0.5:
-                    D[i] = dd
-                    break
-            else:
-                D[i] = max(D[i], min(D[i] + 12.0, drop[i] - 2.0))
-        # the foot steps down onto the rock in courses, in runs of a few segments (never shallower than the rock needs)
-        Dq = np.ceil(D / 3.5) * 3.5
-        for r0 in range(0, n_v, 3):
-            run = Dq[r0:r0 + 3]
+        # the foot steps up and down in courses, in short irregular runs
+        Dq = np.round(D / 2.5) * 2.5
+        r0 = 0
+        while r0 < n_v:
+            n_run = int(rng.integers(1, 4))
+            run = Dq[r0:r0 + n_run]
             if (run > 0).all():
-                Dq[r0:r0 + 3] = run.max()
+                Dq[r0:r0 + n_run] = run[int(rng.integers(0, len(run)))]
+            r0 += n_run
         pairs = [(i, i + 1) for i in range(n_v - 1)] + ([(n_v - 1, 0)] if closed else [])
         chunk = []
         cutters = []
@@ -1486,9 +1484,9 @@ def build_cliff_walls(sink, cw: CliffWalls, rng):
             pts = []
             dseg = float(Dq[i] if Dq[i] > 0 else Dq[j])
             for q, nq, d in ((A, nA, dseg), (Bp, nB, dseg)):
-                for zz, out in ((Z + 0.3, 1.0), (Z - d, 1.0 + d / 11.0)):
+                for zz, out in ((Z + 0.3, 0.8), (Z - d, 0.8 - d * 0.13)):
                     pts.append([q[0] + nq[0] * out, q[1] + nq[1] * out, zz])
-                    pts.append([q[0] - nq[0] * 3.0, q[1] - nq[1] * 3.0, zz])
+                    pts.append([q[0] - nq[0] * 3.5, q[1] - nq[1] * 3.5, zz])
             parts = [tag(m3d.Manifold.hull_points(np.array(pts)), STONE)]
             band = []                                                # the string course under the rim
             for q, nq in ((A, nA), (Bp, nB)):
@@ -1496,29 +1494,19 @@ def build_cliff_walls(sink, cw: CliffWalls, rng):
                     band.append([q[0] + nq[0] * 1.35, q[1] + nq[1] * 1.35, zz])
                     band.append([q[0] - nq[0] * 0.5, q[1] - nq[1] * 0.5, zz])
             parts.append(tag(m3d.Manifold.hull_points(np.array(band)), TRIM))
-            plinth = []                                              # a footing course where the wall meets the rock
-            for q, nq in ((A, nA), (Bp, nB)):
-                out = 1.0 + dseg / 11.0
-                for zz, extra in ((Z - dseg - 0.8, 0.9), (Z - dseg + 1.6, 0.55)):
-                    plinth.append([q[0] + nq[0] * (out + extra), q[1] + nq[1] * (out + extra), zz])
-                    plinth.append([q[0] - nq[0] * 1.0, q[1] - nq[1] * 1.0, zz])
-            parts.append(tag(m3d.Manifold.hull_points(np.array(plinth)), STONE))
-            if i % 3 == 0 and D[i] > 12.0:                           # a counterfort with two set-offs
+            if i % 4 == 0 and dseg > 8.0:                            # a slim buttress, leaning back with the wall
                 t_ = np.array([-nA[1], nA[0]])
-                zb = Z - D[i] - 1.0
-                for (z0_, z1_, p0_, p1_) in ((zb, zb + D[i] * 0.45, 2.8, 2.0), (zb + D[i] * 0.45, zb + D[i] * 0.8, 2.0, 1.3),
-                                             (zb + D[i] * 0.8, Z - 2.5, 1.3, 0.7)):
-                    bp = []
-                    for zz, pr in ((z0_, p0_), (z1_, p1_)):
-                        f = A + nA * (1.0 + (Z - zz) / 11.0)
-                        for tt in (-1.3, 1.3):
-                            for pp in (-0.6, pr):
-                                c = f + t_ * tt + nA * pp
-                                bp.append([c[0], c[1], zz])
-                    parts.append(tag(m3d.Manifold.hull_points(np.array(bp)), STONE))
-            for dd in (6.0, 13.0, 20.0, 27.0):                       # small windows low on the rock (lit at night)
-                if i % 2 == 0 and dseg > dd + 5.0 and rng.random() < 0.7:
-                    o = A + nA * (1.05 + dd / 11.0)
+                bp = []
+                for zz, pr in ((Z - dseg, 0.9), (Z - 2.5, 0.45)):
+                    f = A + nA * (0.8 - (Z - zz) * 0.13)
+                    for tt in (-1.1, 1.1):
+                        for pp in (-0.6, pr):
+                            c = f + t_ * tt + nA * pp
+                            bp.append([c[0], c[1], zz])
+                parts.append(tag(m3d.Manifold.hull_points(np.array(bp)), STONE))
+            for dd in (4.5, 9.5):                                    # small windows in the wall (lit at night)
+                if i % 2 == 0 and dseg > dd + 3.5 and rng.random() < 0.6:
+                    o = A + nA * (0.85 - (dd + 1.3) * 0.13)
                     inward = -a3(nA)
                     window(sink, cutters, "c_lancet", (o[0], o[1], Z - dd - 1.5), np.cross(inward, UP), inward, 1.0, 2.6)
             chunk.append((i, m3d.Manifold.batch_boolean(parts, m3d.OpType.Add)))
@@ -1533,11 +1521,11 @@ def build_cliff_walls(sink, cw: CliffWalls, rng):
                     sink.place("c_lantern", (lp[0], lp[1], Z), np.eye(3))
             if len(chunk) >= 12:
                 flush()
-            # tower candidates: sharp convex corners where the wall is deep; along straight runs every ~70 m
-            if D[i] > 20.0 and 3 <= i < n_v - 3:
+            # tower candidates: sharp convex corners where the wall is deepest; along straight runs every ~70 m
+            if D[i] > 9.0 and 3 <= i < n_v - 3:
                 score = -float((V[i - 3] - A) @ nA + (V[i + 3] - A) @ nA)
                 tower_cands.append((score, A, nA, D[i]))
-            elif D[i] > 18.0 and i % 14 == 7:
+            elif D[i] > 9.0 and i % 14 == 7:
                 tower_cands.append((1.6, A, nA, D[i]))
         flush()
     # towers rooted deep on the cliff at the sharpest corners
@@ -1546,14 +1534,14 @@ def build_cliff_walls(sink, cw: CliffWalls, rng):
     for score, A, nA, d in tower_cands:
         if len(placed) >= cw.towers or score < 1.5:
             break
-        r = float(rng.uniform(5.0, 6.8))
-        c = A + nA * (r * 0.55)
+        r = float(rng.uniform(4.6, 6.2))
+        c = A + nA * (r * 0.35)
         if any(np.linalg.norm(c - q) < 55.0 for q in placed) or occupied(c - nA * r * 0.5, r * 0.6):
             continue
         placed.append(c)
         kind = ("cone", "stepped", "crenel", "cone", "spire", "stepped")[len(placed) % 6]
-        up = float(rng.uniform(6.0, 22.0))                           # how far the tower rises above the plateau
-        body = CP.Stage(d + 3.0 + up, r, "string", floor_h=5.5)
+        up = float(rng.uniform(6.0, 20.0))                           # how far the tower rises above the plateau
+        body = CP.Stage(d + 4.0 + up, r, "string", floor_h=5.5)
         if kind == "stepped":                                         # a narrower stage on a corbelled gallery
             st = [body, CP.Stage(1.0, r, "gallery"), CP.Stage(float(rng.uniform(6.0, 10.0)), r * 0.72, "corbel", floor_h=4.0)]
             roof = CP.Roof("cone", r * 0.72 * 2.8, 1, 2.0)
@@ -1561,14 +1549,22 @@ def build_cliff_walls(sink, cw: CliffWalls, rng):
             st = [body, CP.Stage(4.5, r, "corbel", floor_h=4.0)]
             roof = CP.Roof("flat", 0.0, 0, 0.0)
         elif kind == "spire":
-            st = [CP.Stage(d + 3.0 + up, r * 0.92, "string", floor_h=5.5, shape="octagon"),
+            st = [CP.Stage(d + 4.0 + up, r * 0.92, "string", floor_h=5.5, shape="octagon"),
                   CP.Stage(4.0, r * 0.92, "crenel", floor_h=4.0, shape="octagon")]
             roof = CP.Roof("spire", r * 3.2, 1, 2.5)
         else:
             st = [body, CP.Stage(5.0, r, "corbel", floor_h=4.0)]
             roof = CP.Roof("cone", r * float(rng.uniform(2.1, 2.9)), 1, 2.5)
-        tw = Tower(f"CliffTower{len(placed)}", (c[0], c[1]), st, roof, "octagon" if kind == "spire" else "round", base=Z - d - 3.0)
+        foot = Z - d - 4.0
+        tw = Tower(f"CliffTower{len(placed)}", (c[0], c[1]), st, roof, "octagon" if kind == "spire" else "round", base=foot, foot=foot)
         build_tower(sink, tw, rng)
+        # the turret is corbelled out of the cliff: three stepped corbel courses and a stone cone under them, sinking into
+        # the rock
+        rr = r * (0.92 if kind == "spire" else 1.0)
+        r0_, r1_, r2_ = rr + 0.15, rr - 0.15, rr - 0.45
+        cone = mk.revolve([(0.001, foot - 1.3 - rr * 1.3), (r2_ * 0.55, foot - 1.3 - rr * 0.75), (r2_, foot - 1.3), (r2_, foot - 0.8),
+                           (r1_, foot - 0.8), (r1_, foot - 0.3), (r0_, foot - 0.3), (r0_, foot + 0.3), (0.001, foot + 0.3)], 32, mat=TRIM)
+        sink.add(cone.translate((c[0], c[1], 0.0)))
     print(f"    cliff walls: {len(placed)} cliff towers", flush=True)
 
 

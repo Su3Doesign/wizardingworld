@@ -2,7 +2,8 @@
 terrain, from the reference viewpoints and from close up - the quick check between castle builds.
 
     python castle_view.py OUT/geo OUT/castle_view [view,view...] [--samples N] [--long PX]
-Views: those of massing_view.py plus close-ups (hall, staircase, viaduct, stairs, astronomy, clock)."""
+Views: those of massing_view.py plus close-ups (hall, staircase, viaduct, stairs, astronomy, clock, ...) and the grounds
+(the stadium, the pitch, the flying lawn, the fountain, the Viaduct court)."""
 from __future__ import annotations
 
 import argparse
@@ -46,12 +47,21 @@ VIEWS.update({
     "clock": dict(loc=(60.0, -200.0, 70.0), at=(-16.0, -114.0, 130.0), lens=35.0, res=(1000, 1400)),
     # window / buttress detail on the hall
     "detail": dict(loc=(184.0, -50.0, 96.0), at=(165.0, -62.0, 104.0), lens=35.0, res=(1500, 1000)),
+    # the Quidditch stadium from the castle side, and from the pitch's south end
+    "stadium": dict(loc=(-30.0, 320.0, 150.0), at=(-125.0, 480.0, 88.0), lens=30.0, res=(1500, 1000)),
+    "pitch": dict(loc=(-108.1, 407.1, 85.5), at=(-141.9, 542.9, 92.0), lens=24.0, res=(1500, 1000)),
+    # the flying lesson's lawn, the fountain in the Transfiguration court, the Viaduct court's statues
+    "flying": dict(loc=(9.6, 376.1, 82.4), at=(-34.1, 407.9, 84.6), lens=28.0, res=(1500, 844)),
+    "quidditch_aerial": dict(loc=(-205.0, 790.0, 170.0), at=(-70.0, 250.0, 88.0), lens=28.0, res=(1500, 844)),
+    "fountain": dict(loc=(-53.0, 57.0, 84.0), at=(-65.0, 69.0, 82.0), lens=28.0, res=(1500, 1000)),
+    "viaduct_court": dict(loc=(113.0, 33.0, 83.5), at=(100.0, 47.0, 82.0), lens=26.0, res=(1500, 1000)),
 })
 
 CLAY = {"M_CastleStone": ((0.50, 0.46, 0.40), 0.8), "M_Trim": ((0.60, 0.56, 0.49), 0.75), "M_Slate": ((0.07, 0.085, 0.10), 0.45),
         "M_Lead": ((0.20, 0.21, 0.22), 0.4), "M_Glass": ((0.02, 0.025, 0.03), 0.08), "M_GlassInst": ((0.02, 0.025, 0.03), 0.08),
         "M_Wood": ((0.25, 0.17, 0.10), 0.8), "M_ClockFace": ((0.75, 0.70, 0.55), 0.5), "M_Lantern": ((0.9, 0.7, 0.4), 0.3),
-        "M_River": ((0.03, 0.06, 0.07), 0.05), "M_Fall": ((0.85, 0.9, 0.92), 0.4), "M_Mist": ((0.9, 0.92, 0.95), 0.9)}
+        "M_River": ((0.03, 0.06, 0.07), 0.05), "M_Fall": ((0.85, 0.9, 0.92), 0.4), "M_Mist": ((0.9, 0.92, 0.95), 0.9),
+        "M_Marble": ((0.85, 0.85, 0.82), 0.4), "M_Water": ((0.02, 0.04, 0.05), 0.05)}
 
 
 def main():
@@ -70,7 +80,10 @@ def main():
     sc.view_settings.look = "Medium High Contrast"
     M = {k: mat(k, c, r) for k, (c, r) in CLAY.items()}
     M["M_Terrain"] = terrain_mat()
-    for p in sorted(glob.glob(f"{a.geo}/castle_*.npz")) + sorted(glob.glob(f"{a.geo}/terrain_core_*.npz")):
+    M["M_Cloth"] = PV.m_cloth()
+    grounds = [f"{a.geo}/{n}.npz" for n in ("grounds_stadium", "grounds_props", "grounds_pitchsand", "grounds_greenhouses", "grounds_gates")
+               if os.path.isfile(f"{a.geo}/{n}.npz")]
+    for p in sorted(glob.glob(f"{a.geo}/castle_*.npz")) + sorted(glob.glob(f"{a.geo}/terrain_core_*.npz")) + grounds:
         PV.add_mesh(p, M)
     outer = sorted(glob.glob(f"{a.geo}/terrain_outer_*.npz"))
     if outer:

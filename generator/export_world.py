@@ -206,12 +206,16 @@ def write_scene(geo_dir, out_path):
         for p, R in zip(d["pos"], d["R"]):
             q = p + R.astype(np.float64) @ np.array([2.12, 0.0, 0.98])
             lanterns.append([round(100.0 * q[0], 1), round(-100.0 * q[1], 1), round(100.0 * q[2], 1)])
-    castle_lanterns = []                                     # the stairs', terraces', quay's and covered bridge's lanterns
+    castle_lanterns = []                                     # the stairs', terraces', quay's, covered bridge's, grounds' lanterns
     cp = f"{geo_dir}/instances/castle_lantern.npz"
     if os.path.isfile(cp):
         d = ins.load_set(cp)
         for p, R, sc in zip(d["pos"], d["R"], d["scale"]):
             q = p + R.astype(np.float64) @ (np.array([0.0, 0.0, 1.65]) * sc)
+            castle_lanterns.append([round(100.0 * q[0], 1), round(-100.0 * q[1], 1), round(100.0 * q[2], 1)])
+    gp = f"{geo_dir}/grounds_lights.npy"                     # the grounds' braziers and lamp posts (props.py)
+    if os.path.isfile(gp):
+        for q in np.load(gp).reshape(-1, 3):
             castle_lanterns.append([round(100.0 * q[0], 1), round(-100.0 * q[1], 1), round(100.0 * q[2], 1)])
     fog_volumes = [
         dict(name="Gorge", center=[-215.0, -40.0, 16.0], size=[90.0, 300.0, 26.0], radial=0.45, height=0.7,

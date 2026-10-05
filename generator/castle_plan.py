@@ -235,8 +235,8 @@ class CliffWalls:
     small windows low on the rock, crenellated terrace parapets where no building stands at the rim, towers rooted
     deep on the cliff at the rocks' corners."""
     name: str
-    depth: tuple = (12.0, 38.0)           # wall depth below the plateau: range along the rim (m), deeper where the rock needs
-    towers: int = 18
+    depth: tuple = (5.0, 16.0)            # wall depth below the plateau: range along the rim (m); the rock swallows the foot
+    towers: int = 12
 
 
 @dataclass

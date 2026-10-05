@@ -7,8 +7,8 @@ A Gothic castle on two jointed-granite rocks above a black Highland loch. The la
 - Long walled entry stairs climb from the boathouse up the bay's cliff, and the stream from the hills falls through
   an arch under every flight.
 - At the back, a covered timber bridge spans the stream's gorge towards the stone circle and the hut.
-- Around it all: the river gorge, the grounds with the stadium, the greenhouses and the gates, a forest of spruce and
-  a ring of eroded mountains.
+- Beside the castle, on the lawn behind it: the Quidditch stadium and the flying lesson's lawn.
+- Around it all: the river gorge, the greenhouses and the gates, a forest of spruce and a ring of eroded mountains.
 
 It's built to be rendered in Unreal Engine 5 with Nanite and Lumen, after your references:
 - the castle above the misty gorge (ref 1) and the moonlit castle with the boats (ref 2, the night poster);
@@ -18,16 +18,17 @@ It's built to be rendered in Unreal Engine 5 with Nanite and Lumen, after your r
 **Everything is original and generated from code.** There are no scanned assets, no copied geometry and no copied
 textures. The reference images are not part of this repository.
 
-![Layout: landmarks and the 15 shots](docs/layout_map.jpg)
+![Layout: landmarks and the 17 shots](docs/layout_map.jpg)
 
 | | |
 |---|---|
-| Unique geometry | **7.0 M triangles**, all Nanite: the 1.2 km hero terrain (3.6 M), the castle (1.59 M), the valley and mountains (1.6 M), the grounds and the water; plus a 1.25 M-triangle library of instanced meshes |
-| The castle | 45 towers (87 counting the crown turrets and stair turrets), 48 halls, ranges, courts, walls and bridges, the entry stairs with 5 towers, the deep cliff walls with 13 towers rooted in the rock. **24 500 instanced detail modules**: traceried windows, pinnacles, crockets, merlons, corbels, quoins, lanterns, the clock… |
-| Instances | **629 000** Nanite instances, about **45 billion instanced triangles**: 217 k spruces, 65 k young spruces, 31 k pines, 14 k birches, 4 k dead trees, 144 k moss cushions, 38 k granite boulders, 90 k grass clumps, 4 k ferns, the willow, 14 lantern boats and the castle's detail modules |
+| Unique geometry | **7.0 M triangles**, all Nanite: the 1.2 km hero terrain (3.6 M), the castle (1.48 M), the valley and mountains (1.6 M), the grounds with the stadium and the props, and the water; plus a 1.25 M-triangle library of instanced meshes |
+| The castle | 45 towers (87 counting the crown turrets and stair turrets), 48 halls, ranges, courts, walls and bridges, the entry stairs with 5 towers, the cliff walls sunk into the rock with 12 corbelled turrets. **23 500 instanced detail modules**: traceried windows, pinnacles, crockets, merlons, corbels, quoins, lanterns, the clock… |
+| The grounds | the Quidditch stadium (16 checkered house towers, stands, hoops, the marked pitch), the flying lesson's lawn (brooms, racks, the ball trunk), lamp posts, braziers, a fountain, statues, the greenhouses, the hut, the stone circle, the gates, Hogsmeade |
+| Instances | **644 000** Nanite instances, about **45 billion instanced triangles**: 218 k spruces, 65 k young spruces, 31 k pines, 14 k birches, 4 k dead trees, 163 k moss cushions, 37 k granite boulders, 86 k grass clumps, 4 k ferns, the willow, 14 lantern boats and the castle's detail modules |
 | Alpha cards | **none**. Every needle spray, leaf, moss cushion and grass blade is opaque geometry, which suits Nanite and gives clean shadows. |
 | Textures | 2K procedural PBR sets (granite, castle ashlar, dressed trim, moss, slate, grass, forest floor, shore, dirt, lead, leaded glass, wood, bark, needles…) plus macro and detail maps, water normals, waterfall, stars and moon |
-| Shots | 15 cameras with Level Sequences and Movie Render Queue jobs, each carrying its own lighting preset (see [Shots](#shots-camera-placements-for-the-main-events)) |
+| Shots | 17 cameras with Level Sequences and Movie Render Queue jobs, each carrying its own lighting preset (see [Shots](#shots-camera-placements-for-the-main-events)) |
 
 ## Can this reach the realism of references 1 and 2?
 
@@ -42,7 +43,7 @@ materials.** Here is what decides the result.
      open joints, sheeting grooves, buttresses and couloirs.
    - **Meshing:** marching cubes at 0.75 m, then decimated to 3.6 M triangles.
 
-   On top of that, 123 k moss cushions sit on the up-facing rock, young spruces grow on the ledges, and boulders lie
+   On top of that, about 160 k moss cushions sit on the up-facing rock, young spruces grow on the ledges, and boulders lie
    on the talus. Nanite renders all of it at full density. This is the same approach real granite environments use in
    UE5, and it is what makes ref 1's crag readable.
 2. **Surface materials are the one place where a scan beats code.** The procedural granite, moss and castle-stone
@@ -55,7 +56,7 @@ materials.** Here is what decides the result.
    - Eight local fog volumes: mist banks in the gorge, under the lake cliff, over the east arm and the bay, in the
      stream's gorge, at the waterfall's foot and over the forests.
    - A moon with a star dome, windows that glow at night, about 105 lanterns along the stairs, terraces, quay and covered
-     bridge, and lanterns on the boats.
+     bridge, braziers and lamp posts on the grounds and in the courts, and lanterns on the boats.
 
    Five presets (mist, day, sunset, dusk, night) are keyed into the shots.
 4. **Refs 1 and 2 are themselves highly polished, AI-like images.** Their final look also comes from grading. Render
@@ -94,17 +95,19 @@ The details below follow your notes:
   - Round towers stand at the turns, and lanterns line the whole way.
   - The stream drops down a cleft through the stairs: it runs under a pointed arch in every flight and falls between
     them, four falls in all, into the bay.
-- **Deep foundations.** Along every cliff rim, battered masonry walls clad the upper cliff and step down 12 to 50 m
-  until they rest on the rock:
-  - They carry counterforts, a string course, and rows of small windows that glow at night.
-  - Thirteen towers rise from low on the rock at the corners and along the long walls, with cones, spires,
-    battlements or a narrower stage on a corbelled gallery.
+- **Foundations sunk into the rock.** Along every cliff rim, a masonry wall clads the top of the cliff and sinks into
+  it, so the castle looks built into the rock rather than set on top of it:
+  - The face leans back into the cliff as it goes down. Its depth (5 to 16 m) wanders and steps irregularly along the
+    rim, so the rock swallows the lower courses unevenly.
+  - It carries slim buttresses, a string course and a few small windows that glow at night.
+  - Twelve turrets are corbelled out of the cliff at the rocks' sharpest corners, on stepped corbels that sink into the
+    rock. They have cones, spires, battlements or a narrower stage on a corbelled gallery.
   - Where no building stands at the edge, a crenellated parapet with lanterns runs along the terrace.
 - **The back of the castle.** A covered timber bridge leaves a gate tower at the north-east corner and crosses the
   stream's 25 m gorge on a stone pier and timber trestles. It has planked and braced walls, open bays and a slate
   roof, and leads to the grounds and the stone circle.
 
-**On polygon counts.** The castle is about 1.6 M unique triangles plus 24 500 instanced detail modules (6.9 M
+**On polygon counts.** The castle is about 1.5 M unique triangles plus 23 500 instanced detail modules (6.6 M
 instanced triangles). Its unique shells stay lean on purpose: unique geometry costs disk space (about 28 MB per million
 triangles in FBX), while instanced detail costs almost nothing in Nanite.
 
@@ -112,6 +115,31 @@ The next step towards "a billion triangles" is therefore instancing, not bigger 
 individual ashlar blocks on every wall, and individual slates on every roof, would take the castle into the hundreds
 of millions of triangles. The pipeline for it is in place: `detail_lib.py` builds a module once, and `castle.py`
 places it wherever the walls and roofs are.
+
+## The grounds
+
+- **The Quidditch stadium** stands on the lawn beside the castle, north-west of the greenhouses, its long axis turned
+  towards the castle. It follows the film's stadium, the studio model and the diagram in *Quidditch Through the Ages*:
+  - An oval pitch (55 × 152 m) with white markings: the boundary, the halfway line, the centre circle where the balls
+    are released, and the arcs of the two scoring areas. Three goal hoops stand at each end, the middle one the
+    highest, on sandy patches worn into the turf.
+  - The stands' front, facing the pitch, is a band of checkered house cloth under a timber rail, with three timber
+    tiers behind it. A low crenellated stone wall runs round the outside, hung with long house banners.
+  - Sixteen X-braced timber towers, 20 to 31 m tall, four for each house. Their spectator boxes are wrapped in
+    checkered house cloth (scarlet and gold, green and silver, blue and bronze, yellow and black), under canvas
+    pyramid roofs with long two-coloured streamers.
+- **The flying lesson** is laid out on the lawn between the greenhouses and the stadium:
+  - two rows of brooms on the grass, facing each other, with a Quaffle left in the aisle;
+  - two broom racks and the open ball trunk (the Quaffle, the two Bludgers and the Snitch) in the teacher's corner;
+  - practice hoops at the far end and benches along one side.
+- **Small things, so the grounds don't look empty:**
+  - lamp posts along the road from the castle to the gates, and braziers at the head of the stairs and at the gates;
+  - a tiered fountain with falling water in the Transfiguration court, with stone benches, braziers and statues of
+    robed wizards (one holds up a glowing orb);
+  - more statues in the Viaduct court and on the north-west rock's terrace, and a sundial in the clock court;
+  - barrels and crates by the greenhouses, and the gamekeeper's woodpile.
+
+  The braziers and the lamps light up at night.
 
 ## Quick start (Unreal Engine 5.6, Windows, DX12 GPU with ≥ 12 GB VRAM recommended)
 
@@ -126,7 +154,7 @@ places it wherever the walls and roofs are.
    ```
 
    (or **Tools ▸ Execute Python Script…** → `Content/Python/build_world.py`).
-3. Wait. The first run imports 118 FBX meshes, builds Nanite and compiles about 28 materials, then places 629 k
+3. Wait. The first run imports 120 FBX meshes, builds Nanite and compiles about 28 materials, then places 644 k
    instances. 30–90 minutes is normal. The log shows `[WW] >>> stage` / `<<< stage done` lines and ends with a summary.
    The level `/Game/WizardingWorld/Maps/WizardingWorld` opens lit with the **mist** preset.
 4. Look through a shot: in the Outliner right-click `CAM_01_Gorge_Mist` ▸ *Pilot*. Switch the editor lighting with
@@ -146,17 +174,19 @@ Re-running `build_world.run()` is safe: assets are replaced and the actors from 
 | 02 | `CAM_02_Boats_Night` | the boats cross the east arm by lantern light towards the boathouse, the Great Hall lit above the cliff (**ref 2**, the night poster); 12 s push-in | night | 40 mm | 2:3 |
 | 03 | `CAM_03_Lake_Sunset` | the castle silhouetted against the sunset, from the lake (**ref 4**) | sunset | 35 mm | 16:9 |
 | 04 | `CAM_04_Viaduct_Walk` | walking the grand viaduct over the inlet into the Viaduct court; 12 s | day | 24 mm | 16:9 |
-| 05 | `CAM_05_Quidditch_Aerial` | over the stadium towards the castle; 10 s | day | 28 mm | 16:9 |
+| 05 | `CAM_05_Quidditch_Aerial` | over the Quidditch stadium beside the castle, towards the castle; 10 s | day | 28 mm | 16:9 |
 | 06 | `CAM_06_ForestEdge_Hut` | from the forest edge by the hut, windows lighting up | dusk | 30 mm | 16:9 |
 | 07 | `CAM_07_Astronomy_Tower` | from the top of the Astronomy Tower (the tallest) over the moonlit lake | night | 20 mm | 16:9 |
 | 08 | `CAM_08_Station_Night` | from the station across the lake to the lit castle | night | 55 mm | 16:9 |
 | 09 | `CAM_09_Grand_Orbit` | 24 s orbit round the whole castle | day | 24 mm | 16:9 |
-| 10 | `CAM_10_Cliff_Moss` | detail: moss, ledges and the deep walls on the gorge face | mist | 40 mm | 9:16 |
+| 10 | `CAM_10_Cliff_Moss` | detail: moss, ledges and the walls sunk into the rock on the gorge face | mist | 40 mm | 9:16 |
 | 11 | `CAM_11_Gorge_River` | from the river up the gorge to the castle | mist | 22 mm | 9:16 |
 | 12 | `CAM_12_Plan_Top` | the site plan from above | day | 60 mm | 1:1 |
-| 13 | `CAM_13_Night_Cliff` | the night castle reference: the castle on its cliff over the lake, deep walls and lit windows under the moon | night | 35 mm | 16:9 |
+| 13 | `CAM_13_Night_Cliff` | the night castle reference: the castle on its cliff over the lake, its walls sunk into the rock, lit windows under the moon | night | 35 mm | 16:9 |
 | 14 | `CAM_14_Boathouse_Stairs` | the studio model's view: the entry stairs climbing the cliff, the waterfall through their arches | dusk | 24 mm | 16:9 |
 | 15 | `CAM_15_Covered_Bridge` | the covered bridge over the stream's gorge, from the gorge | mist | 28 mm | 16:9 |
+| 16 | `CAM_16_Quidditch_Pitch` | on the pitch: the goal hoops and the checkered house towers; 10 s dolly | day | 24 mm | 16:9 |
+| 17 | `CAM_17_Flying_Lesson` | the flying lesson: brooms laid out on the lawn, the racks and the ball trunk, the stadium behind; 8 s | day | 28 mm | 16:9 |
 
 **Changing the shots.** Shots are defined in `generator/shots.py`, which is the single source of truth: the scatter
 cuts sight-line clearings for them, the previews render them, and `scene.json` carries them to Unreal. To move a
@@ -171,7 +201,7 @@ camera, edit its position there, then run `python build_all.py --only scatter,ex
 | `day` | sun at 42° from the south-south-west | light haze, volumetric clouds |
 | `sunset` (ref 4) | sun 3.5° above the west-north-west horizon, orange | thin haze, mist over the lake, windows starting to glow |
 | `dusk` | sun just below the horizon | blue hour, lit windows, mist in the valley |
-| `night` (ref 2, the night castle) | bright blue moonlight from the north-north-west (a "day for night" look, after the night castle reference) | deep blue sky with moonlit clouds and stars, a cinematic moon disc, blue height fog, warm windows (about two in three lit, picked per window), the lanterns of the stairs, terraces, quay, covered bridge and boats, mist on the water |
+| `night` (ref 2, the night castle) | bright blue moonlight from the north-north-west (a "day for night" look, after the night castle reference) | deep blue sky with moonlit clouds and stars, a cinematic moon disc, blue height fog, warm windows (about two in three lit, picked per window), the lanterns of the stairs, terraces, quay, covered bridge and boats, the braziers and lamp posts of the grounds, mist on the water |
 
 The values live in `SourceAssets/scene.json` (`presets`) and in the `CFG` block at the top of `build_world.py`:
 window glow, lantern intensity, water absorption and scattering, instance density and render samples.
@@ -185,7 +215,7 @@ WizardingWorld/                    Unreal Engine 5.6 project (content-only, open
   Config/                          Lumen + VSM (8192 pages) + Nanite + DX12/SM6, volumetric fog, sky atmosphere
   Content/Python/build_world.py    the one-step scene builder (run inside the editor)
   Content/Python/render_shots.py   renders the queued shots with Movie Render Queue
-  SourceAssets/                    fbx/ (118 meshes, centimetres, Z-up) + fbx/instances/ (57 record files)
+  SourceAssets/                    fbx/ (120 meshes, centimetres, Z-up) + fbx/instances/ (57 record files)
                                    textures/ (2K PBR) + manifest.json + scene.json (shots, presets, mist banks, lanterns)
 generator/                         the procedural generators (numpy / numba / scipy / manifold3d / Blender-as-a-module)
 Previews/                          Cycles renders of every shot (NOT Unreal renders)
@@ -203,12 +233,13 @@ LOCAL_CLAUDE_PROMPT.md             for a Claude Code session on the PC that driv
 | `rockfield.py`, `core.py` | **The 1.2 × 1.2 km hero terrain.** It combines the height field with the granite SDF. Each point uses the rock weight and face frame of its nearest surface point, via exact distance transforms. It is meshed with marching cubes, Taubin-smoothed and quadric-decimated, then gets masks (rock, moss, forest floor, shore, road and SDF ambient occlusion) in UV1–UV3. |
 | `terrain.py` | **The valley and mountains outside the core.** This is an adaptive Delaunay mesh at 3–12 m spacing. It overlaps the core under a 0.45 m dip, so there is no seam. |
 | `castle_plan.py` | **The castle as data.** Every hall, range, court, gatehouse, wall, bridge, stair and tower, placed after the castle map. A tower is a stack of stages (round, octagonal or square, each set back from the one below and topped by a string course, a corbel table with a parapet, a corbelled gallery, crenellations or an open belfry) under a cone, spire, pyramid, helm or dome, with crown turrets and attached stair turrets that are towers again: the "towers within towers" of the Headmaster's and Astronomy towers. |
-| `castle.py` | **The detailed castle.** Walls and stages are solids with every window and door opening really cut. Plinths reach down to the rock. Halls have buttresses with set-offs, two tiers of traceried windows, pierced parapets, gables with crockets and lucarnes. Roofs are slate with modelled courses, hipped, gabled or butted. There are belfries with bells, the clock, and quoins on every free corner. Also built here: the two-tier grand viaduct, the bridges, the boathouse with its water gate, the entry stairs, the deep cliff walls with their towers, and the covered bridge. Unique shells go to 21 area meshes; the repeated ornament goes to instance records. |
+| `castle.py` | **The detailed castle.** Walls and stages are solids with every window and door opening really cut. Plinths reach down to the rock. Halls have buttresses with set-offs, two tiers of traceried windows, pierced parapets, gables with crockets and lucarnes. Roofs are slate with modelled courses, hipped, gabled or butted. There are belfries with bells, the clock, and quoins on every free corner. Also built here: the two-tier grand viaduct, the bridges, the boathouse with its water gate, the entry stairs, the cliff walls sunk into the rock with their corbelled turrets, and the covered bridge. Unique shells go to 21 area meshes; the repeated ornament goes to instance records. |
 | `detail_lib.py` | **The instanced detail modules** (Nanite instances, like the forest): five window types with tracery and glass, the rose window, the door, pinnacles with gablets and crockets, finials, merlons, corbels, machicolation arches, balusters, pierced parapet panels, lucarnes, dormers, chimneys, ridge cresting, gargoyles, bartizans, arcade columns, the clock face, lanterns and quoins. |
 | `castle_massing.py`, `castle_view.py` | the clay block-out of the plan and the clay check renders of the detailed castle |
-| `grounds.py` | the stadium (22 timber stand towers in four house colours, goal hoops), the hut, the greenhouses, the stone circle, the winged-boar gates, the tomb, the station, Hogsmeade (~100 houses), the boats with lanterns, the lake, the river, the stream and the waterfall (four falls down the cleft through the stairs) |
+| `grounds.py` | the Quidditch stadium (16 X-braced timber towers in checkered house cloth, the stands with their checkered front, the crenellated outer wall, the marked pitch with sandy goal areas, the goal hoops), the hut, the greenhouses, the stone circle, the winged-boar gates, the tomb, the station, Hogsmeade (~100 houses), the boats with lanterns, the lake, the river, the stream and the waterfall (four falls down the cleft through the stairs) |
+| `props.py` | the flying lesson's lawn (brooms, racks, the ball trunk, practice hoops, benches), lamp posts, braziers, the fountain, statues, the sundial, barrels, crates and the woodpile, and the lights of the braziers and lamps |
 | `trees.py`, `smallplants.py` | Norway spruces (150–200 k tris each: whorls of drooping branches, curtains of needle sprays), young spruces, a Scots pine, a dead snag, birches, the old willow, faceted granite boulders, moss cushions, ferns and grass clumps (the last three from the Flooded Rotunda's high-poly library) |
-| `scatter.py` | **Placement of everything.** Forests by density mask, below the tree line. Spruces on the crag's ledges and talus. Moss on up-facing rock, boulders on talus, in the river bed and along the shores. Understory near the castle. Nothing grows inside the castle's masonry (stairs, cliff walls, bridges). Sight-line clearings for every shot. |
+| `scatter.py` | **Placement of everything.** Forests by density mask, below the tree line. Spruces on the crag's ledges and talus. Moss on up-facing rock, boulders on talus, in the river bed and along the shores. Understory near the castle. Nothing grows inside the castle's masonry (stairs, cliff walls, bridges), the stadium or the props; the pitch and the flying lawn are mown. Sight-line clearings for every shot. |
 | `tex_world.py` | all textures (re-uses the Flooded Rotunda's masonry and moss generators) |
 | `sky.py` | star dome and moon disc |
 | `export_world.py` | FBX export (cm, Z-up, identity transform) + instance records + manifest + scene.json, **and parses every file back to verify it** |
@@ -239,17 +270,17 @@ All of these work on top of the build. The moss layer, the masks and the presets
 
 | | status |
 |---|---|
-| Meshes: units, axes, UV layers, material slots, extents, triangle counts, winding | **verified**: every FBX is parsed back and compared with the manifest (`export_world.py`), 118/118 OK |
+| Meshes: units, axes, UV layers, material slots, extents, triangle counts, winding | **verified**: every FBX is parsed back and compared with the manifest (`export_world.py`), 120/120 OK |
 | Instance records | **verified**: every `.bin` is read back. Placing library vertices with the Unreal record (mirrored import frame, quaternion, scale) reproduces the Blender placement to < 0.5 cm, 57/57 OK. |
 | Builder API | **verified statically**: 177 distinct `unreal.*` references, every `set_editor_property` key and every material-graph call checked against the UE 5.6 Python API stub (`check_builder.py`). Only the Movie Render Queue calls are not in that stub (the plugin was not part of it). They are guarded and fall back to manual setup. |
-| Builder logic | **executed end to end against a mocked `unreal` module** (`mock_run_builder.py`): 79 steps OK, all material graphs (including the per-window glass and the clock face), 629 394 instance records into 57 instanced components (quaternions and scales checked), 15 cameras, sequences with their preset tracks, render jobs, 119 lantern lights |
+| Builder logic | **executed end to end against a mocked `unreal` module** (`mock_run_builder.py`): 83 steps OK, all material graphs (including the per-window glass, the clock face and the eight-colour house cloth), 644 234 instance records into 57 instanced components (quaternions and scales checked), 17 cameras, sequences with their preset tracks, render jobs, 138 lantern lights |
 | Look | **checked in Blender Cycles** (`Previews/`): same meshes, instances, textures, cameras and sun directions. Lighting is path-traced with a compositor fog, not Lumen with volumetric fog and clouds. |
 | Running inside Unreal | **not tested here** (no GPU, no Unreal in this environment). Every stage is isolated, logged and has fallbacks; expect to tune exposure and fog on first open. |
 
 ## Performance
 
 - **Editor sluggish or low on VRAM:** set `CFG["instance_density"] = 0.5` or `CFG["instance_sets"] = ["spruce", "moss"]`
-  and re-run. Grass (90 k) and moss (144 k) are the cheapest sets to drop. The spruces are the heaviest. The castle's
+  and re-run. Grass (86 k) and moss (163 k) are the cheapest sets to drop. The spruces are the heaviest. The castle's
   detail modules (`castle_*` sets) are light; keep them.
 - **Blocky shadows in the forest:** virtual shadow map page-pool overflow. `r.Shadow.Virtual.MaxPhysicalPages` is
   already 8192; raise it to 16384 on 24 GB GPUs.
