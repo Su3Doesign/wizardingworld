@@ -108,11 +108,14 @@ def _export_mesh(m, base, out_dir, mats, extra, normals_angle):
     )
     lo, hi = m.V.min(0), m.V.max(0)
     fn = m.face_normals()
+    T = m.V[m.F]
+    area = 0.5 * np.linalg.norm(np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0]), axis=1)
     entry = dict(
         name=name, file=f"{name}.fbx", source=base, tris=int(m.nf), slots=slots,
         bbox_center_m=((lo + hi) / 2).round(4).tolist(), bbox_extent_m=((hi - lo) / 2).round(4).tolist(),
         uv_layers=[n for n, a in zip(("UV0", "UV1", "UV2", "UV3"), (m.uv0, m.uv1, m.uv2, m.uv3)) if a is not None],
-        size_mb=round(os.path.getsize(fbx_path) / 1e6, 2), mean_up=round(float(fn[:, 2].mean()), 3), **extra,
+        size_mb=round(os.path.getsize(fbx_path) / 1e6, 2),
+        mean_up=round(float((fn[:, 2] * area).sum() / max(area.sum(), 1e-9)), 3), **extra,
     )
     bpy.data.objects.remove(ob)
     if name in bpy.data.meshes:
@@ -301,7 +304,7 @@ def verify(out_dir, tol_cm=1.0):
             problems.append(f"uv layers {g['uv_layers']} != {e['uv_layers']}")
         if s["materials"] != e["slots"]:
             problems.append(f"materials {s['materials']} != {e['slots']}")
-        if e.get("kind") in ("terrain", "water") and e.get("mean_up", 1.0) < 0.3:
+        if e.get("kind") in ("terrain", "water") and e.get("mean_up", 1.0) < 0.3:        # area-weighted: catches flipped winding
             problems.append(f"surface faces down (mean normal z {e.get('mean_up')})")
         bad += bool(problems)
         print(f"  [{'OK ' if not problems else 'BAD'}] {e['name']:30s} " + ("; ".join(problems) if problems else f"{g['polys']:,} tris"))

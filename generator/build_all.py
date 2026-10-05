@@ -9,7 +9,8 @@
 Stages (each a module of this folder; all deterministic, fixed seeds):
     erode     world.py       hydraulic + thermal erosion of the mountain ring              (cache/erosion.npz)
     core      core.py        the 1.2 km hero terrain: height field + granite SDF (crag, gorge, ravine, lake cliffs)
-    castle    castle.py      the castle on its crag (castle_kit.py)
+    details   detail_lib.py  the castle's instanced detail modules (windows, pinnacles, merlons, lanterns, quoins ...)
+    castle    castle.py      the castle of castle_plan.py: unique shells per area + instance records of the modules
     terrain   terrain.py     the outer valley and the mountains (adaptive height-field mesh)
     grounds   grounds.py     stadium, hut, greenhouses, stone circle, gates, station, Hogsmeade, boats, water surfaces
     sky       sky.py         star dome + moon disc
@@ -70,6 +71,8 @@ def main():
         run("erode", ["world.py", "erode"])
     if want("core"):
         run("core", ["core.py", GEO, str(q["vox"]), str(q["core_tris"])])
+    if want("details"):
+        run("details", ["detail_lib.py", os.path.join(GEO, "lib")])
     if want("castle"):
         run("castle", ["castle.py", GEO])
     if want("terrain"):

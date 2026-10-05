@@ -32,6 +32,7 @@ from castle_plan import (ArchBridge, Arcade, Boathouse, CliffWalls, CoveredBridg
                          SuspensionBridge, Tower, Viaduct, Wall)
 
 STONE, TRIM, SLATE, LEAD, GLASS, WOOD = 20, 21, 22, 23, 24, 25
+PAVE = ck.PAVE                  # walkway paving (finished as trim with little moss)
 UP = np.array([0.0, 0.0, 1.0])
 Z = W.CASTLE_Z
 
@@ -964,6 +965,7 @@ def build_viaduct(sink, v: Viaduct, rng):
                 solids.append(tag(tri.transform(M), STONE))
         for zz in (z_t, v.deck - 0.3):
             solids.append(box_between(p0 - a * 0.5, p1 + a * 0.5, v.width + 0.6, zz - 0.25, zz + 0.25, TRIM))
+        solids.append(box_between(p0 - a * 0.5, p1 + a * 0.5, v.width - 0.3, v.deck - 0.1, v.deck + 0.06, PAVE))   # the paved deck
         whole = apply_cuts(m3d.Manifold.batch_boolean(solids, m3d.OpType.Add), cut)
         sink.add(whole)
         # arcaded parapet: small arches on columns between a coping and a plinth course
@@ -1000,7 +1002,8 @@ def build_archbridge(sink, br: ArchBridge, rng):
         bx = m3d.Manifold.cube([2 * r, br.width + 2, br.deck - 3.2 - r - zlow + 1], True).rotate([0, 0, yaw]).translate(
             [cc[0], cc[1], (br.deck - 3.2 - r + zlow - 1) / 2])
         cut.append(tag(arch + bx, TRIM))
-    solids = [body, box_between(p0 - a * 2.0, p1 + a * 2.0, br.width + 0.6, br.deck - 0.5, br.deck, TRIM)]
+    solids = [body, box_between(p0 - a * 2.0, p1 + a * 2.0, br.width + 0.6, br.deck - 0.5, br.deck - 0.1, TRIM),
+              box_between(p0 - a * 2.0, p1 + a * 2.0, br.width - 0.2, br.deck - 0.15, br.deck + 0.02, PAVE)]
     sink.add(apply_cuts(m3d.Manifold.batch_boolean(solids, m3d.OpType.Add), cut))
     for s in (-1.0, 1.0):
         n_out = b * s
@@ -1075,7 +1078,7 @@ def build_stair(sink, st: Stair, rng):
         for k in range(n):                                           # the steps
             x0, x1 = xa + sx * tread * k, xa + sx * tread * (k + 1)
             z = za + rise * (k + 1) / n
-            solids.append(box_between((x0, yc), (x1 + sx * 0.03, yc), Wd, z - 0.75, z, TRIM))
+            solids.append(box_between((x0, yc), (x1 + sx * 0.03, yc), Wd, z - 0.75, z, PAVE))
         nb = max(2, int(round(L / 3.0)))
         for k in range(nb):                                          # the walls, bay by bay
             x0, x1 = xa + sx * L * k / nb, xa + sx * L * (k + 1) / nb
@@ -1092,6 +1095,12 @@ def build_stair(sink, st: Stair, rng):
                 solids.append(box_between((x0, yo - 0.6), (x1 + sx * 0.02, yo - 0.6), t + 1.2, foot, zm, STONE))
                 solids.append(box_between((x0, yo - 0.6), (x1 + sx * 0.02, yo - 0.6), t + 1.4, zm - 0.3, zm, TRIM))
                 solids.append(box_between((x0, yo - 0.3), (x1 + sx * 0.02, yo - 0.3), t + 0.6, zm, zlo - 0.6, STONE))
+                if zlo - foot > 7.0 and k % 2 == 0:                  # counterforts on the tall retaining walls
+                    xb = x0
+                    for (z0_, z1_, pr) in ((foot, zm + 0.4, 2.6), (zm + 0.4, zlo - 1.6, 1.7)):
+                        yb = yo - t / 2 - pr / 2 + 0.3
+                        solids.append(box_between((xb - 0.95, yb), (xb + 0.95, yb), pr, z0_, z1_, STONE))
+                        solids.append(box_between((xb - 1.05, yb), (xb + 1.05, yb), pr + 0.2, z1_ - 0.25, z1_, TRIM))
             solids.append(box_between((x0, yo - 0.15), (x1 + sx * 0.02, yo - 0.15), t + 0.5, zlo - 0.9, zlo - 0.5, TRIM))
             solids.append(box_between((x0, yo), (x1 + sx * 0.02, yo), t + 0.16, zhi + 1.3, zhi + 1.45, TRIM))
             for j in (0.25, 0.75):                                   # two merlons per bay
@@ -1163,7 +1172,7 @@ def build_stair(sink, st: Stair, rng):
         if z < 3.0:                                                  # the boathouse quay: a paved stone platform
             foot = foot_along([(x0, y0), (x1, y0), (x1, y1), (x0, y1), (x0, y0)], z, max_drop=12.0)
             sink.add(box_between((x0, cy), (x1, cy), y1 - y0, foot, z - 0.2, STONE))
-            sink.add(box_between((x0 - 0.2, cy), (x1 + 0.2, cy), y1 - y0 + 0.4, z - 0.2, z, TRIM))
+            sink.add(box_between((x0 - 0.2, cy), (x1 + 0.2, cy), y1 - y0 + 0.4, z - 0.2, z, PAVE))
             for k in range(int((x1 - x0) / 4.0) + 1):                # bollards and lanterns along the quay edge
                 sink.place("c_finial", (x0 + 2.0 + 4.0 * k, y0 + 0.6, z), np.eye(3), (0.35, 0.35, 0.3))
                 if k % 2 == 1:
@@ -1171,7 +1180,7 @@ def build_stair(sink, st: Stair, rng):
             continue
         foot = foot_along([(x0, y0), (x1, y0), (x1, y1), (x0, y1), (x0, y0)], z, max_drop=60.0)
         solids = [box_between((x0, cy), (x1, cy), y1 - y0, foot, z - 0.15, STONE),
-                  box_between((x0 - 0.3, cy), (x1 + 0.3, cy), y1 - y0 + 0.6, z - 0.15, z + 0.05, TRIM)]
+                  box_between((x0 - 0.3, cy), (x1 + 0.3, cy), y1 - y0 + 0.6, z - 0.15, z + 0.05, PAVE)]
         solids.append(box_between((x0 - 1.0, cy), (x1 + 1.0, cy), y1 - y0 + 2.0, foot, foot + min(8.0, z - foot) * 0.6, STONE))
         edges = {"S": ((x0, y0), (x1, y0), (0.0, -1.0)), "N": ((x1, y1), (x0, y1), (0.0, 1.0)),
                  "W": ((x0, y1), (x0, y0), (-1.0, 0.0)), "E": ((x1, y0), (x1, y1), (1.0, 0.0))}
@@ -1437,10 +1446,25 @@ def build_cliff_walls(sink, cw: CliffWalls, rng):
                                           np.array([v[1] + n[1] * kk for kk in (2, 4, 6, 8, 10)])).min()) for v, n in zip(V, N)])
         sv = idx.astype(float)
         ph = rng.uniform(0, 2 * math.pi, 3)
-        wob = 0.5 + 0.5 * (0.55 * np.sin(sv / 41.0 + ph[0]) + 0.3 * np.sin(sv / 17.0 + ph[1]) + 0.15 * np.sin(sv / 7.0 + ph[2]))
+        wob = 0.5 + 0.5 * (0.45 * np.sin(sv / 37.0 + ph[0]) + 0.35 * np.sin(sv / 13.0 + ph[1]) + 0.2 * np.sin(sv / 5.0 + ph[2]))
         D = np.clip(drop - 3.0, 0.0, lo + (hi - lo) * wob)
         D[drop < 8.0] = 0.0
-        Dq = np.floor(D / 3.5) * 3.5                                 # the foot steps down onto the rock in courses
+        # the wall must stand on rock: where the cliff falls away under the planned foot, go on down (up to 12 m more)
+        # until the rock comes out to the wall's battered face
+        for i in np.where(D > 0)[0]:
+            for dd in np.arange(D[i], min(D[i] + 12.01, drop[i] - 2.0), 2.0):
+                q = V[i] + N[i] * (1.0 + dd / 11.0 + 0.6)
+                if Z - dd <= float(ground([q[0]], [q[1]])[0]) + 0.5:
+                    D[i] = dd
+                    break
+            else:
+                D[i] = max(D[i], min(D[i] + 12.0, drop[i] - 2.0))
+        # the foot steps down onto the rock in courses, in runs of a few segments (never shallower than the rock needs)
+        Dq = np.ceil(D / 3.5) * 3.5
+        for r0 in range(0, n_v, 3):
+            run = Dq[r0:r0 + 3]
+            if (run > 0).all():
+                Dq[r0:r0 + 3] = run.max()
         pairs = [(i, i + 1) for i in range(n_v - 1)] + ([(n_v - 1, 0)] if closed else [])
         chunk = []
         cutters = []
@@ -1460,18 +1484,25 @@ def build_cliff_walls(sink, cw: CliffWalls, rng):
                 continue
             A, Bp, nA, nB = V[i], V[j], N[i], N[j]
             pts = []
-            dseg = float(min(Dq[i], Dq[j]) if rng.random() < 0.5 else max(Dq[i], Dq[j]))
+            dseg = float(Dq[i] if Dq[i] > 0 else Dq[j])
             for q, nq, d in ((A, nA, dseg), (Bp, nB, dseg)):
-                for zz, out in ((Z + 0.3, 0.4), (Z - d, 0.4 + d / 14.0)):
+                for zz, out in ((Z + 0.3, 1.0), (Z - d, 1.0 + d / 11.0)):
                     pts.append([q[0] + nq[0] * out, q[1] + nq[1] * out, zz])
                     pts.append([q[0] - nq[0] * 3.0, q[1] - nq[1] * 3.0, zz])
             parts = [tag(m3d.Manifold.hull_points(np.array(pts)), STONE)]
             band = []                                                # the string course under the rim
             for q, nq in ((A, nA), (Bp, nB)):
                 for zz in (Z - 1.75, Z - 1.4):
-                    band.append([q[0] + nq[0] * 0.75, q[1] + nq[1] * 0.75, zz])
+                    band.append([q[0] + nq[0] * 1.35, q[1] + nq[1] * 1.35, zz])
                     band.append([q[0] - nq[0] * 0.5, q[1] - nq[1] * 0.5, zz])
             parts.append(tag(m3d.Manifold.hull_points(np.array(band)), TRIM))
+            plinth = []                                              # a footing course where the wall meets the rock
+            for q, nq in ((A, nA), (Bp, nB)):
+                out = 1.0 + dseg / 11.0
+                for zz, extra in ((Z - dseg - 0.8, 0.9), (Z - dseg + 1.6, 0.55)):
+                    plinth.append([q[0] + nq[0] * (out + extra), q[1] + nq[1] * (out + extra), zz])
+                    plinth.append([q[0] - nq[0] * 1.0, q[1] - nq[1] * 1.0, zz])
+            parts.append(tag(m3d.Manifold.hull_points(np.array(plinth)), STONE))
             if i % 3 == 0 and D[i] > 12.0:                           # a counterfort with two set-offs
                 t_ = np.array([-nA[1], nA[0]])
                 zb = Z - D[i] - 1.0
@@ -1479,7 +1510,7 @@ def build_cliff_walls(sink, cw: CliffWalls, rng):
                                              (zb + D[i] * 0.8, Z - 2.5, 1.3, 0.7)):
                     bp = []
                     for zz, pr in ((z0_, p0_), (z1_, p1_)):
-                        f = A + nA * (0.4 + (Z - zz) / 14.0)
+                        f = A + nA * (1.0 + (Z - zz) / 11.0)
                         for tt in (-1.3, 1.3):
                             for pp in (-0.6, pr):
                                 c = f + t_ * tt + nA * pp
@@ -1487,14 +1518,14 @@ def build_cliff_walls(sink, cw: CliffWalls, rng):
                     parts.append(tag(m3d.Manifold.hull_points(np.array(bp)), STONE))
             for dd in (6.0, 13.0, 20.0, 27.0):                       # small windows low on the rock (lit at night)
                 if i % 2 == 0 and dseg > dd + 5.0 and rng.random() < 0.7:
-                    o = A + nA * (0.45 + dd / 14.0)
+                    o = A + nA * (1.05 + dd / 11.0)
                     inward = -a3(nA)
                     window(sink, cutters, "c_lancet", (o[0], o[1], Z - dd - 1.5), np.cross(inward, UP), inward, 1.0, 2.6)
             chunk.append((i, m3d.Manifold.batch_boolean(parts, m3d.OpType.Add)))
             mid = (A + Bp) / 2
             nm = (nA + nB) / np.linalg.norm(nA + nB)
             if not any(occupied(mid - nm * kk, 1.0) for kk in (1.0, 3.0, 5.0, 7.0)):
-                q0_, q1_ = A + nA * 0.4, Bp + nB * 0.4                 # a terrace parapet, a lantern now and then
+                q0_, q1_ = A + nA * 1.0, Bp + nB * 1.0                 # a terrace parapet, a lantern now and then
                 sink.add(parapet_line(sink, q0_, q1_, nm, Z + 0.9, "crenel", over=-0.1, thick=0.8))
                 sink.add(box_between(q0_ - nm * 0.5, q1_ - nm * 0.5, 0.8, Z - 0.3, Z + 0.7, STONE))
                 if i % 5 == 0:
@@ -1502,10 +1533,12 @@ def build_cliff_walls(sink, cw: CliffWalls, rng):
                     sink.place("c_lantern", (lp[0], lp[1], Z), np.eye(3))
             if len(chunk) >= 12:
                 flush()
-            # tower candidates: sharp convex corners where the wall is deep
+            # tower candidates: sharp convex corners where the wall is deep; along straight runs every ~70 m
             if D[i] > 20.0 and 3 <= i < n_v - 3:
                 score = -float((V[i - 3] - A) @ nA + (V[i + 3] - A) @ nA)
                 tower_cands.append((score, A, nA, D[i]))
+            elif D[i] > 18.0 and i % 14 == 7:
+                tower_cands.append((1.6, A, nA, D[i]))
         flush()
     # towers rooted deep on the cliff at the sharpest corners
     tower_cands.sort(key=lambda c: -c[0])
@@ -1515,12 +1548,26 @@ def build_cliff_walls(sink, cw: CliffWalls, rng):
             break
         r = float(rng.uniform(5.0, 6.8))
         c = A + nA * (r * 0.55)
-        if any(np.linalg.norm(c - q) < 70.0 for q in placed) or occupied(c - nA * r * 0.5, r * 0.6):
+        if any(np.linalg.norm(c - q) < 55.0 for q in placed) or occupied(c - nA * r * 0.5, r * 0.6):
             continue
         placed.append(c)
-        tw = Tower(f"CliffTower{len(placed)}", (c[0], c[1]), [CP.Stage(d + 3.0 + 14.0, r, "string", floor_h=5.5),
-                                                              CP.Stage(5.0, r, "corbel", floor_h=4.0)],
-                   CP.Roof("cone", r * 2.5, 1, 2.5), "round", base=Z - d - 3.0)
+        kind = ("cone", "stepped", "crenel", "cone", "spire", "stepped")[len(placed) % 6]
+        up = float(rng.uniform(6.0, 22.0))                           # how far the tower rises above the plateau
+        body = CP.Stage(d + 3.0 + up, r, "string", floor_h=5.5)
+        if kind == "stepped":                                         # a narrower stage on a corbelled gallery
+            st = [body, CP.Stage(1.0, r, "gallery"), CP.Stage(float(rng.uniform(6.0, 10.0)), r * 0.72, "corbel", floor_h=4.0)]
+            roof = CP.Roof("cone", r * 0.72 * 2.8, 1, 2.0)
+        elif kind == "crenel":
+            st = [body, CP.Stage(4.5, r, "corbel", floor_h=4.0)]
+            roof = CP.Roof("flat", 0.0, 0, 0.0)
+        elif kind == "spire":
+            st = [CP.Stage(d + 3.0 + up, r * 0.92, "string", floor_h=5.5, shape="octagon"),
+                  CP.Stage(4.0, r * 0.92, "crenel", floor_h=4.0, shape="octagon")]
+            roof = CP.Roof("spire", r * 3.2, 1, 2.5)
+        else:
+            st = [body, CP.Stage(5.0, r, "corbel", floor_h=4.0)]
+            roof = CP.Roof("cone", r * float(rng.uniform(2.1, 2.9)), 1, 2.5)
+        tw = Tower(f"CliffTower{len(placed)}", (c[0], c[1]), st, roof, "octagon" if kind == "spire" else "round", base=Z - d - 3.0)
         build_tower(sink, tw, rng)
     print(f"    cliff walls: {len(placed)} cliff towers", flush=True)
 

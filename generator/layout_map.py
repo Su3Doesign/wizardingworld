@@ -20,7 +20,7 @@ def font(size):
     return ImageFont.load_default()
 
 
-def main(out, n=1600, half=1500.0, center=(0.0, 150.0)):
+def main(out, n=1600, half=1250.0, center=(150.0, 120.0)):
     xs = np.linspace(center[0] - half, center[0] + half, n)
     ys = np.linspace(center[1] + half, center[1] - half, n)
     X, Y = np.meshgrid(xs, ys)
@@ -46,8 +46,18 @@ def main(out, n=1600, half=1500.0, center=(0.0, 150.0)):
     for path, wcol in ((W.GORGE_PATH, (60, 120, 170, 255)), (W.RAVINE_PATH, (60, 120, 170, 255)), (W.ROAD_PATH, (150, 120, 80, 255))):
         pts = [px(*p) for p in path[::3]]
         d.line(pts, fill=wcol, width=4 if wcol[0] < 100 else 3)
-    # castle outline
-    d.line([px(*p) for p in W.CRAG_OUTLINE[::2]] + [px(*W.CRAG_OUTLINE[0])], fill=(250, 235, 200, 255), width=3)
+    # the castle's two rocks (the plateau rims), the stairs, the bridges
+    from skimage import measure
+
+    cd = F.crag().reshape(n, n)
+    for C in measure.find_contours(cd, 0.0):
+        if len(C) < 20:
+            continue
+        pts = [(c[1], c[0]) for c in C[::2]]
+        d.line(pts + [pts[0]], fill=(250, 235, 200, 255), width=3)
+    for xa, xb, yc, _, _ in W.STAIR_FLIGHTS:
+        d.line([px(xa, yc), px(xb, yc)], fill=(250, 235, 200, 255), width=3)
+    d.line([px(*q) for q in W.VIADUCT], fill=(250, 235, 200, 255), width=4)
     f1, f2, f3 = font(30), font(22), font(18)
     # cameras: position, view cone, number
     resolved = SH.resolve(lambda x, y: float(W.ground(x, y)[0]))
@@ -76,11 +86,12 @@ def main(out, n=1600, half=1500.0, center=(0.0, 150.0)):
         d.ellipse([X0 - 9, Y0 - 9, X0 + 9, Y0 + 9], fill=(20, 20, 20, 255), outline=(*colr, 255), width=3)
         num = name.split("_")[1]
         d.text((X0, Y0), num, fill=(255, 255, 255, 255), font=font(13), anchor="mm")
-    labels = [((0, 30), "CASTLE (crag top 80 m)"), ((-300, 320), "river gorge"), ((330, 260), "ravine"),
-              (W.PITCH, "Quidditch stadium"), (W.HUT, "hut"), (W.WILLOW, "willow"), (W.GREENHOUSES, "greenhouses"),
-              (W.STONE_CIRCLE, "stone circle"), (W.GATES, "gates"), (W.STATION, "station"), ((W.BOATHOUSE[0] - 40, W.BOATHOUSE[1] - 70), "boathouse"),
-              ((W.WATERFALL_LIP[0] + 10, W.WATERFALL_LIP[1] - 60), "waterfall"), ((0, -900), "THE BLACK LAKE"), (W.ISLANDS[0][:2], "tomb island"),
-              ((900, 700), "the forest"), ((-130, 1450), "to Hogsmeade")]
+    labels = [((-30, -40), "CASTLE"), ((-330, 330), "river gorge"), ((175, 520), "the stream"),
+              ((360, -60), "east arm"), ((190, 128), "the bay"), ((-30, 345), "covered bridge"), ((-120, 140), "grand viaduct"),
+              (W.PITCH, "Quidditch stadium"), (W.HUT, "hut"), (W.WILLOW, "willow"), ((W.GREENHOUSES[0] - 60, W.GREENHOUSES[1] + 20), "greenhouses"),
+              ((W.STONE_CIRCLE[0] + 60, W.STONE_CIRCLE[1] + 10), "stone circle"), (W.GATES, "gates"), (W.STATION, "station"),
+              ((W.BOATHOUSE[0] + 80, W.BOATHOUSE[1] + 10), "boathouse"), ((W.FALL_X + 140, 222), "stairs + waterfall"),
+              ((380, -880), "THE BLACK LAKE"), (W.ISLANDS[0][:2], "tomb island"), ((900, 700), "the forest"), ((-130, 1300), "to Hogsmeade")]
     for (x, y), t in labels:
         X0, Y0 = px(x, y)
         fnt = f1 if t.isupper() else f2

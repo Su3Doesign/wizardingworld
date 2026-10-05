@@ -22,7 +22,8 @@ Please do the following:
    If something is 100x off or mirrored, the calibration step's log line says why.
 4. For each preset run `import build_world; build_world.apply_preset("<preset>")` (mist, day, sunset, dusk, night),
    take a High Resolution Screenshot from the matching camera, and tune the values in `SourceAssets/scene.json` /
-   `CFG` until the mist shot looks like a misty Highland morning and the night shot like a moonlit lake.
+   `CFG` until the mist shot looks like a misty Highland morning and the night shots like the night castle reference:
+   a bright blue moonlit night, deep blue sky with lit clouds, warm windows and lanterns (`CAM_02`, `CAM_13`).
 5. Render all shots: `import render_shots; render_shots.run()`. Show me the images from `Saved/MovieRenders/`.
 6. Then the realism upgrades from README "Pushing it to photoreal": Megascans granite + moss into `MI`s of
    M_Terrain / M_Boulder, Megascans conifers for the hero foreground, then re-render.

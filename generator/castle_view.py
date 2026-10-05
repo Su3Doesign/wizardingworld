@@ -36,6 +36,8 @@ VIEWS.update({
     "bridge_gorge": dict(loc=(116.0, 318.0, 66.0), at=(127.0, 274.0, 78.0), lens=26.0, res=(1500, 1000)),
     # the north-west rock's west face over the gorge (the night reference's left side)
     "west_cliff": dict(loc=(-330.0, 70.0, 92.0), at=(-150.0, 30.0, 80.0), lens=30.0, res=(1500, 1000)),
+    # the deep wall on the gorge face, close (as CAM_10)
+    "cliffmoss": dict(loc=(-250.0, 10.0, 52.0), at=(-175.0, 30.0, 60.0), lens=40.0, res=(1000, 1500)),
     # the south-east rock's north-east corner over the bay (the deep walls and a cliff tower)
     "se_corner": dict(loc=(250.0, 140.0, 20.0), at=(170.0, 70.0, 60.0), lens=30.0, res=(1500, 1000)),
     # the Astronomy Tower's stages and crown

@@ -578,7 +578,7 @@ def night_sky(nt, bg, P, stars_path):
                 L(v, m.inputs[i])
         return m.outputs[0]
     up = maprange(sep.outputs[2], -0.02, 0.6)
-    grad = mixc(up, (0.105, 0.16, 0.30), (0.012, 0.026, 0.07))
+    grad = mixc(up, (0.10, 0.155, 0.29), (0.009, 0.020, 0.058))
     # the moon's direction (from the moon lamp's elevation / azimuth)
     el, az = math.radians(P["sun_elev"]), math.radians(P["sun_az"])
     md = (math.sin(az) * math.cos(el), math.cos(az) * math.cos(el), math.sin(el))
@@ -600,7 +600,7 @@ def night_sky(nt, bg, P, stars_path):
     cov = maprange(nz.outputs["Fac"], 0.47, 0.70)
     cloud = math_("MULTIPLY", cov, maprange(sep.outputs[2], 0.0, 0.12))
     cloud = math_("MULTIPLY", cloud, 0.9)
-    ccol = mixc(near, (0.085, 0.11, 0.17), (0.55, 0.62, 0.76))
+    ccol = mixc(near, (0.15, 0.19, 0.28), (0.6, 0.66, 0.8))
     sky = mixc(cloud, grad, ccol)
     # stars between the clouds, above the horizon
     env = nt.nodes.new("ShaderNodeTexEnvironment")
@@ -720,7 +720,7 @@ def setup_compositor(preset, cam_z):
     nt.links.new(rl.outputs["Depth"], is_sky.inputs[0])
     dsk = nt.nodes.new("CompositorNodeMath")
     dsk.operation = "SUBTRACT"
-    dsk.inputs[0].default_value = {"mist": 0.8, "day": 0.25, "sunset": 0.12, "night": 0.3, "dusk": 0.2}[preset]
+    dsk.inputs[0].default_value = {"mist": 0.8, "day": 0.25, "sunset": 0.12, "night": 0.15, "dusk": 0.2}[preset]
     nt.links.new(amt.outputs[0], dsk.inputs[1])
     dsk2 = nt.nodes.new("CompositorNodeMath")
     dsk2.operation = "MULTIPLY"

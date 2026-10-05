@@ -45,9 +45,9 @@ SHOTS = {
               dict(t=10.0, loc=(-296.0, -10.0, ("above", 33.0)), look_at=(-140.0, 44.0, 100.0))]),
     "CAM_02_Boats_Night": dict(
         title="Ref 2 / the night poster: the first-years cross the east arm by lantern light towards the boathouse", aspect="tall",
-        lens=28.0, fstop=4.0, preset="night",
-        keys=[dict(t=0.0, loc=(440.0, -190.0, 3.4), look_at=(100.0, 40.0, 100.0)),
-              dict(t=12.0, loc=(426.0, -140.0, 3.6), look_at=(100.0, 50.0, 100.0))]),
+        lens=40.0, fstop=4.0, preset="night",
+        keys=[dict(t=0.0, loc=(545.0, -440.0, 3.4), look_at=(110.0, 30.0, 82.0)),
+              dict(t=12.0, loc=(525.0, -395.0, 3.6), look_at=(110.0, 40.0, 82.0))]),
     "CAM_03_Lake_Sunset": dict(
         title="Ref 4: the castle silhouetted against the sunset, from the lake", aspect="landscape", lens=35.0, fstop=8.0,
         preset="sunset", keys=[dict(t=0.0, loc=(338.0, -433.0, 7.0), look_at=(0.0, 0.0, 84.0))]),
@@ -65,7 +65,7 @@ SHOTS = {
         keys=[dict(t=0.0, loc=(512.0, 512.0, ("above", 2.2)), look_at=(30.0, 20.0, 120.0))]),
     "CAM_07_Astronomy_Tower": dict(
         title="From the top of the Astronomy Tower over the lake, night", aspect="landscape", lens=20.0, fstop=8.0,
-        preset="night", keys=[dict(t=0.0, loc=(-98.0, 13.5, 182.8), look_at=(60.0, -700.0, 20.0))]),
+        preset="night", keys=[dict(t=0.0, loc=(-98.0, 14.0, 186.5), look_at=(60.0, -700.0, 30.0))]),
     "CAM_08_Station_Night": dict(
         title="From the station across the lake to the lit castle", aspect="landscape", lens=55.0, fstop=5.6, preset="night",
         keys=[dict(t=0.0, loc=(985.0, -655.0, 7.5), look_at=(0.0, -40.0, 112.0))]),

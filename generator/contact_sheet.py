@@ -42,7 +42,8 @@ def main(src, out, width=2400, row_h=430, gap=12, pad=24):
         y += h + gap
     sheet = Image.new("RGB", (width, int(round(y - gap + pad))), (16, 17, 19))
     d = ImageDraw.Draw(sheet, "RGBA")
-    d.text((pad, pad + 6), "The Castle on the Crag: Cycles previews of the 12 shots (not Unreal renders)", fill=(235, 235, 235), font=font(30))
+    d.text((pad, pad + 6), f"The Castle on the Crag: Cycles previews of the {len(ims)} shots (not Unreal renders)", fill=(235, 235, 235),
+           font=font(30))
     f = font(19)
     for name, im, x, y0, w, h in layout:
         sheet.paste(im.resize((w, h), Image.LANCZOS), (x, y0))

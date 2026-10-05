@@ -24,6 +24,7 @@ import meshkit as mk
 from meshkit import Mesh
 
 STONE, TRIM, SLATE, LEAD, GLASS, WOOD = 20, 21, 22, 23, 24, 25
+PAVE = 38                       # walkway paving (stair treads, decks, landings): finished as dressed trim with little moss
 _ID_MAT = {}                    # manifold original id -> material
 
 
@@ -854,7 +855,8 @@ def finish(mesh: Mesh, z_ground=None):
     """UV0 box projection for stone / trim / wood (2 m tiles), grime + moss masks in UV1 for every face."""
     if mesh is None or mesh.nf == 0:
         return mesh
-    stone = np.isin(mesh.mat, (STONE, TRIM, WOOD, LEAD))
+    paving = mesh.mat == PAVE
+    stone = np.isin(mesh.mat, (STONE, TRIM, WOOD, LEAD, PAVE))
     if mesh.uv0 is None:
         mesh.uv0 = np.full((mesh.nf, 3, 2), np.nan)
     box_uv = Mesh(mesh.V, mesh.F, mesh.mat).uv_box(2.0, only_missing=False).uv0
@@ -868,7 +870,9 @@ def finish(mesh: Mesh, z_ground=None):
     noise = mk.fbm(P.reshape(-1, 3) / 6.0, 3, seed=5).reshape(-1, 3)
     moss = np.clip(mk.smoothstep(0.5, 0.95, fn[:, 2])[:, None] * 0.7 + 0.5 * mk.smoothstep(8.0, 0.0, z - zg) + 0.35 * noise, 0, 1)
     moss = np.where((mesh.mat == SLATE)[:, None], 0.35 * mk.smoothstep(0.1, 0.8, noise + 0.2), moss)
+    moss = np.where(paving[:, None], 0.14 * mk.smoothstep(0.3, 0.8, noise + 0.15), moss)      # worn paving: moss in the joints
     mesh.uv1 = np.stack([np.clip(grime + 0.15 * noise, 0, 1), moss], -1)
+    mesh.mat[paving] = TRIM
     if mesh.uv2 is None:
         mesh.uv2 = np.zeros((mesh.nf, 3, 2))
     mesh.uv2 = np.nan_to_num(mesh.uv2)
