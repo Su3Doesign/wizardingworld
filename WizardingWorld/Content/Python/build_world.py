@@ -761,6 +761,28 @@ def build_glass(name="M_Glass"):
     return b.finish(), b
 
 
+def build_glass_inst(name="M_GlassInst"):
+    """Glass of the castle's instanced window modules: as M_Glass, but whether a window is lit, how bright and how warm
+    come from the instance (PerInstanceRandom) - about two windows in three glow at night."""
+    b = MatBuilder(name)
+    uv = b.uv(0)
+    c = b.tex(T("T_Glass_BC"), uv, S_COLOR)
+    o = b.tex(T("T_Glass_ORH"), uv, S_MASKS)
+    came = b.mask(o, "RGB", b=True)
+    rnd = b.node(unreal.MaterialExpressionPerInstanceRandom)
+    lit = b.smoothstep(rnd, "", 0.30, 0.33)
+    rnd2 = b.unary(unreal.MaterialExpressionFrac, b.mul(rnd, "", k=7.31))
+    warm = b.lerp(b.const3((1.0, 0.50, 0.18)), "", b.const3((1.0, 0.68, 0.36)), "", rnd2, "")
+    glow = b.mul(b.mul(lit, "", b.unary(unreal.MaterialExpressionOneMinus, came), ""), "", b.mpc("WindowGlow"), "")
+    glow = b.mul(glow, "", b.add(b.mul(rnd2, "", k=0.6), "", k=0.6), "")
+    b.out(c, "RGB", MP.MP_BASE_COLOR)
+    b.out(b.lerp(b.const(0.06), "", b.const(0.5), "", came, ""), "", MP.MP_ROUGHNESS)
+    b.out(b.const(0.6), "", MP.MP_SPECULAR)
+    b.out(b.mul(warm, "", glow, ""), "", MP.MP_EMISSIVE_COLOR)
+    b.out(b.tex(T("T_Glass_N"), uv, S_NORMAL), "RGB", MP.MP_NORMAL)
+    return b.finish(), b
+
+
 def build_cloth(name="M_Cloth"):
     """Stand canopies: four house colours picked by UV2.x (0, .25, .5, .75)."""
     b = MatBuilder(name)
@@ -949,6 +971,8 @@ def build_materials():
         ("M_Slate", build_slate),
         ("M_Lead", lambda: build_simple("M_Lead", "Lead", metal=0.4)),
         ("M_Glass", build_glass),
+        ("M_GlassInst", build_glass_inst),
+        ("M_ClockFace", lambda: build_emissive("M_ClockFace", (1.0, 0.93, 0.78), 14.0)),
         ("M_Wood", lambda: build_simple("M_Wood", "Wood", uv_tile=0.5)),
         ("M_Cloth", build_cloth),
         ("M_Marble", lambda: build_simple("M_Marble", None, (0.78, 0.77, 0.73), 0.35)),
@@ -1242,6 +1266,13 @@ def build_atmosphere(scene, mats, meshes):
         sp(unreal.PointLightComponent, lc, intensity=0.0, light_color=unreal.Color(255, 160, 80, 255), attenuation_radius=2500.0,
            source_radius=6.0, cast_shadows=True)
         lanterns.append(lt)
+    # the castle's lanterns (stairs, terraces, quay, covered bridge): small unshadowed warm lights
+    for i, p in enumerate(scene.get("castle_lanterns", [])):
+        lt = spawn(unreal.PointLight, f"CastleLantern_{i:03d}", loc=unreal.Vector(p[0], p[1], p[2]), folder="WizardingWorld/Lighting/Lanterns")
+        lc = lt.get_component_by_class(unreal.PointLightComponent)
+        sp(unreal.PointLightComponent, lc, intensity=0.0, light_color=unreal.Color(255, 150, 70, 255), attenuation_radius=1400.0,
+           source_radius=8.0, cast_shadows=False)
+        lanterns.append(lt)
     actors["lanterns"] = lanterns
     ACTORS.update(actors)
     return actors
@@ -1279,8 +1310,10 @@ def apply_preset(name):
         sp(unreal.SkyLightComponent, ACTORS["sky"].get_component_by_class(unreal.SkyLightComponent), intensity=float(P["sky"]))
     if ACTORS.get("fog"):
         fc = ACTORS["fog"].get_component_by_class(unreal.ExponentialHeightFogComponent)
+        fcol = P.get("fog_color", (0.447, 0.638, 1.0))
         sp(unreal.ExponentialHeightFogComponent, fc, fog_density=float(P["fog_density"]), fog_height_falloff=float(P["fog_falloff"]),
-           volumetric_fog_extinction_scale=1.0 if P.get("vol_fog") else 0.0)
+           volumetric_fog_extinction_scale=1.0 if P.get("vol_fog") else 0.0,
+           fog_inscattering_luminance=unreal.LinearColor(float(fcol[0]), float(fcol[1]), float(fcol[2]), 1.0))
         ACTORS["fog"].set_actor_location(unreal.Vector(0, 0, 100.0 * float(P.get("fog_height", 0.0))), False, False)
     for v, fv in ACTORS.get("banks", []):
         vc = v.get_component_by_class(unreal.LocalFogVolumeComponent)
@@ -1323,7 +1356,7 @@ def _rebind_actors():
                "stars": "stars", "moon_disc": "moon_disc", "VolumetricCloud": "clouds"}.get(lab)
         if key:
             ACTORS[key] = a
-        elif lab.startswith("Lantern_"):
+        elif lab.startswith(("Lantern_", "CastleLantern_")):
             lanterns.append(a)
         elif lab.startswith("Mist_"):
             fv = next((f for f in SCENE.get("fog_volumes", []) if f"Mist_{f['name']}" == lab), None)

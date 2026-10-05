@@ -55,6 +55,7 @@ class Columns:
         steep = ndimage.gaussian_filter(np.maximum(steep, spread), 2.2 / vox)
         lakebed = W.sstep(-30.0, -6.0, H)                       # deep lake floor: smooth
         w = np.clip(steep, 0, 1) * lakebed
+        w = w * (1.0 - W.stair_mask(X, Y))                     # the entry stairs' benches, the stream's cleft, the cove
         # taper the rock and dip the surface near the region border (the outer terrain covers that band)
         de = np.minimum.reduce([X - x0, x1 - X, Y - y0, y1 - Y])
         w = w * W.sstep(0.0, 25.0, de)

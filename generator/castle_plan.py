@@ -207,11 +207,36 @@ class Glasshouse:
 
 @dataclass
 class Stair:
-    """Walled stair flights down a cliff: a polyline of landings (x, y, z)."""
+    """The entry stairs: straight flights along x (x_start, x_end, y, z_start, z_end) on benches up the cliff, landing
+    bastions (x0, x1, y0, y1, z, side the flights leave from), a pointed arch where a flight bridges the stream's cleft."""
     name: str
-    path: list
-    width: float = 4.0
-    wall_h: float = 1.4
+    flights: list
+    landings: list
+    width: float = 5.0
+    wall_t: float = 1.0
+    cleft_x: float | None = None
+
+
+@dataclass
+class CoveredBridge:
+    """A covered timber bridge (after the illustrated map and the Legacy key art): a gallery with planked lower walls, a
+    band of open bays and a slate roof, on stone piers in the gorge and timber trestles on the banks."""
+    name: str
+    p0: tuple
+    p1: tuple
+    z0: float                              # deck at p0 / p1
+    z1: float
+    width: float = 4.4
+
+
+@dataclass
+class CliffWalls:
+    """The castle's deep foundations: battered, buttressed walls down the cliff faces along the plateau rims, rows of
+    small windows low on the rock, crenellated terrace parapets where no building stands at the rim, towers rooted
+    deep on the cliff at the rocks' corners."""
+    name: str
+    depth: tuple = (14.0, 44.0)           # wall depth below the plateau: range along the rim (m)
+    towers: int = 8
 
 
 @dataclass
@@ -429,7 +454,8 @@ def plan():
     # --- the north: the annex's greenhouses and walls, the north gate to the grounds
     B.append(Glasshouse("Greenhouse1", (-30.0, 150.0), (20.0, 168.0), 16.0, 10.0))
     B.append(Glasshouse("Greenhouse2", (-6.0, 136.0), (6.0, 182.0), 14.0, 12.0))
-    B.append(Wall("AnnexWall", [(-112.0, 168.0), (-60.0, 192.0), (0.0, 196.0), (40.0, 188.0), (62.0, 172.0)], 9.0, crenel=True))
+    B.append(Wall("AnnexWall", [(-112.0, 168.0), (-60.0, 192.0), (0.0, 196.0), (40.0, 188.0), (62.0, 172.0), (64.0, 204.0)], 9.0,
+                  crenel=True))
     B.append(Gatehouse("NorthGate", (-40.0, 196.0), 20.0, 16.0, 26.0, yaw=90.0, turret_r=6.0, turret_h=38.0))
     T.append(round_tower("NorthWestTower", (-140.0, 150.0), 7.0, 50.0, 22.0, band="corbel"))
 
@@ -441,10 +467,25 @@ def plan():
     B.append(SuspensionBridge("SuspensionBridge", W.SUSPENSION_BRIDGE[0], W.SUSPENSION_BRIDGE[1], Z - 6.0, 4.0, 16.0))
 
     # ======================================================================= the boathouse, the entry stairs, the Map Chamber
-    B.append(Boathouse("Boathouse", W.BOATHOUSE, -20.0, 26.0, 13.0, 1.2))
-    # the entry stairs climb the spur's south face in three long flights; the stream falls through an arch under each
-    B.append(Stair("EntryStairs", [(240.0, 184.0, 3.0), (112.0, 190.0, 30.0), (190.0, 196.0, 52.0), (66.0, 204.0, Z)],
-                   width=4.6, wall_h=1.5))
+    B.append(Boathouse("Boathouse", W.BOATHOUSE, 90.0, W.BOATHOUSE_LEN, 13.0, 1.2))
+    # the entry stairs climb the bay's north face in three flights joined by landing bastions; the stream falls through
+    # the arch under each flight (world.py shapes the face, the benches and the cleft to match)
+    B.append(Stair("EntryStairs", list(W.STAIR_FLIGHTS), list(W.STAIR_LANDINGS), W.STAIR_W, W.STAIR_WALL, W.FALL_X))
+    T.append(round_tower("StairHeadTower", (62.0, 209.0), 4.6, 20.0, 13.0, band="corbel", base=77.0,
+                         role="the tower at the head of the entry stairs"))
+    # ======================================================================= the back: the covered bridge over the stream's gorge
+    # from a gate tower at the castle's north-east corner (walled to the stair head) across the gorge to the grounds and
+    # the stone circle - as in the films, where the wooden bridge leads to the stone circle and on down to the hut
+    B.append(Wall("BridgeCourtWall", [(62.0, 213.6), (72.0, 236.0), (92.0, 256.0)], 8.0, crenel=True))
+    T.append(Tower("BridgeGate", (98.0, 261.0), [Stage(15.0, 6.0, "string", floor_h=5.0), Stage(8.0, 6.0, "corbel", gables=True)],
+                   Roof("helm", 14.0, 0, 2.5), "square", base=77.0, yaw=25.0,
+                   crown=[(dx, dy, pinnacle_turret("BGPin", 0.9, 4.0, 6.0)) for dx, dy in corners(6.0, 0.6)],
+                   role="the gate of the covered bridge"))
+    B.append(CoveredBridge("CoveredBridge", (104.0, 264.0), (151.0, 286.0), 79.0, 79.0, 4.4))
+    T.append(round_tower("BridgeEastTower", (155.5, 288.0), 3.6, 10.0, 9.0, band="corbel", base=77.0,
+                         role="the far end of the covered bridge"))
+    # ======================================================================= the deep foundations down the cliffs
+    B.append(CliffWalls("CliffWalls"))
     T.append(round_tower("MapChamber", (STACKS_MAP[0], STACKS_MAP[1]), 11.0, 16.0, 10.0, band="corbel", base=STACKS_MAP[2] - 2.0,
                          roof="dome", role="the Map Chamber on its sea stack"))
     B.append(ArchBridge("MapChamberBridge", (-90.0, -46.0), (-82.0, -12.0), STACKS_MAP[2] + 2.0, 3.5, 1))

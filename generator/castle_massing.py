@@ -16,7 +16,8 @@ import numpy as np
 import castle_plan as CP
 import meshkit as mk
 import world as W
-from castle_plan import (ArchBridge, Arcade, Boathouse, Gatehouse, Glasshouse, Hall, Range, Stair, SuspensionBridge, Tower,
+from castle_plan import (ArchBridge, Arcade, Boathouse, CliffWalls, CoveredBridge, Gatehouse, Glasshouse, Hall, Range, Stair,
+                         SuspensionBridge, Tower,
                          Viaduct, Wall)
 
 WALL, ROOF, TRIM, GLASS = 20, 22, 21, 24     # castle material ids (export_world.MAT_NAMES)
@@ -346,20 +347,17 @@ def build_glasshouse(g: Glasshouse, parts):
 
 
 def build_stair(s: Stair, parts):
-    P = np.asarray(s.path, float)
-    for i in range(len(P) - 1):
-        q0, q1 = P[i], P[i + 1]
-        d = q1[:2] - q0[:2]
-        L = float(np.linalg.norm(d))
-        a = d / L
-        steps = max(2, int(L / 1.2))
-        for k in range(steps):
-            t0, t1 = k / steps, (k + 1) / steps
-            z = q0[2] + (q1[2] - q0[2]) * t1
-            c0 = q0[:2] + d * t0
-            c1 = q0[:2] + d * t1
-            foot = ground_min([c0[0], c1[0]], [c0[1], c1[1]]) - 2.0
-            parts[WALL].append(oriented_box(c0, c1 + a * 0.05, s.width + 0.8, min(foot, z - 0.4), z + s.wall_h))
+    for xa, xb, yc, za, zb in s.flights:
+        n = max(2, int(abs(xb - xa) / 1.2))
+        for k in range(n):
+            x0 = xa + (xb - xa) * k / n
+            x1 = xa + (xb - xa) * (k + 1) / n
+            z = za + (zb - za) * (k + 1) / n
+            foot = ground_min([x0, x1], [yc, yc]) - 2.0
+            parts[WALL].append(oriented_box((x0, yc), (x1 + 0.05, yc), s.width + 1.2, min(foot, z - 0.4), z + 1.5))
+    for x0, x1, y0, y1, z, _ in s.landings:
+        foot = ground_min([x0, x1, x0, x1], [y0, y0, y1, y1]) - 2.0
+        parts[WALL].append(oriented_box(((x0 + x1) / 2, y0), ((x0 + x1) / 2, y1), x1 - x0, min(foot, z - 0.4), z + 1.5))
 
 
 def build_boathouse(b: Boathouse, parts):
@@ -374,6 +372,11 @@ def build_boathouse(b: Boathouse, parts):
     parts[ROOF].append(roof_solid("square", "spire", 1.8, b.base + 16.0, 9.0, q[0], q[1], b.yaw))
 
 
+def build_covered(c: CoveredBridge, parts):
+    parts[WALL].append(oriented_box(c.p0, c.p1, c.width + 0.8, min(c.z0, c.z1) - 0.6, max(c.z0, c.z1) + 3.0))
+    parts[ROOF].append(gable_roof(c.p0, c.p1, c.width + 0.8, max(c.z0, c.z1) + 3.0, 40.0, overhang=0.5))
+
+
 def build(out_dir):
     t0 = time.time()
     os.makedirs(out_dir, exist_ok=True)
@@ -383,7 +386,8 @@ def build(out_dir):
         build_tower(t, parts)
     fns = {Hall: build_hall, Range: build_range, Arcade: build_arcade, Gatehouse: build_gate, Wall: build_wall,
            Viaduct: build_viaduct, Stair: build_stair, Boathouse: build_boathouse, ArchBridge: build_archbridge,
-           SuspensionBridge: build_suspension, Glasshouse: build_glasshouse}
+           SuspensionBridge: build_suspension, Glasshouse: build_glasshouse, CoveredBridge: build_covered,
+           CliffWalls: lambda b, parts: None}
     for b in B:
         fns[type(b)](b, parts)
     meshes = []

@@ -24,9 +24,11 @@ PRESETS = {
     "sunset": dict(sun_elev=3.5, sun_az=316.0, sun_lux=8.0, sun_color=(255, 168, 112), sky=1.0, fog_density=0.009,
                    fog_falloff=0.010, fog_height=10.0, vol_fog=True, mist_banks=True, windows=0.55, clouds=0.6, exposure=0.6,
                    tint=(1.0, 0.96, 0.92), saturation=1.05),
-    "night": dict(sun_elev=24.0, sun_az=340.0, sun_lux=0.35, sun_color=(170, 195, 255), sky=0.08, fog_density=0.018,
-                  fog_falloff=0.012, fog_height=5.0, vol_fog=True, mist_banks=True, windows=1.0, clouds=0.45, exposure=1.6,
-                  tint=(0.92, 0.97, 1.05), saturation=0.95, moon=True, stars=True),
+    # night, after the night castle reference: a bright blue moonlit night (day-for-night), clouds lit by the moon, blue
+    # mist in the valleys, warm windows and lanterns
+    "night": dict(sun_elev=24.0, sun_az=340.0, sun_lux=0.8, sun_color=(165, 192, 255), sky=0.2, fog_density=0.02,
+                  fog_falloff=0.012, fog_height=5.0, vol_fog=True, mist_banks=True, windows=1.0, clouds=0.6, exposure=1.2,
+                  tint=(0.88, 0.95, 1.08), saturation=1.0, moon=True, stars=True, fog_color=(0.03, 0.05, 0.11)),
     "dusk": dict(sun_elev=0.8, sun_az=300.0, sun_lux=3.0, sun_color=(255, 150, 120), sky=0.6, fog_density=0.025,
                  fog_falloff=0.010, fog_height=8.0, vol_fog=True, mist_banks=True, windows=0.8, clouds=0.6, exposure=1.0,
                  tint=(0.98, 0.98, 1.02), saturation=1.0),
@@ -39,20 +41,21 @@ SHOTS = {
     "CAM_01_Gorge_Mist": dict(
         title="Ref 1: the castle above the gorge, misty morning", aspect="portrait", lens=24.0, fstop=8.0, preset="mist",
         subject_low=30.0,
-        keys=[dict(t=0.0, loc=(-300.0, -176.0, ("above", 30.0)), look_at=(-118.0, -74.0, 88.0)),
-              dict(t=10.0, loc=(-296.0, -156.0, ("above", 33.0)), look_at=(-118.0, -70.0, 90.0))]),
+        keys=[dict(t=0.0, loc=(-300.0, -30.0, ("above", 30.0)), look_at=(-140.0, 40.0, 98.0)),
+              dict(t=10.0, loc=(-296.0, -10.0, ("above", 33.0)), look_at=(-140.0, 44.0, 100.0))]),
     "CAM_02_Boats_Night": dict(
-        title="Ref 2: first-years crossing the lake by lantern light, moonrise behind the castle", aspect="tall", lens=28.0,
-        fstop=4.0, preset="night",
-        keys=[dict(t=0.0, loc=(300.0, -660.0, 3.2), look_at=(105.0, -90.0, 96.0)),
-              dict(t=12.0, loc=(272.0, -585.0, 3.6), look_at=(105.0, -90.0, 98.0))]),
+        title="Ref 2 / the night poster: the first-years cross the east arm by lantern light towards the boathouse", aspect="tall",
+        lens=28.0, fstop=4.0, preset="night",
+        keys=[dict(t=0.0, loc=(440.0, -190.0, 3.4), look_at=(100.0, 40.0, 100.0)),
+              dict(t=12.0, loc=(426.0, -140.0, 3.6), look_at=(100.0, 50.0, 100.0))]),
     "CAM_03_Lake_Sunset": dict(
         title="Ref 4: the castle silhouetted against the sunset, from the lake", aspect="landscape", lens=35.0, fstop=8.0,
         preset="sunset", keys=[dict(t=0.0, loc=(338.0, -433.0, 7.0), look_at=(0.0, 0.0, 84.0))]),
     "CAM_04_Viaduct_Walk": dict(
-        title="Walking the viaduct into the castle", aspect="landscape", lens=24.0, fstop=5.6, preset="day",
-        keys=[dict(t=0.0, loc=(343.0, -53.2, 80.75), look_at=(186.0, -40.0, 92.0)),         # out of the east tower's door
-              dict(t=12.0, loc=(300.0, -49.6, 80.75), look_at=(150.0, -37.0, 98.0))]),     # deck 79 m, parapet 80.4 m
+        title="Walking the grand viaduct over the inlet into the Viaduct court", aspect="landscape", lens=24.0, fstop=5.6,
+        preset="day",
+        keys=[dict(t=0.0, loc=(20.0, 126.5, 81.6), look_at=(62.0, 84.0, 90.0)),            # out of the Viaduct Entrance
+              dict(t=12.0, loc=(40.0, 114.0, 80.75), look_at=(72.0, 62.0, 92.0))]),        # deck 79 m
     "CAM_05_Quidditch_Aerial": dict(
         title="Over the Quidditch stadium towards the castle", aspect="landscape", lens=28.0, fstop=8.0, preset="day",
         keys=[dict(t=0.0, loc=(-360.0, 1060.0, 205.0), look_at=(-40.0, 140.0, 105.0)),
@@ -62,7 +65,7 @@ SHOTS = {
         keys=[dict(t=0.0, loc=(512.0, 512.0, ("above", 2.2)), look_at=(30.0, 20.0, 120.0))]),
     "CAM_07_Astronomy_Tower": dict(
         title="From the top of the Astronomy Tower over the lake, night", aspect="landscape", lens=20.0, fstop=8.0,
-        preset="night", keys=[dict(t=0.0, loc=(158.0, 133.0, 194.0), look_at=(60.0, -700.0, 20.0))]),
+        preset="night", keys=[dict(t=0.0, loc=(-98.0, 13.5, 182.8), look_at=(60.0, -700.0, 20.0))]),
     "CAM_08_Station_Night": dict(
         title="From the station across the lake to the lit castle", aspect="landscape", lens=55.0, fstop=5.6, preset="night",
         keys=[dict(t=0.0, loc=(985.0, -655.0, 7.5), look_at=(0.0, -40.0, 112.0))]),
@@ -72,14 +75,26 @@ SHOTS = {
                                                                                                        a0=-120.0, a1=60.0,
                                                                                                        seconds=24.0)),
     "CAM_10_Cliff_Moss": dict(
-        title="Detail: moss, ledges and the little house on the gorge face", aspect="portrait", lens=40.0, fstop=4.0,
-        preset="mist", keys=[dict(t=0.0, loc=(-262.0, -122.0, 44.0), look_at=(-176.0, -108.0, 52.0))]),
+        title="Detail: moss, ledges and the deep walls on the gorge face", aspect="portrait", lens=40.0, fstop=4.0,
+        preset="mist", keys=[dict(t=0.0, loc=(-250.0, 10.0, 52.0), look_at=(-175.0, 30.0, 60.0))]),
     "CAM_11_Gorge_River": dict(
         title="From the river up the gorge to the castle", aspect="portrait", lens=22.0, fstop=8.0, preset="mist",
-        keys=[dict(t=0.0, loc=(-228.0, -232.0, 6.0), look_at=(-160.0, -70.0, 100.0))]),
+        keys=[dict(t=0.0, loc=(-215.0, -170.0, 7.0), look_at=(-150.0, 20.0, 100.0))]),
     "CAM_12_Plan_Top": dict(
         title="Site plan (top view)", aspect="square", lens=60.0, fstop=16.0, preset="day",
         keys=[dict(t=0.0, loc=(0.0, 200.0, 4200.0), look_at=(0.0, 201.0, 0.0))]),
+    "CAM_13_Night_Cliff": dict(
+        title="The night castle reference: the castle on its cliff over the lake, deep walls and lit windows, moonlight",
+        aspect="landscape", lens=35.0, fstop=5.6, preset="night",
+        keys=[dict(t=0.0, loc=(-470.0, -420.0, 45.0), look_at=(-70.0, -30.0, 105.0))]),
+    "CAM_14_Boathouse_Stairs": dict(
+        title="The studio model's view: the entry stairs climbing the cliff, the waterfall through their arches, dusk",
+        aspect="landscape", lens=24.0, fstop=5.6, preset="dusk",
+        keys=[dict(t=0.0, loc=(255.0, 95.0, 5.0), look_at=(135.0, 200.0, 45.0))]),
+    "CAM_15_Covered_Bridge": dict(
+        title="The covered bridge over the stream's gorge, from the grounds, misty morning", aspect="landscape", lens=28.0,
+        fstop=8.0, preset="mist",
+        keys=[dict(t=0.0, loc=(113.0, 362.0, ("above", 8.0)), look_at=(128.0, 270.0, 76.0))]),
 }
 
 

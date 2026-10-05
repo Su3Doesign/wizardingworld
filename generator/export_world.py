@@ -29,17 +29,31 @@ from meshkit import Mesh
 
 MAT_NAMES = {0: "M_Terrain", 1: "M_Boulder", 6: "M_Fern3D", 13: "M_MossClump", 14: "M_Fern3D", 15: "M_Grass3D",
              20: "M_CastleStone", 21: "M_Trim", 22: "M_Slate", 23: "M_Lead", 24: "M_Glass", 25: "M_Wood",
-             26: "M_Cloth", 28: "M_Marble", 30: "M_Water", 31: "M_River", 32: "M_Fall", 33: "M_Mist", 34: "M_Lantern",
+             26: "M_Cloth", 27: "M_GlassInst", 28: "M_Marble", 29: "M_ClockFace",
+             30: "M_Water", 31: "M_River", 32: "M_Fall", 33: "M_Mist", 34: "M_Lantern",
              35: "M_Stars", 36: "M_Moon",
              40: "M_Bark", 41: "M_Needles", 42: "M_Leaf", 43: "M_DeadWood", 44: "M_BirchBark", 45: "M_PineBark"}
 
+
+class _Sets(dict):
+    """instance set -> library mesh per variant; the castle's sets (castle_<module>) use the detail modules lib_c_<module>."""
+
+    def __missing__(self, k):
+        if k.startswith("castle_"):
+            return lambda v, k=k: f"lib_c_{k[7:]}"
+        raise KeyError(k)
+
+    def __contains__(self, k):
+        return dict.__contains__(self, k) or k.startswith("castle_")
+
+
 # instance set -> library mesh per variant
-INSTANCE_SETS = {
+INSTANCE_SETS = _Sets({
     "spruce": lambda v: f"lib_spruce_{v:02d}", "spruceyoung": lambda v: f"lib_spruceyoung_{v:02d}", "pine": lambda v: "lib_pine_00",
     "snag": lambda v: "lib_snag_00", "birch": lambda v: f"lib_birch_{v:02d}", "willow": lambda v: "lib_willow_00",
     "boulder": lambda v: f"lib_boulder_{v:02d}", "moss": lambda v: f"lib_moss_{v:02d}", "fern": lambda v: f"lib_fern_{v:02d}",
     "grass": lambda v: f"lib_grass_{v:02d}", "boats": lambda v: "lib_boat_00",
-}
+})
 FOLIAGE_SETS = {"spruce", "spruceyoung", "pine", "snag", "birch", "willow", "fern", "grass"}
 
 # how Unreal should treat each asset:  kind (folder / tag), nanite, shadow, and whether Lumen's distance fields matter
@@ -189,22 +203,36 @@ def write_scene(geo_dir, out_path):
         for p, R in zip(d["pos"], d["R"]):
             q = p + R.astype(np.float64) @ np.array([2.12, 0.0, 0.98])
             lanterns.append([round(100.0 * q[0], 1), round(-100.0 * q[1], 1), round(100.0 * q[2], 1)])
+    castle_lanterns = []                                     # the stairs', terraces', quay's and covered bridge's lanterns
+    cp = f"{geo_dir}/instances/castle_lantern.npz"
+    if os.path.isfile(cp):
+        d = ins.load_set(cp)
+        for p, R, sc in zip(d["pos"], d["R"], d["scale"]):
+            q = p + R.astype(np.float64) @ (np.array([0.0, 0.0, 1.65]) * sc)
+            castle_lanterns.append([round(100.0 * q[0], 1), round(-100.0 * q[1], 1), round(100.0 * q[2], 1)])
     fog_volumes = [
         dict(name="Gorge", center=[-215.0, -40.0, 16.0], size=[90.0, 300.0, 26.0], radial=0.45, height=0.7,
              strength=dict(mist=1.0, sunset=0.35, dusk=0.6, night=0.5)),
         dict(name="LakeUnderCliff", center=[40.0, -330.0, 5.0], size=[560.0, 240.0, 16.0], radial=0.35, height=0.6,
              strength=dict(mist=0.9, sunset=0.6, dusk=0.7, night=0.8)),
-        dict(name="Ravine", center=[226.0, -90.0, 30.0], size=[50.0, 120.0, 30.0], radial=0.5, height=0.6,
+        dict(name="EastArm", center=[240.0, -60.0, 6.0], size=[120.0, 260.0, 16.0], radial=0.4, height=0.6,
              strength=dict(mist=1.0, sunset=0.3, dusk=0.5, night=0.6)),
+        dict(name="StreamGorge", center=[124.0, 290.0, 60.0], size=[60.0, 130.0, 22.0], radial=0.5, height=0.7,
+             strength=dict(mist=1.0, sunset=0.3, dusk=0.6, night=0.7)),
+        dict(name="FallSpray", center=[150.0, 186.0, 6.0], size=[40.0, 26.0, 16.0], radial=0.6, height=0.8,
+             strength=dict(mist=0.8, day=0.25, sunset=0.4, dusk=0.6, night=0.7)),
+        dict(name="Bay", center=[160.0, 140.0, 4.0], size=[200.0, 90.0, 12.0], radial=0.35, height=0.6,
+             strength=dict(mist=0.9, sunset=0.4, dusk=0.6, night=0.8)),
         dict(name="ValleyForest", center=[420.0, 650.0, 82.0], size=[900.0, 650.0, 30.0], radial=0.25, height=0.5,
              strength=dict(mist=1.0, dusk=0.5, night=0.3)),
         dict(name="WestHills", center=[-700.0, 100.0, 95.0], size=[700.0, 900.0, 40.0], radial=0.2, height=0.5,
              strength=dict(mist=0.8, dusk=0.4)),
     ]
     scene = dict(world=dict(lake_z=W.LAKE_Z, castle_z=W.CASTLE_Z, extent_m=W.EXTENT, moon_dir=list(SH.MOON_DIR)),
-                 presets=SH.PRESETS, shots=resolved, fog_volumes=fog_volumes, lanterns=lanterns)
+                 presets=SH.PRESETS, shots=resolved, fog_volumes=fog_volumes, lanterns=lanterns, castle_lanterns=castle_lanterns)
     json.dump(scene, open(out_path, "w"), indent=1)
-    print(f"  scene.json: {len(resolved)} shots, {len(SH.PRESETS)} presets, {len(fog_volumes)} mist banks, {len(lanterns)} lanterns")
+    print(f"  scene.json: {len(resolved)} shots, {len(SH.PRESETS)} presets, {len(fog_volumes)} mist banks, {len(lanterns)} boat "
+          f"lanterns, {len(castle_lanterns)} castle lanterns")
 
 
 def verify_instances(out_dir, geo_dir, n_check=150):

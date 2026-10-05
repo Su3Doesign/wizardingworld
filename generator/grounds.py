@@ -372,6 +372,9 @@ def river():
 
 
 def stream_and_fall():
+    """The stream across the grounds, then down the cleft through the entry stairs (world.FALL_BED): it runs under each
+    flight's arch and falls on the rock banks between them, the last fall into the bay.  Returns the water ribbons (runs),
+    the falling sheets and the spray."""
     path = W.RAVINE_PATH
     L = W.pathfield("ravine").length
 
@@ -379,38 +382,50 @@ def stream_and_fall():
         return W.ravine_bed(s) + 0.35
 
     def w(s):
-        return 7.0 + 2.0 * np.clip((s - (L - 300.0)) / 300.0, 0, 1)
+        return 7.0 - 1.0 * np.clip((s - (L - 120.0)) / 120.0, 0, 1)
 
-    st = ribbon(path, z, w, RIVER, step=1.5, s_range=(0.0, L - 0.5), uv_scale=4.0)
-    # the waterfall: a curved sheet from the lip down to the lake, bulging out a little, with UV v falling downwards
-    lx, ly, lz = W.WATERFALL_LIP
-    fx, fy, fz = W.WATERFALL_FOOT
-    d = np.array([fx - lx, fy - ly])
-    d /= np.linalg.norm(d)
-    side = np.array([-d[1], d[0]])
-    rows = np.linspace(0, 1, 60)
-    cols = np.linspace(-1, 1, 13)
-    G = np.empty((len(rows), len(cols), 3))
-    for i, t in enumerate(rows):
-        out = 4.0 * t ** 0.5 + 6.0 * t                                     # leaves the lip and falls clear of the cliff
-        zz = lz - (lz - fz) * t ** 1.6 * 1.0
-        wid = 8.0 + 6.0 * t
-        G[i, :, 0] = lx + d[0] * out + side[0] * cols * wid / 2
-        G[i, :, 1] = ly + d[1] * out + side[1] * cols * wid / 2
-        G[i, :, 2] = zz + 0.6 * np.cos(cols * 2.5) * (1 - t)
-    fall = mk.grid(G, mat=FALL)
-    UV = np.stack(np.meshgrid(rows * (lz - fz) / 4.0, (cols + 1) / 2, indexing="ij"), -1)[..., ::-1].reshape(-1, 2)
-    fall.uv0 = UV[fall.F]
-    # make the sheet face away from the cliff (towards the lake)
-    if np.mean(fall.face_normals()[:, :2] @ d) < 0:
-        fall.flip()
-    # spray at the foot: a squat dome of mist
-    mist = mk.revolve([(0.0, 0.0), (14.0, 0.5), (16.0, 6.0), (9.0, 14.0), (0.0, 18.0)], seg=32, mat=MIST)
-    mist.translate((fx + d[0] * 6.0, fy + d[1] * 6.0, W.LAKE_Z - 0.3))
-    if mist.volume() < 0:
-        mist.flip()
-    mist.uv_box(10.0, only_missing=False)
-    return st, fall, mist
+    runs = [ribbon(path, z, w, RIVER, step=1.5, s_range=(0.0, L - 0.3), uv_scale=4.0)]
+    falls, mists = [], []
+    B = W.FALL_BED
+    x = W.FALL_X
+    y_end = float(path[-1][1])
+    for i in range(len(B) - 1):
+        (ya, za), (yb, zb) = B[i], B[i + 1]
+        if ya > y_end or zb < W.LAKE_Z - 1.0 and za < W.LAKE_Z:
+            continue
+        drop = za - zb
+        if drop < 3.0:                                     # a run: the water's surface follows the bed
+            yy = np.arange(min(ya, y_end), yb - 0.01, -1.0)
+            if len(yy) < 2:
+                continue
+            P = np.stack([np.full(len(yy), x), yy], 1)
+            runs.append(ribbon(P, lambda s_, ya_=min(ya, y_end), yb_=yb, za_=za, zb_=zb: np.interp(s_, [0.0, ya_ - yb_], [za_, zb_]) + 0.35,
+                               lambda s_: np.full_like(s_, 5.6), RIVER, step=1.0, uv_scale=4.0))
+            continue
+        # a fall: the sheet leaves the lip level and curves down to the pool (a free-fall parabola), spreading a little
+        zb_eff = max(zb, W.LAKE_Z - 0.3)
+        rows = np.linspace(0, 1, max(12, int(drop / 0.8)))
+        cols = np.linspace(-1, 1, 11)
+        G = np.empty((len(rows), len(cols), 3))
+        for k, t in enumerate(rows):
+            wid = 5.2 + 1.6 * t
+            G[k, :, 0] = x + cols * wid / 2
+            G[k, :, 1] = ya + 0.2 - (ya - yb + 0.6) * t - 0.25 * np.cos(cols * 2.0) * t
+            G[k, :, 2] = za + 0.35 - (za + 0.35 - zb_eff) * t * t
+        f = mk.grid(G, mat=FALL)
+        UV = np.stack(np.meshgrid(rows * drop / 4.0, (cols + 1) / 2, indexing="ij"), -1)[..., ::-1].reshape(-1, 2)
+        f.uv0 = UV[f.F]
+        if np.mean(f.face_normals()[:, 1]) > 0:          # the sheet faces the lake (south)
+            f.flip()
+        falls.append(f)
+        r = 3.0 + 0.35 * drop
+        mist = mk.revolve([(0.0, 0.0), (r, 0.3), (r * 1.15, r * 0.35), (r * 0.65, r * 0.85), (0.0, r * 1.05)], seg=24, mat=MIST)
+        mist.translate((x, yb - 1.5, zb_eff - 0.3))
+        if mist.volume() < 0:
+            mist.flip()
+        mist.uv_box(10.0, only_missing=False)
+        mists.append(mist)
+    return mk.merge(runs), mk.merge(falls), mk.merge(mists)
 
 
 # ----------------------------------------------------------------------------------------------- driver

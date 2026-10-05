@@ -285,6 +285,25 @@ def m_glass(name="M_Glass", night=0.0):
     return m
 
 
+def m_glass_inst(name="M_GlassInst", night=0.0):
+    """Glass of the instanced window modules, as the Unreal material: lit / brightness / warmth per instance."""
+    m = bpy.data.materials.new(name)
+    b = NB(m)
+    v = b.coord(uv="UV0", scale=1.0)
+    bc = b.img("T_Glass_BC.jpg", "sRGB", v).outputs[0]
+    orh = b.img("T_Glass_ORH.png", "Non-Color", v).outputs[0]
+    _, _, came = b.sep(orh)
+    rnd = b.n.new("ShaderNodeObjectInfo").outputs["Random"]
+    lit = b.smooth(rnd, 0.30, 0.33)
+    rnd2 = b.math("FRACT", b.math("MULTIPLY", rnd, 7.31))
+    glow = b.math("MULTIPLY", b.math("MULTIPLY", lit, b.math("SUBTRACT", 1.0, came)), 9.0 * night)
+    glow.node.name = "GLOW"
+    glow = b.math("MULTIPLY", glow, b.math("ADD", b.math("MULTIPLY", rnd2, 0.6), 0.6))
+    warm = b.mix(rnd2, (1.0, 0.50, 0.18), (1.0, 0.68, 0.36))
+    b.set(**{"Base Color": bc, "Roughness": 0.08, "Emission Color": warm, "Emission Strength": glow})
+    return m
+
+
 def m_cloth(name="M_Cloth"):
     m = bpy.data.materials.new(name)
     b = NB(m)
@@ -386,6 +405,8 @@ def build_materials(night=0.0):
     M["M_Slate"] = m_slate()
     M["M_Lead"] = m_simple("M_Lead", "Lead", rough=0.45, metal=0.4)
     M["M_Glass"] = m_glass(night=night)
+    M["M_GlassInst"] = m_glass_inst(night=night)
+    M["M_ClockFace"] = m_emit("M_ClockFace", (1.0, 0.93, 0.78), 14.0 * night + 0.3)
     M["M_Wood"] = m_simple("M_Wood", "Wood", rough=0.8)
     M["M_Cloth"] = m_cloth()
     M["M_Marble"] = m_simple("M_Marble", None, (0.75, 0.74, 0.70), 0.35)
@@ -489,10 +510,7 @@ def setup_world(preset, stars_path):
     nt.links.new(bg.outputs[0], out.inputs[0])
     P = SH.PRESETS[preset]
     if P.get("stars"):
-        env = nt.nodes.new("ShaderNodeTexEnvironment")
-        env.image = bpy.data.images.load(stars_path, check_existing=True)
-        nt.links.new(env.outputs[0], bg.inputs[0])
-        bg.inputs["Strength"].default_value = 0.35
+        night_sky(nt, bg, P, stars_path)
     else:
         sky = nt.nodes.new("ShaderNodeTexSky")
         sky.sky_type = "NISHITA"
@@ -513,11 +531,99 @@ def setup_world(preset, stars_path):
     if P.get("moon"):
         el, az = math.radians(P["sun_elev"]), math.radians(P["sun_az"])
         d = (math.sin(az) * math.cos(el), math.cos(az) * math.cos(el), math.sin(el))
-        bu.add_sun(d, strength=0.35, angle_deg=0.55, color=tuple(c / 255.0 for c in P["sun_color"]), name="SunLamp")
+        bu.add_sun(d, strength=1.1, angle_deg=0.55, color=tuple(c / 255.0 for c in P["sun_color"]), name="SunLamp")
+
+
+def night_sky(nt, bg, P, stars_path):
+    """The night sky of the night castle reference: a deep blue gradient brightening to the horizon, soft clouds lit by
+    the moon (brighter towards it), a halo round the moon, stars between the clouds."""
+    L = nt.links.new
+    tc = nt.nodes.new("ShaderNodeTexCoord")
+    dirn = tc.outputs["Generated"]
+    sep = nt.nodes.new("ShaderNodeSeparateXYZ")
+    L(dirn, sep.inputs[0])
+
+    def maprange(x, a, b):
+        m = nt.nodes.new("ShaderNodeMapRange")
+        m.interpolation_type = "SMOOTHSTEP"
+        m.clamp = True
+        m.inputs["From Min"].default_value = a
+        m.inputs["From Max"].default_value = b
+        L(x, m.inputs[0])
+        return m.outputs[0]
+
+    def mixc(fac, a, b):
+        m = nt.nodes.new("ShaderNodeMix")
+        m.data_type = "RGBA"
+        for sock, v in ((m.inputs[6], a), (m.inputs[7], b)):
+            if isinstance(v, tuple):
+                sock.default_value = (*v, 1.0)
+            else:
+                L(v, sock)
+        if isinstance(fac, float):
+            m.inputs[0].default_value = fac
+        else:
+            L(fac, m.inputs[0])
+        return m.outputs[2]
+
+    def math_(op, a, b=None):
+        m = nt.nodes.new("ShaderNodeMath")
+        m.operation = op
+        for i, v in enumerate((a, b)):
+            if v is None:
+                continue
+            if isinstance(v, (int, float)):
+                m.inputs[i].default_value = v
+            else:
+                L(v, m.inputs[i])
+        return m.outputs[0]
+    up = maprange(sep.outputs[2], -0.02, 0.6)
+    grad = mixc(up, (0.105, 0.16, 0.30), (0.012, 0.026, 0.07))
+    # the moon's direction (from the moon lamp's elevation / azimuth)
+    el, az = math.radians(P["sun_elev"]), math.radians(P["sun_az"])
+    md = (math.sin(az) * math.cos(el), math.cos(az) * math.cos(el), math.sin(el))
+    dot = nt.nodes.new("ShaderNodeVectorMath")
+    dot.operation = "DOT_PRODUCT"
+    L(dirn, dot.inputs[0])
+    dot.inputs[1].default_value = md
+    near = math_("POWER", math_("MAXIMUM", dot.outputs["Value"], 0.0), 5.0)
+    halo = math_("POWER", math_("MAXIMUM", dot.outputs["Value"], 0.0), 160.0)
+    # clouds: fbm on the direction, flattened towards the horizon, thinning out low down
+    mp = nt.nodes.new("ShaderNodeMapping")
+    mp.inputs["Scale"].default_value = (2.4, 2.4, 7.0)
+    L(dirn, mp.inputs[0])
+    nz = nt.nodes.new("ShaderNodeTexNoise")
+    nz.inputs["Scale"].default_value = 1.7
+    nz.inputs["Detail"].default_value = 9.0
+    nz.inputs["Roughness"].default_value = 0.62
+    L(mp.outputs[0], nz.inputs["Vector"])
+    cov = maprange(nz.outputs["Fac"], 0.47, 0.70)
+    cloud = math_("MULTIPLY", cov, maprange(sep.outputs[2], 0.0, 0.12))
+    cloud = math_("MULTIPLY", cloud, 0.9)
+    ccol = mixc(near, (0.085, 0.11, 0.17), (0.55, 0.62, 0.76))
+    sky = mixc(cloud, grad, ccol)
+    # stars between the clouds, above the horizon
+    env = nt.nodes.new("ShaderNodeTexEnvironment")
+    env.image = bpy.data.images.load(stars_path, check_existing=True)
+    st_k = math_("MULTIPLY", math_("SUBTRACT", 1.0, cloud), maprange(sep.outputs[2], 0.02, 0.25))
+    stars = nt.nodes.new("ShaderNodeMix")
+    stars.data_type = "RGBA"
+    stars.blend_type = "ADD"
+    L(st_k, stars.inputs[0])
+    L(sky, stars.inputs[6])
+    L(env.outputs[0], stars.inputs[7])
+    halo_add = nt.nodes.new("ShaderNodeMix")
+    halo_add.data_type = "RGBA"
+    halo_add.blend_type = "ADD"
+    L(math_("MULTIPLY", halo, 0.6), halo_add.inputs[0])
+    L(stars.outputs[2], halo_add.inputs[6])
+    halo_add.inputs[7].default_value = (0.75, 0.82, 1.0, 1.0)
+    L(halo_add.outputs[2], bg.inputs[0])
+    bg.inputs["Strength"].default_value = 1.0
 
 
 # exposure bias over the metered middle grey, per preset (the mist is airy, the sunset a silhouette, dusk is dim)
-EV_BIAS = {"mist": 0.4, "day": 0.0, "sunset": -0.6, "dusk": -0.8}
+EV_BIAS = {"mist": 0.4, "day": 0.0, "sunset": -0.6, "dusk": -0.8, "night": -1.1}
 
 
 def auto_exposure(preset, out_dir, long=192):
@@ -626,7 +732,7 @@ def setup_compositor(preset, cam_z):
     amt.use_clamp = True
     nt.links.new(amt_.outputs[0], amt.inputs[0])
     nt.links.new(dsk2.outputs[0], amt.inputs[1])
-    fogc = {"mist": (0.62, 0.68, 0.70), "day": (0.62, 0.70, 0.82), "sunset": (0.95, 0.62, 0.45), "night": (0.010, 0.016, 0.030),
+    fogc = {"mist": (0.62, 0.68, 0.70), "day": (0.62, 0.70, 0.82), "sunset": (0.95, 0.62, 0.45), "night": (0.050, 0.080, 0.150),
             "dusk": (0.45, 0.40, 0.48)}[preset]
     mix = nt.nodes.new("CompositorNodeMixRGB")
     nt.links.new(amt.outputs[0], mix.inputs[0])
@@ -726,6 +832,9 @@ def main():
         add_instances(p, lib_obs, scale=a.scale)
     boats = ins.load_set(f"{a.geo}/instances/boats.npz")
     lantern_pos = [tuple(p + R @ np.array([2.12, 0.0, 0.98])) for p, R in zip(boats["pos"], boats["R"])]
+    if os.path.isfile(f"{a.geo}/instances/castle_lantern.npz"):
+        cl = ins.load_set(f"{a.geo}/instances/castle_lantern.npz")
+        lantern_pos += [tuple(p + R @ (np.array([0.0, 0.0, 1.65]) * sc_)) for p, R, sc_ in zip(cl["pos"], cl["R"], cl["scale"])]
     print(f"scene built in {time.time() - t0:.0f}s", flush=True)
     glass = bpy.data.materials["M_Glass"]
     lantern = bpy.data.materials["M_Lantern"]
@@ -735,6 +844,9 @@ def main():
         night = P["windows"]
         # window glow / lanterns for this preset
         glass.node_tree.nodes["GLOW"].inputs[1].default_value = 9.0 * night
+        bpy.data.materials["M_GlassInst"].node_tree.nodes["GLOW"].inputs[1].default_value = 9.0 * night
+        clock = bpy.data.materials["M_ClockFace"].node_tree.nodes["Principled BSDF"]
+        clock.inputs["Emission Strength"].default_value = 14.0 * night + 0.3
         lantern.node_tree.nodes["Principled BSDF"].inputs["Emission Strength"].default_value = 25.0 * night + 0.5
         night_lights(lantern_pos, P.get("moon", False))
         moon_disc(TEX, P.get("moon", False))
@@ -755,12 +867,8 @@ def main():
         cam.data.clip_start = 0.3
         setup_compositor(s["preset"], k["loc"][2])
         t = time.time()
-        if P.get("moon"):
-            sc.view_settings.look = "None"
-            sc.view_settings.exposure = P["exposure"] * 0.8 + 0.4
-        else:
-            sc.view_settings.look = "Medium High Contrast"      # closer to Unreal's filmic tone curve than AgX's base
-            auto_exposure(s["preset"], a.out)
+        sc.view_settings.look = "Medium High Contrast"          # closer to Unreal's filmic tone curve than AgX's base
+        auto_exposure(s["preset"], a.out)
         bu.render_to(f"{a.out}/{name}.png")
         print(f"rendered {name} ({rx}x{ry}, preset {s['preset']}, exposure {sc.view_settings.exposure:+.2f}) in {time.time() - t:.0f}s",
               flush=True)

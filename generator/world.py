@@ -118,16 +118,34 @@ GORGE_PATH = catmull([
 _GORGE_BED_Y = np.array([3000, 2250, 1650, 1150, 760, 470, 250, 80, -40, -150, -255, -380], np.float64)
 _GORGE_BED_Z = np.array([260, 175, 122, 92, 70, 50, 30, 15, 7, 2.2, -2.0, -8.0], np.float64)
 
-# east ravine -> the stream from the north-east hills: it crosses the grounds, cuts a cleft through the root of the
-# boathouse spur and falls through the arches of the entry stairs into the bay.  Bed 2-3 m below the natural ground.
+# east ravine -> the stream from the north-east hills: it crosses the grounds and reaches the rim of the bay's north
+# face, where it drops down a cleft through the entry stairs into the bay (FALL_BED).  Bed 2-3 m below the natural ground.
 RAVINE_PATH = catmull([
-    (600, 1400), (500, 1060), (410, 780), (330, 560), (260, 400), (200, 300), (162, 246), (150, 214),
+    (320, 1400), (240, 1060), (180, 780), (140, 560), (116, 400), (114, 300), (134, 262), (148, 240), (150, 228),
 ], step=2.0)
-_RAVINE_BED_Y = np.array([1400, 1060, 780, 560, 390, 290, 240, 214], np.float64)
-_RAVINE_BED_Z = np.array([96.0, 86.0, 80.0, 77.0, 74.0, 71.0, 66.0, 60.0], np.float64)
+# near the castle the stream has cut a gorge ~25 m deep into the grounds (the covered bridge spans it)
+_RAVINE_BED_Y = np.array([1400, 1060, 780, 560, 400, 330, 300, 262, 240, 228], np.float64)
+_RAVINE_BED_Z = np.array([96.0, 89.0, 84.0, 80.0, 75.0, 63.0, 58.0, 54.0, 52.0, 51.0], np.float64)
 RAVINE_GAP = 0.0
-WATERFALL_LIP = (150.0, 212.0, 60.0)
-WATERFALL_FOOT = (150.0, 182.0, 0.0)
+
+# the entry stairs: three flights up the bay's north face from the boathouse quay to the castle's north-east corner,
+# joined by landing bastions.  The stream's cleft cuts down the face; every flight bridges it on an arch and the stream
+# falls on the rock banks between them - seen from the boats, the waterfall drops through the stairs.
+# Flights run east-west:  (x_start, x_end, y, z_start, z_end);  landings / the quay:  (x0, x1, y0, y1, z, open side)
+STAIR_FLIGHTS = [(228.0, 92.0, 188.5, 2.5, 25.0), (92.0, 206.0, 201.5, 27.0, 47.0), (206.0, 70.0, 214.5, 49.0, 77.5)]
+STAIR_W = 5.0                    # the stair between its walls
+STAIR_WALL = 1.0                 # wall thickness (the outer wall stands on a battered retaining wall)
+STAIR_BAND = 4.0                 # half-width of a flight's bench (the stair, its walls, a margin)
+STAIR_LANDINGS = [(222.0, 252.0, 176.0, 193.0, 1.2, "W"), (82.0, 96.0, 184.5, 205.5, 26.0, "E"),
+                  (202.0, 216.0, 197.5, 218.5, 48.0, "W")]
+FALL_X = 150.0                   # the stream's cleft
+FALL_W = 7.0                     # cleft width at the bed
+# the stream bed down the cleft (y, z): out of the gorge into a pool under the top flight, a fall, under the middle
+# flight, a fall, under the bottom flight, the last fall into the bay
+FALL_BED = np.array([(244.0, 52.0), (228.0, 51.0), (219.5, 50.5), (209.0, 49.5), (207.4, 31.5), (196.6, 30.0), (195.0, 9.0),
+                     (184.6, 8.5), (183.2, -1.5), (170.0, -4.0)], np.float64)
+WATERFALL_LIP = (FALL_X, 209.0, 49.5)
+WATERFALL_FOOT = (FALL_X, 183.0, 0.0)
 
 # the boathouse spur: a rocky ridge from the north-west rock's north-east corner down into the bay
 SPUR_PATH = catmull([(50, 222), (100, 224), (150, 220), (200, 208), (244, 192)], step=2.0)
@@ -177,7 +195,8 @@ STONE_BRIDGE = ((-36.0, 40.0), (6.0, 22.0))
 SUSPENSION_BRIDGE = ((-58.0, -2.0), (-14.0, -24.0))
 STACKS = [(-100.0, -66.0, 13.0, 64.0, "MapChamberRock")]   # sea stacks: (x, y, radius, top z, name)
 STATION = (1010.0, -640.0)
-BOATHOUSE = (244.0, 186.0)
+BOATHOUSE = (240.0, 170.0)          # its water gate faces south into the bay (the boats' landing)
+BOATHOUSE_LEN = 26.0
 BOAT_DOCK_STATION = (930.0, -600.0)
 
 FOREST_CENTRES = [(1300, 600, 1500.0), (900, 1600, 1000.0), (-1100, 300, 900.0), (-700, -150, 500.0)]
@@ -380,7 +399,8 @@ class Fields:
         h = self._flatten(h, GREENHOUSES, (65.0, 45.0), 35.0)
         h = self._flatten(h, HUT, (25.0, 25.0), 30.0)
         h = h - 0.35 * sstep(5.0, 1.5, self.road())
-        return h
+        # 9. the bay's north face shaped for the entry stairs, the stream's cleft, the boathouse cove
+        return stair_face(x, y, h)
 
     def erosion_weight(self):
         """Where the eroded grid may change the analytic terrain (mountains, not the authored valley floor)."""
@@ -446,6 +466,97 @@ class Fields:
             f = f * sstep(4.0, 9.0, dr) * (1.0 - sstep(140.0, 60.0, L_r - sr) * sstep(60.0, 20.0, dr))
             return np.clip(f, 0, 1)
         return self._get("forest", _f)
+
+
+def stair_elements():
+    """The stair's platforms as boxes with a deck height linear along x: (x0, x1, y0, y1, z_at_x0, z_at_x1, lowest)."""
+    B = STAIR_BAND
+    out = []
+    for i, (xa, xb, yc, za, zb) in enumerate(STAIR_FLIGHTS):
+        x0, x1 = min(xa, xb), max(xa, xb)
+        z0, z1 = (za, zb) if xa < xb else (zb, za)
+        out.append((x0, x1, yc - B, yc + B, z0, z1, i == 0))
+    for k, (x0, x1, y0, y1, z, _) in enumerate(STAIR_LANDINGS):
+        out.append((x0, x1, y0, y1, z, z, k < 2))
+    return out
+
+
+def stair_deck(x, e):
+    x0, x1, _, _, z0, z1, _ = e
+    return z0 + (z1 - z0) * np.clip((x - x0) / max(x1 - x0, 1e-6), 0.0, 1.0)
+
+
+def stair_distance(x, y):
+    """Distance (m) to the nearest stair platform (0 on them)."""
+    d = np.full(np.shape(x), 1e9)
+    for x0, x1, y0, y1, *_ in stair_elements():
+        dx = np.clip(np.maximum(x0 - x, x - x1), 0, None)
+        dy = np.clip(np.maximum(y0 - y, y - y1), 0, None)
+        d = np.minimum(d, np.hypot(dx, dy))
+    return d
+
+
+def fall_bed(y):
+    return np.interp(-np.asarray(y, np.float64), -FALL_BED[:, 0], FALL_BED[:, 1])
+
+
+def stair_face(x, y, h):
+    """Step 9 of the height field.  Every stair platform gets a bench: fills raise the ground up to it (steep rock below,
+    very steep on the lake side of the lowest ones), cuts lower the ground to it (steep rock above) - so the flights sit
+    on benches stacked up the face with rock banks between them; the benches are then levelled exactly.  Then the
+    stream's cleft is cut down the face (it passes under the flights) and the boathouse cove is dug out of the shore."""
+    zone = (x > 30.0) & (x < 280.0) & (y > 140.0) & (y < 260.0)
+    if not zone.any():
+        return h
+    h = h.copy()
+    xs, ys, hs = x[zone], y[zone], h[zone]
+    E = stair_elements()
+    n = 0.8 * fn.fbm2(xs, ys, 9.0, 3, 91)
+    for e in E:
+        x0, x1, y0, y1, _, _, lowest = e
+        deck = stair_deck(xs, e) - 0.6
+        dx = np.clip(np.maximum(x0 - xs, xs - x1), 0, None)
+        ds = np.clip(y0 - ys, 0, None)
+        dn = np.clip(ys - y1, 0, None)
+        hs = np.maximum(hs, deck - 3.0 * (dx + np.clip(dn - 3.0, 0, None)) - (8.0 if lowest else 3.0) * ds + n)
+    for e in E:
+        x0, x1, y0, y1, _, _, lowest = e
+        deck = stair_deck(xs, e) - 0.6
+        dx = np.clip(np.maximum(x0 - xs, xs - x1), 0, None)
+        ds = np.clip(y0 - ys, 0, None)
+        dn = np.clip(ys - y1, 0, None)
+        if lowest:          # the lake side of the lowest platforms drops away: their outer walls stand on the rock / water
+            cut = np.where(ds > 0, np.maximum(deck - 0.9 - 6.0 * ds, LAKE_Z - 4.0) + 4.0 * dx, deck + 4.0 * (dx + dn))
+        else:
+            cut = deck + 4.0 * (dx + dn + ds)
+        hs = np.minimum(hs, cut + np.abs(n))
+    for e in E:                                                    # level the benches
+        x0, x1, y0, y1 = e[:4]
+        on = (xs >= x0) & (xs <= x1) & (ys >= y0) & (ys <= y1)
+        hs = np.where(on, stair_deck(xs, e) - 0.6, hs)
+    # the cleft: the stream's bed down the face, steep rock walls
+    dxf = np.clip(np.abs(xs - FALL_X) - FALL_W / 2, 0, None)
+    cleft = fall_bed(ys) + 4.0 * dxf + 0.6 * np.abs(n)
+    hs = np.where((ys > 172.0) & (ys < 250.0), np.minimum(hs, cleft), hs)
+    # the boathouse cove: the slip under the boathouse and the water before its gate
+    bx, by = BOATHOUSE
+    dcx = np.clip(np.abs(xs - bx) - 10.0, 0, None)
+    dcy = np.clip(np.maximum((by - BOATHOUSE_LEN / 2 - 14.0) - ys, ys - (by + 2.0)), 0, None)
+    hs = np.minimum(hs, LAKE_Z - 3.5 + 3.0 * (dcx + dcy))
+    h[zone] = hs
+    return h
+
+
+def stair_mask(x, y):
+    """1 on and near the stair benches and in the cleft (no granite displacement there), 0 elsewhere."""
+    d = stair_distance(x, y)
+    m = sstep(3.0, 0.6, d)
+    near = (y > 172.0) & (y < 250.0)
+    m = np.maximum(m, np.where(near, sstep(8.0, 4.0, np.abs(x - FALL_X)), 0.0))
+    bx, by = BOATHOUSE
+    m = np.maximum(m, sstep(6.0, 1.0, np.hypot(np.clip(np.abs(x - bx) - 10.0, 0, None),
+                                               np.clip(np.abs(y - by) - BOATHOUSE_LEN / 2, 0, None))))
+    return m
 
 
 _FLAT = {}

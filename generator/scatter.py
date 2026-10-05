@@ -112,6 +112,21 @@ class Sets:
         e["scale"].append(sc)
         e["variant"].append(np.asarray(variant, np.int16))
 
+    def keep_out_of(self, built):
+        """Drop instances inside / on the castle's masonry (trees with a wider berth than moss and grass)."""
+        for name, e in self.d.items():
+            r, pad = {"spruce": (3.5, 3.0), "spruceyoung": (2.5, 2.0), "pine": (3.0, 3.0), "snag": (2.5, 3.0), "birch": (3.0, 3.0),
+                      "boulder": (1.5, 1.5), "willow": (0.0, 0.0)}.get(name, (0.6, 0.6))
+            pos = np.concatenate(e["pos"])
+            drop = built.inside(pos, r, pad)
+            if drop.any():
+                keep = ~drop
+                e["pos"] = [pos[keep]]
+                e["R"] = [np.concatenate(e["R"])[keep]]
+                e["scale"] = [np.concatenate(e["scale"])[keep]]
+                e["variant"] = [np.concatenate(e["variant"])[keep]]
+                print(f"  castle masonry: removed {int(drop.sum()):,} {name}", flush=True)
+
     def clear_sightlines(self):
         """Remove trees (and big boulders) in front of the cameras of shots.py, so every shot has a clear view."""
         import shots
@@ -154,6 +169,62 @@ class Sets:
             print(f"  {name:12s} {len(pos):9,d} instances", flush=True)
             tot += len(pos)
         print(f"  total {tot:,} instances", flush=True)
+
+
+# ----------------------------------------------------------------------------------------------- the castle's masonry
+class Built:
+    """Where the castle's masonry stands off the plateau too (the entry stairs, the deep walls down the cliffs, the
+    bridges, the boathouse): per 1 m cell the lowest and highest z of the castle's meshes, so the scatter keeps out."""
+
+    def __init__(self, out_dir, x0=-260.0, y0=-300.0, nx=560, ny=660):
+        import glob
+
+        self.x0, self.y0 = x0, y0
+        self.zmin = np.full((nx, ny), np.inf)
+        self.zmax = np.full((nx, ny), -np.inf)
+        self.ok = False
+        rng = np.random.default_rng(3)
+        for f in sorted(glob.glob(f"{out_dir}/castle_*.npz")):
+            m = Mesh.load(f)
+            T = m.V[m.F]
+            area = 0.5 * np.linalg.norm(np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0]), axis=1)
+            pts = [m.V, T.mean(1)]
+            big = area > 1.5                                         # big faces (walls, roofs): fill them with samples
+            if big.any():
+                Tb = T[big]
+                n = np.minimum((area[big] / 0.8).astype(int) + 1, 400)
+                rep = np.repeat(np.arange(len(Tb)), n)
+                u, v = rng.random(len(rep)), rng.random(len(rep))
+                flip = u + v > 1
+                u[flip], v[flip] = 1 - u[flip], 1 - v[flip]
+                tb = Tb[rep]
+                pts.append(tb[:, 0] + (tb[:, 1] - tb[:, 0]) * u[:, None] + (tb[:, 2] - tb[:, 0]) * v[:, None])
+            P = np.concatenate(pts)
+            i = ((P[:, 0] - x0)).astype(int)
+            j = ((P[:, 1] - y0)).astype(int)
+            ok = (i >= 0) & (i < nx) & (j >= 0) & (j < ny)
+            np.minimum.at(self.zmin, (i[ok], j[ok]), P[ok, 2])
+            np.maximum.at(self.zmax, (i[ok], j[ok]), P[ok, 2])
+            self.ok = True
+        self._cache = {}
+
+    def grids(self, r):
+        if r not in self._cache:
+            from scipy import ndimage
+
+            k = 2 * int(math.ceil(r)) + 1
+            self._cache[r] = (ndimage.minimum_filter(self.zmin, size=k), ndimage.maximum_filter(self.zmax, size=k))
+        return self._cache[r]
+
+    def inside(self, pos, r=1.0, pad=1.0):
+        """True for points standing in / on / right under the masonry (within r m in plan, pad m in height)."""
+        if not self.ok or not len(pos):
+            return np.zeros(len(pos), bool)
+        lo, hi = self.grids(r)
+        i = np.clip((pos[:, 0] - self.x0).astype(int), 0, lo.shape[0] - 1)
+        j = np.clip((pos[:, 1] - self.y0).astype(int), 0, lo.shape[1] - 1)
+        z = pos[:, 2]
+        return (z > lo[i, j] - pad) & (z < hi[i, j] + pad)
 
 
 # ----------------------------------------------------------------------------------------------- forests
@@ -344,6 +415,7 @@ def build(out_dir="OUT/geo", seed=13, density=1.0):
     understory(S, rng)
     wx, wy = W.WILLOW
     S.add("willow", np.array([[wx, wy, float(W.ground(wx, wy)[0]) - 0.6]]), upright(1, rng, 0.0), np.array([1.25]), np.array([0]))
+    S.keep_out_of(Built(out_dir))
     S.clear_sightlines()
     S.save(out_dir)
     print(f"  scatter done in {time.time() - t0:.0f}s", flush=True)
